@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"outDir": "./build/",
+		"noImplicitAny": true,
+		"module": "commonjs",
+		"target": "ES5",
+		"jsx": "react",
+		"allowJs": true,
+		"lib": ["es2015", "dom"],
+		"moduleResolution": "node"
+	},
+	"include": [
+		"src/**/*.ts"
+	],
+	"exclude": [
+		"./node_modules/**/*"
+	]
+}
+
