@@ -8,8 +8,7 @@ module.exports = {
     },
     mode: 'development',
     plugins: [
-        new HtmlWebpackPlugin(),
-        new CleanWebpackPlugin()
+        new HtmlWebpackPlugin()
     ],
     module: {
         rules: [
