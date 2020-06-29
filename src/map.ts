@@ -15,22 +15,32 @@ export interface MapDefinition {
 export function createMapGameObject(engine: Engine, def: MapDefinition) {
 	const root = new GameObject();
 
+	const grass = loadGLB(
+		engine.gl,
+		engine.programs.standard,
+		require("./resources/models/ground_grass.glb")
+	);
+
+	const cliffStraight = loadGLB(
+		engine.gl,
+		engine.programs.standard,
+		require("./resources/models/cliff_top_rock.glb")
+	);
+
+	cliffStraight.add(grass.clone());
+
+	const cliffCorner = loadGLB(
+		engine.gl,
+		engine.programs.standard,
+		require("./resources/models/cliff_cornerInnerTop_rock.glb")
+	);
+
+	cliffCorner.add(grass.clone());
+
 	const tiles = {
-		grass: loadGLB(
-			engine.gl,
-			engine.programs.standard,
-			require("./resources/models/ground_grass.glb")
-		),
-		cliffStraight: loadGLB(
-			engine.gl,
-			engine.programs.standard,
-			require("./resources/models/cliff_top_rock.glb")
-		),
-		cliffCorner: loadGLB(
-			engine.gl,
-			engine.programs.standard,
-			require("./resources/models/cliff_cornerInnerTop_rock.glb")
-		),
+		grass,
+		cliffStraight,
+		cliffCorner
 	};
 
 	const tileWidth = 1;
@@ -43,17 +53,13 @@ export function createMapGameObject(engine: Engine, def: MapDefinition) {
 			const { offset = [0, 0], rotation = 0, key } = tileDef;
 			const tileCopy = tiles[key as keyof typeof tiles];
 
-			const tile = new GameObject();
+			const tile = tileCopy.clone();
 			tile.position = vec3.fromValues(
 				x * tileWidth + offset[0],
 				0,
 				y * tileHeight + offset[1]
 			);
 			quat.rotateY(tile.rotation, quat.create(), rotation);
-
-			if (tileCopy) {
-				tile.renderable = tileCopy.children[0].renderable;
-			}
 
 			root.position = vec3.fromValues(-tileWidth * def.width / 2, 0, -tileHeight * def.height / 2);
 
