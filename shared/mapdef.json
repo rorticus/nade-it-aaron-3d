@@ -1,0 +1,11 @@
+{
+  "┏": {
+    "filename": "borderNorthWest"
+  },
+  "┓": {
+    "filename": "borderNorthEast"
+  },
+  "━": {
+    "filename": "borderTop"
+  }
+}

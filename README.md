@@ -1,12 +1,11 @@
 # 'nade it, Aaron!
 
-A slack game like Bomberman.
+## Map Assets
 
-## Development
-If you are just developing this game, clone the repository, `npm i` and get going with `npm run build`.  
-This will package the app and get you on the right track.
+Map assets are generated using Asset Forge.
 
-If you are developing the game alongside the engine, you'll need to link the
-engine. Clone `webgl-engine` and run `npm run link` in that directory. Then run
-`npm run watch` to start the TypeScript watch server. In this project, run `npm link webgl-engine`.
-This will let this project update when you update `webgl-engine`.
+1. Assemble single tile using Asset Forge using the default grid. A single tile should span one grid cell.
+2. Export as GLB file
+3. Export as a sprite using the following export settings,
+  ![Asset Forge Export Settings](./docs/assetForgeExportSettings.png)
+4. Paste exported sprite in final map grid (pixelmator file)
