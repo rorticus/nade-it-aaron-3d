@@ -1,11 +1,29 @@
 {
-  "┏": {
+  "0": {
     "filename": "borderNorthWest"
   },
-  "┓": {
+  "1": {
+    "filename": "borderNorth"
+  },
+  "2": {
     "filename": "borderNorthEast"
   },
-  "━": {
-    "filename": "borderTop"
+  "12": {
+    "filename": "borderWest"
+  },
+  "13": {
+    "filename": "grass"
+  },
+  "14": {
+    "filename": "borderEast"
+  },
+  "24": {
+    "filename": "borderSouthWest"
+  },
+  "25": {
+    "filename": "borderSouth"
+  },
+  "26": {
+    "filename": "borderSouthEast"
   }
 }
