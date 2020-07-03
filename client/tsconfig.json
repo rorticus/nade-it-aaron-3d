@@ -10,10 +10,9 @@
 		"moduleResolution": "node"
 	},
 	"include": [
-		"client/src/**/*.ts"
+		"./src/**/*.ts"
 	],
 	"exclude": [
 		"./node_modules/**/*"
 	]
 }
-

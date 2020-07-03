@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "../node_modules/.bin/webpack",
-    "watch": "../node_modules/.bin/webpack -w"
+    "build": "webpack",
+    "watch": "webpack -w"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "colyseus.js": "^0.13.1",
     "gl-matrix": "^3.3.0",
     "webgl-engine": "github:rorticus/webgl-engine"
   },

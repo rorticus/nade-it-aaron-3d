@@ -6,11 +6,14 @@ import { monitor } from "@colyseus/monitor";
 
 import { NadeItAaron } from "./NadeItAaron";
 
+const staticPath = process.env.STATIC_PATH || '../client/build';
+
 const port = Number(process.env.PORT || 2567);
 const app = express()
 
 app.use(cors());
 app.use(express.json())
+app.use(express.static(staticPath));
 
 const server = http.createServer(app);
 const gameServer = new Server({
