@@ -1,11 +1,10 @@
-import {Camera, Engine, loadGLTF, OrbitCamera, Scene} from "webgl-engine";
-import {vec3} from "gl-matrix";
-import {createMapGameObject} from "./map";
+import {Engine} from "webgl-engine";
 import * as Colyseus from 'colyseus.js';
+import Lobby from "./scenes/Lobby";
 
 const canvas = document.createElement("canvas");
-canvas.setAttribute("width", "512");
-canvas.setAttribute("height", "512");
+canvas.setAttribute("width", "1024");
+canvas.setAttribute("height", "768");
 
 document.body.appendChild(canvas);
 
@@ -17,6 +16,8 @@ engine.start();
 
 client.joinOrCreate('nadeit', { sessionId: '123'}).then(room => {
     console.log('sessionId', room.sessionId);
+
+    engine.scene = new Lobby(engine);
 });
 
 
