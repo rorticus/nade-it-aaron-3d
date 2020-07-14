@@ -18,7 +18,21 @@ export class NadeItAaron extends Room<GameState> {
 
     onJoin (client: Client, options: any) {
         console.log('client joined', client.id);
-        this.state.players[client.id] = new Player();
+        const player = new Player();
+
+        let indices = [1, 2, 3, 4];
+        for(let key in this.state.players) {
+            const index = indices.indexOf(this.state.players[key].index);
+            if(index >= 0) {
+                indices = indices.splice(index, 1);
+            }
+        }
+
+        if(indices.length > 0) {
+            player.index = indices[0];
+        }
+
+        this.state.players[client.id] = player;
     }
 
     onLeave (client: Client, consented: boolean) {

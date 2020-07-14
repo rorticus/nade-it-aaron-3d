@@ -10,3 +10,12 @@ If you are developing the game alongside the engine, you'll need to link the
 engine. Clone `webgl-engine` and run `npm run link` in that directory. Then run
 `npm run watch` to start the TypeScript watch server. In this project, run `npm link webgl-engine`.
 This will let this project update when you update `webgl-engine`.
+
+## Resources
+
+This game uses a couple of resources (both paid and free) from kenney.nl:
+
+- Emotes Pack
+- UI Pack
+- NatureKit 2
+- Character Assets Version 4a
