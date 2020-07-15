@@ -7,4 +7,5 @@ export class Player extends Schema {
     @type('float32') rotation: number;
     @type('boolean') isReady = false;
     @type('int8') index = 0;
+    @type('boolean') isHost = false;
 }

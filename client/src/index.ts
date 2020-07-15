@@ -18,15 +18,7 @@ engine.start();
 client.joinOrCreate<GameState>('nadeit', { sessionId: '123'}).then(room => {
     console.log('sessionId', room.sessionId);
 
-    engine.scene = new Lobby(engine);
-
-    room.state.players.onAdd = (player, key) => {
-        console.log(key);
-    };
-
-    room.state.players.onChange = (player, key) => {
-        console.log(player);
-    };
+    engine.scene = new Lobby(engine, room.sessionId, room.state);
 });
 
 

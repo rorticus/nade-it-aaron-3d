@@ -6,7 +6,8 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "watch": "nodemon",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate-schema": "schema-codegen src/state/Player.ts --output ../client/src/state --ts"
   },
   "author": "",
   "license": "ISC",

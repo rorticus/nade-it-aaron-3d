@@ -1,25 +1,27 @@
 import {Engine, LightType, loadGLB, Scene} from "webgl-engine";
 import {positionSpriteOnCanvas, sprite} from "webgl-engine/lib/webgl/utils";
 import {vec3} from "gl-matrix";
+import {GameState} from "../state/GameState";
+import {getPlayerSkin, removePlayerSkin, updatePlayerSkin} from "../players";
 
 const backgroundImage = require('../resources/images/lobby-background.png').default;
 const waitingForPlayers = require('../resources/images/waiting-for-players.png').default;
+const startButton = require('../resources/images/start-button.png').default;
 
 const character = require('../resources/models/character.glb');
 
 function loadCharacter(engine: Engine, position: [number, number, number], rotation: number) {
-    const character1 = loadGLB(engine.gl, engine.programs.standard, character);
-    character1.id = 'character1';
-    character1.position = position;
-    character1.animation.transitionTo('Idle', 0);
-    character1.rotateY(rotation);
-    character1.getObjectById('characterMedium', true).renderable.renderables[0].uniforms['u_color'] = vec3.fromValues(0, 0, 0);
+    const characterModel = loadGLB(engine.gl, engine.programs.standard, character);
+    characterModel.position = position;
+    characterModel.animation.transitionTo('Idle', 0);
+    characterModel.rotateY(rotation);
+    characterModel.getObjectById('characterMedium', true).renderable.renderables[0].uniforms['u_color'] = vec3.fromValues(0, 0, 0);
 
-    return character1;
+    return characterModel;
 }
 
 export class Lobby extends Scene {
-    constructor(engine: Engine) {
+    constructor(engine: Engine, clientId: string, gameState: GameState) {
         super();
 
         this.camera.position = vec3.fromValues(0, 0, 10);
@@ -54,6 +56,39 @@ export class Lobby extends Scene {
         const character4 = loadCharacter(engine, [-6, -4.5, 0], Math.PI * 45 / 180);
         character4.id = 'character4';
         this.addGameObject(character4, 2);
+
+        gameState.players.onAdd = (player, key) => {
+            const character = this.getObjectById(`character${player.index}`);
+
+            if(player.isReady) {
+                updatePlayerSkin(engine, character, getPlayerSkin(player.index));
+            } else {
+                removePlayerSkin(engine, character);
+            }
+
+            if(player.id === clientId && player.isHost) {
+                // add start button
+                const start = sprite(engine, startButton);
+                positionSpriteOnCanvas(engine, start, 344, 568, 335, 177);
+                this.addGameObject(start, 1);
+            }
+        };
+
+        gameState.players.onChange = (player, key) => {
+            const character = this.getObjectById(`character${player.index}`);
+
+            if(player.isReady) {
+                updatePlayerSkin(engine, character, getPlayerSkin(player.index));
+            } else {
+                removePlayerSkin(engine, character);
+            }
+        };
+
+        gameState.players.onRemove = (player, key) => {
+            const character = this.getObjectById(`character${player.index}`);
+
+            removePlayerSkin(engine, character);
+        };
     }
 }
 

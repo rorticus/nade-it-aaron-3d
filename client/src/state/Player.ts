@@ -14,4 +14,5 @@ export class Player extends Schema {
     @type("float32") public rotation: number;
     @type("boolean") public isReady: boolean;
     @type("int8") public index: number;
+    @type("boolean") public isHost: boolean;
 }

@@ -19,12 +19,19 @@ export class NadeItAaron extends Room<GameState> {
     onJoin (client: Client, options: any) {
         console.log('client joined', client.id);
         const player = new Player();
+        player.isReady = true;
 
-        let indices = [1, 2, 3, 4];
+        if(Object.keys(this.state.players).length === 0) {
+            player.isHost = true;
+        } else {
+            player.isHost = false;
+        }
+
+        const indices = [1, 2, 3, 4];
         for(let key in this.state.players) {
             const index = indices.indexOf(this.state.players[key].index);
             if(index >= 0) {
-                indices = indices.splice(index, 1);
+                indices.splice(index, 1);
             }
         }
 
@@ -32,6 +39,7 @@ export class NadeItAaron extends Room<GameState> {
             player.index = indices[0];
         }
 
+        player.id = client.id;
         this.state.players[client.id] = player;
     }
 
