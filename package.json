@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/rorticus/nade-it-aaron-3d/issues"
   },
-  "homepage": "https://github.com/rorticus/nade-it-aaron-3d#readme"
+  "homepage": "https://github.com/rorticus/nade-it-aaron-3d#readme",
+  "prettier": {
+    "useTabs": true
+  }
 }

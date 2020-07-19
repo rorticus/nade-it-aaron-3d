@@ -1,17 +1,21 @@
 import { Room, Client } from "colyseus";
 import {GameState} from "./state/GameState";
 import {Player} from "./state/Player";
+import {generateMap, MAP_HEIGHT, MAP_WIDTH} from "./map/map";
 
 export class NadeItAaron extends Room<GameState> {
 
-    onCreate (options: any) {
-        console.log('room created', options);
 
+    onCreate (options: any) {
         this.setState(new GameState());
 
-        this.onMessage("type", (client, message) => {
-            // handle "type" message
-            console.log('some sort of message', client, message);
+        this.onMessage('start', (client, message) => {
+            const map = generateMap();
+            this.broadcast('start', {
+                mapWidth: MAP_WIDTH,
+                mapHeight: MAP_HEIGHT,
+                map
+            });
         });
 
     }

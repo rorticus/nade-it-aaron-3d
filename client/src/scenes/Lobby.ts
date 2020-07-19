@@ -4,6 +4,7 @@ import { vec3 } from "gl-matrix";
 import { GameState } from "../state/GameState";
 import { getPlayerSkin, removePlayerSkin, updatePlayerSkin } from "../players";
 import { UIButton } from "../components/UIButton";
+import { Room } from "colyseus.js";
 
 const backgroundImage = require("../resources/images/lobby-background.png")
 	.default;
@@ -35,7 +36,7 @@ function loadCharacter(
 }
 
 export class Lobby extends Scene {
-	constructor(public engine: Engine, clientId: string, gameState: GameState) {
+	constructor(public engine: Engine, clientId: string, room: Room<GameState>) {
 		super();
 
 		this.camera.position = vec3.fromValues(0, 0, 10);
@@ -79,7 +80,7 @@ export class Lobby extends Scene {
 		character4.id = "character4";
 		this.addGameObject(character4, 2);
 
-		gameState.players.onAdd = (player, key) => {
+		room.state.players.onAdd = (player, key) => {
 			const character = this.getObjectById(`character${player.index}`);
 
 			if (player.isReady) {
@@ -96,7 +97,7 @@ export class Lobby extends Scene {
 				start.addComponent(
 					UIButton(335, 177, {
 						onClick() {
-							console.log('click!');
+							room.send('start');
 						},
 					})
 				);
@@ -104,7 +105,7 @@ export class Lobby extends Scene {
 			}
 		};
 
-		gameState.players.onChange = (player, key) => {
+		room.state.players.onChange = (player, key) => {
 			const character = this.getObjectById(`character${player.index}`);
 
 			if (player.isReady) {
@@ -114,7 +115,7 @@ export class Lobby extends Scene {
 			}
 		};
 
-		gameState.players.onRemove = (player, key) => {
+		room.state.players.onRemove = (player, key) => {
 			const character = this.getObjectById(`character${player.index}`);
 
 			removePlayerSkin(engine, character);
