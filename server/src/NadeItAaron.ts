@@ -4,8 +4,6 @@ import {Player} from "./state/Player";
 import {generateMap, MAP_HEIGHT, MAP_WIDTH} from "./map/map";
 
 export class NadeItAaron extends Room<GameState> {
-
-
     onCreate (options: any) {
         this.setState(new GameState());
 
