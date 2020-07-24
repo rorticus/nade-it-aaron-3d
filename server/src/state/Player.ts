@@ -8,4 +8,5 @@ export class Player extends Schema {
     @type('boolean') isReady = false;
     @type('int8') index = 0;
     @type('boolean') isHost = false;
+    @type(Vector3) velocity: Vector3;
 }

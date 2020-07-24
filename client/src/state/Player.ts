@@ -15,4 +15,5 @@ export class Player extends Schema {
     @type("boolean") public isReady: boolean;
     @type("int8") public index: number;
     @type("boolean") public isHost: boolean;
+    @type(Vector3) public velocity: Vector3 = new Vector3();
 }

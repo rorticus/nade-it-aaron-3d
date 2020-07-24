@@ -5,14 +5,7 @@ import { GameState } from "../state/GameState";
 import { getPlayerSkin, removePlayerSkin, updatePlayerSkin } from "../players";
 import { UIButton } from "../components/UIButton";
 import { Room } from "colyseus.js";
-
-const backgroundImage = require("../resources/images/lobby-background.png")
-	.default;
-const waitingForPlayers = require("../resources/images/waiting-for-players.png")
-	.default;
-const startButton = require("../resources/images/start-button.png").default;
-
-const character = require("../resources/models/character.glb");
+import {backgroundImage, character, startButton, waitingForPlayers} from "../resources/assets";
 
 function loadCharacter(
 	engine: Engine,
