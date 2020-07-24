@@ -1,4 +1,4 @@
-import {Engine, LightType, Scene} from "webgl-engine";
+import {Engine, LightType, OrbitCamera, Scene} from "webgl-engine";
 import {Room} from "colyseus.js";
 import {GameState} from "../state/GameState";
 import {StartGame} from "../interfaces";
@@ -13,7 +13,11 @@ export class Play extends Scene {
 	) {
 		super();
 
-		this.camera.position = vec3.fromValues(0, 10, 10);
+		const cam = new OrbitCamera();
+		cam.radius = 12;
+		cam.elevation = -7;
+
+		this.camera = cam;
 		this.pointLights[0].position = [0, 10, 10];
 		this.pointLights[0].color = [1, 1, 1];
 

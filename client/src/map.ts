@@ -10,7 +10,9 @@ export interface MapDefinition {
 
 const tiles: ArrayBuffer[] = [];
 Object.keys(mapDef).forEach((key) => {
-	tiles[parseInt(key, 10)] = require(`./resources/models/${(mapDef as any)[key].filename}.glb`);
+	tiles[parseInt(key, 10)] = require(`./resources/models/${
+		(mapDef as any)[key].filename
+	}.glb`);
 });
 
 export function createMapGameObject(engine: Engine, def: MapDefinition) {
@@ -25,23 +27,23 @@ export function createMapGameObject(engine: Engine, def: MapDefinition) {
 
 	for (let y = 0; y < def.height; y++) {
 		for (let x = 0; x < def.width; x++) {
-			const tileIndex = def.map[y * def.width + x].charCodeAt(0);
+			const tileIndex = def.map.charCodeAt(y * def.width + x);
 
 			const tileCopy = tileModels[tileIndex];
 
 			const tile = tileCopy.clone();
 			tile.position = vec3.fromValues(x * tileWidth, 0, y * tileHeight);
-			quat.rotateY(tile.rotation, quat.create(), 0);
-
-			root.position = vec3.fromValues(
-				(-tileWidth * def.width) / 2,
-				0,
-				(-tileHeight * def.height) / 2
-			);
+			// quat.rotateY(tile.rotation, quat.create(), 0);
 
 			root.add(tile);
 		}
 	}
+
+	root.position = vec3.fromValues(
+		(-tileWidth * (def.width - 1)) / 2,
+		0,
+		(-tileHeight * (def.height - 1)) / 2
+	);
 
 	return root;
 }

@@ -31,8 +31,8 @@ export function generateMap(): string {
 		arr[y * MAP_WIDTH + MAP_WIDTH - 1] = tiles["borderEast"];
 	}
 
-	arr[0] = tiles["borderNorthEast"];
-	arr[MAP_WIDTH - 1] = tiles["borderNorthWest"];
+	arr[0] = tiles["borderNorthWest"];
+	arr[MAP_WIDTH - 1] = tiles["borderNorthEast"];
 	arr[(MAP_HEIGHT - 1) * MAP_WIDTH] = tiles["borderSouthWest"];
 	arr[(MAP_HEIGHT - 1) * MAP_WIDTH + MAP_WIDTH - 1] = tiles["borderSouthEast"];
 
