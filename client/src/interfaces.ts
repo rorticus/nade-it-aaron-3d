@@ -3,3 +3,7 @@ export interface StartGame {
     mapWidth: number;
     mapHeight: number;
 }
+
+export interface Action {
+    t: string;
+}
