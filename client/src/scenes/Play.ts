@@ -1,15 +1,16 @@
-import { Engine, LightType, loadGLB, OrbitCamera, Scene } from "webgl-engine";
-import { Room } from "colyseus.js";
-import { GameState } from "../state/GameState";
-import { StartGame } from "../interfaces";
-import { createMapGameObject } from "../map";
-import { character } from "../resources/assets";
-import { vec3 } from "gl-matrix";
-import { getPlayerSkin, updatePlayerSkin } from "../players";
-import { Player } from "../state/Player";
-import { GameComponentContext } from "webgl-engine/lib/interfaces";
-import { KeyboardKey } from "webgl-engine/lib/services/KeyboardService";
-import { Actions } from "../actions";
+import {Engine, loadGLB, OrbitCamera, Scene} from "webgl-engine";
+import {Room} from "colyseus.js";
+import {GameState} from "../state/GameState";
+import {StartGame} from "../interfaces";
+import {createMapGameObject} from "../map";
+import {character} from "../resources/assets";
+import {vec3} from "gl-matrix";
+import {getPlayerSkin, updatePlayerSkin} from "../players";
+import {Player} from "../state/Player";
+import {GameComponentContext} from "webgl-engine/lib/interfaces";
+import {KeyboardKey} from "webgl-engine/lib/services/KeyboardService";
+import {Actions} from "../actions";
+import {AnimationWrapMode} from "webgl-engine/lib/animation/AnimationState";
 
 const EPSILON = 0.001;
 
@@ -36,7 +37,7 @@ export function configurePlayerModel(engine: Engine, player: Player) {
 		() => {
 			return player.up || player.down || player.left || player.right;
 		},
-		0.1
+		0.33
 	);
 
 	characterModel.animation.addTransition(
@@ -47,7 +48,7 @@ export function configurePlayerModel(engine: Engine, player: Player) {
 		},
 		0.1
 	);
-	characterModel.animation.states['Walk'].timeScale = 1.5;
+	characterModel.animation.states['Walk'].timeScale = 1.25;
 
 	return characterModel;
 }

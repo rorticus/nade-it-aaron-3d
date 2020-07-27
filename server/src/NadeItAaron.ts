@@ -94,7 +94,7 @@ export class NadeItAaron extends Room<GameState> {
 		player.id = client.id;
 		this.state.players[client.id] = player;
 
-		this.setSimulationInterval((t) => this.update(t));
+		this.setSimulationInterval((t) => this.update(t), 33);
 	}
 
 	onLeave(client: Client, consented: boolean) {
