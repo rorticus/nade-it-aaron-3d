@@ -4,15 +4,15 @@ import { Player } from "./state/Player";
 import { generateMap, MAP_HEIGHT, MAP_WIDTH } from "./map/map";
 import { Vector3 } from "./state/primitives";
 
-const PLAYER_SPEED = 3;
-const FRICTION = 0.75;
+const FPS = 0.33;
+const PLAYER_SPEED = 0.25;
+
+export interface MoveMessage {
+	x: number;
+	y: number;
+}
 
 export class NadeItAaron extends Room<GameState> {
-	private left = false;
-	private right = false;
-	private up = false;
-	private down = false;
-
 	onCreate(options: any) {
 		this.setState(new GameState());
 
@@ -25,33 +25,23 @@ export class NadeItAaron extends Room<GameState> {
 			});
 		});
 
-		this.onMessage("leftDown", (client) => {
-			this.state.players[client.id].left = true;
-		});
-		this.onMessage("leftUp", (client) => {
-			this.state.players[client.id].left = false;
+		this.onMessage<MoveMessage>("move", (client, message) => {
+			const player = this.state.players[client.id];
+
+			if (message.x !== 0) {
+				player.position.x += (message.x > 0 ? 1 : -1) * PLAYER_SPEED * FPS;
+				player.rotation = ((90 * Math.PI) / 180) * (message.x > 0 ? 1 : -1);
+			}
+
+			if (message.y !== 0) {
+				player.position.z += (message.y > 0 ? 1 : -1) * PLAYER_SPEED * FPS;
+				player.rotation = ((180 * Math.PI) / 180) * (message.y > 0 ? 0 : -1);
+			}
+
+			player.moving = false;
 		});
 
-		this.onMessage("rightDown", (client) => {
-			this.state.players[client.id].right = true;
-		});
-		this.onMessage("rightUp", (client) => {
-			this.state.players[client.id].right = false;
-		});
-
-		this.onMessage("upDown", (client) => {
-			this.state.players[client.id].up = true;
-		});
-		this.onMessage("upUp", (client) => {
-			this.state.players[client.id].up = false;
-		});
-
-		this.onMessage("downDown", (client) => {
-			this.state.players[client.id].down = true;
-		});
-		this.onMessage("downUp", (client) => {
-			this.state.players[client.id].down = false;
-		});
+		this.setSimulationInterval((t) => this.update(t), 33);
 	}
 
 	onJoin(client: Client, options: any) {
@@ -71,7 +61,6 @@ export class NadeItAaron extends Room<GameState> {
 		player.isReady = true;
 		player.rotation = 0;
 		player.position = p;
-		player.velocity = v;
 
 		if (Object.keys(this.state.players).length === 0) {
 			player.isHost = true;
@@ -93,8 +82,6 @@ export class NadeItAaron extends Room<GameState> {
 
 		player.id = client.id;
 		this.state.players[client.id] = player;
-
-		this.setSimulationInterval((t) => this.update(t), 33);
 	}
 
 	onLeave(client: Client, consented: boolean) {
@@ -108,37 +95,5 @@ export class NadeItAaron extends Room<GameState> {
 
 	update(deltaInMs: number) {
 		const deltaInSeconds = deltaInMs / 1000;
-
-		// move players
-		Object.keys(this.state.players).forEach((k) => {
-			const p = this.state.players[k];
-			let r = 0;
-			let rChanged = false;
-
-			if (p.up) {
-				p.position.z -= PLAYER_SPEED * deltaInSeconds;
-				r -= (180 * Math.PI) / 180;
-				rChanged = true;
-			}
-			if (p.down) {
-				p.position.z += PLAYER_SPEED * deltaInSeconds;
-				r += 0;
-				rChanged = true;
-			}
-			if (p.left) {
-				p.position.x -= PLAYER_SPEED * deltaInSeconds;
-				r -= (90 * Math.PI) / 180;
-				rChanged = true;
-			}
-			if (p.right) {
-				p.position.x += PLAYER_SPEED * deltaInSeconds;
-				r += (90 * Math.PI) / 180;
-				rChanged = true;
-			}
-
-			if (rChanged) {
-				p.rotation = r;
-			}
-		});
 	}
 }

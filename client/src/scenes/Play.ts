@@ -9,10 +9,8 @@ import {getPlayerSkin, updatePlayerSkin} from "../players";
 import {Player} from "../state/Player";
 import {GameComponentContext} from "webgl-engine/lib/interfaces";
 import {KeyboardKey} from "webgl-engine/lib/services/KeyboardService";
-import {Actions} from "../actions";
-import {AnimationWrapMode} from "webgl-engine/lib/animation/AnimationState";
 
-const EPSILON = 0.001;
+const PLAYER_SPEED = 0.25;
 
 export function configurePlayerModel(engine: Engine, player: Player) {
 	const characterModel = loadGLB(
@@ -35,7 +33,7 @@ export function configurePlayerModel(engine: Engine, player: Player) {
 		"Idle",
 		"Walk",
 		() => {
-			return player.up || player.down || player.left || player.right;
+			return player.moving;
 		},
 		0.33
 	);
@@ -44,21 +42,16 @@ export function configurePlayerModel(engine: Engine, player: Player) {
 		"Walk",
 		"Idle",
 		() => {
-			return !player.up && !player.down && !player.left && !player.right;
+			return !player.moving;
 		},
 		0.1
 	);
-	characterModel.animation.states['Walk'].timeScale = 1.25;
+	characterModel.animation.states["Walk"].timeScale = 1;
 
 	return characterModel;
 }
 
 export class Play extends Scene {
-	private down = false;
-	private left = false;
-	private right = false;
-	private up = false;
-
 	constructor(
 		public engine: Engine,
 		startGame: StartGame,
@@ -104,37 +97,34 @@ export class Play extends Scene {
 		super.update(context);
 
 		const { keyboardService } = context.engine;
+		let dirX = 0;
+		let dirY = 0;
 
-		if (keyboardService.down[KeyboardKey.ArrowLeft] && !this.left) {
-			this.room.send(Actions.LeftDown);
-			this.left = true;
-		} else if (!keyboardService.down[KeyboardKey.ArrowLeft] && this.left) {
-			this.left = false;
-			this.room.send(Actions.LeftUp);
+		if (keyboardService.down[KeyboardKey.ArrowLeft]) {
+			dirX -= 1;
 		}
 
-		if (keyboardService.down[KeyboardKey.ArrowRight] && !this.right) {
-			this.room.send(Actions.RightDown);
-			this.right = true;
-		} else if (!keyboardService.down[KeyboardKey.ArrowRight] && this.right) {
-			this.right = false;
-			this.room.send(Actions.RightUp);
+		if (keyboardService.down[KeyboardKey.ArrowRight]) {
+			dirX += 1;
 		}
 
-		if (keyboardService.down[KeyboardKey.ArrowUp] && !this.up) {
-			this.room.send(Actions.UpDown);
-			this.up = true;
-		} else if (!keyboardService.down[KeyboardKey.ArrowUp] && this.up) {
-			this.up = false;
-			this.room.send(Actions.UpUp);
+		if (keyboardService.down[KeyboardKey.ArrowUp]) {
+			dirY -= 1;
 		}
 
-		if (keyboardService.down[KeyboardKey.ArrowDown] && !this.down) {
-			this.room.send(Actions.DownDown);
-			this.down = true;
-		} else if (!keyboardService.down[KeyboardKey.ArrowDown] && this.down) {
-			this.down = false;
-			this.room.send(Actions.DownUp);
+		if (keyboardService.down[KeyboardKey.ArrowDown]) {
+			dirY += 1;
+		}
+
+		if (dirX || dirY) {
+			this.room.send("move", { x: dirX, y: dirY });
+
+			const player = this.getObjectById(this.room.sessionId);
+			if (player) {
+				player.position[0] += dirX * PLAYER_SPEED * context.deltaInSeconds;
+				player.position[2] += dirY * PLAYER_SPEED * context.deltaInSeconds;
+				this.room.state.players[this.room.sessionId].moving = true;
+			}
 		}
 	}
 }
