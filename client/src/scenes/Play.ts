@@ -10,7 +10,15 @@ import {Player} from "../state/Player";
 import {GameComponentContext} from "webgl-engine/lib/interfaces";
 import {KeyboardKey} from "webgl-engine/lib/services/KeyboardService";
 
-const PLAYER_SPEED = 0.25;
+const PLAYER_SPEED = 1;
+
+export function movingTracker = () => {
+	let moving = 0;
+
+	return () => {
+
+	};
+};
 
 export function configurePlayerModel(engine: Engine, player: Player) {
 	const characterModel = loadGLB(
@@ -123,7 +131,6 @@ export class Play extends Scene {
 			if (player) {
 				player.position[0] += dirX * PLAYER_SPEED * context.deltaInSeconds;
 				player.position[2] += dirY * PLAYER_SPEED * context.deltaInSeconds;
-				this.room.state.players[this.room.sessionId].moving = true;
 			}
 		}
 	}
