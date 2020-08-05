@@ -5,7 +5,7 @@ import { generateMap, MAP_HEIGHT, MAP_WIDTH } from "./map/map";
 import { Vector3 } from "./state/primitives";
 
 const FPS = 0.03333333;
-const PLAYER_SPEED = 1;
+const PLAYER_SPEED = 1.5;
 
 export interface MoveMessage {
 	x: number;
@@ -37,8 +37,6 @@ export class NadeItAaron extends Room<GameState> {
 				player.position.z += (message.y > 0 ? 1 : -1) * PLAYER_SPEED * FPS;
 				player.rotation = ((180 * Math.PI) / 180) * (message.y > 0 ? 0 : -1);
 			}
-
-			client.send('move_complete');
 		});
 
 		this.setSimulationInterval((t) => this.update(t), 33);

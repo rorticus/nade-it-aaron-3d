@@ -1,24 +1,35 @@
-import {Engine, loadGLB, OrbitCamera, Scene} from "webgl-engine";
-import {Room} from "colyseus.js";
-import {GameState} from "../state/GameState";
-import {StartGame} from "../interfaces";
-import {createMapGameObject} from "../map";
-import {character} from "../resources/assets";
-import {vec3} from "gl-matrix";
-import {getPlayerSkin, updatePlayerSkin} from "../players";
-import {Player} from "../state/Player";
-import {GameComponentContext} from "webgl-engine/lib/interfaces";
-import {KeyboardKey} from "webgl-engine/lib/services/KeyboardService";
+import { Engine, loadGLB, OrbitCamera, Scene } from "webgl-engine";
+import { Room } from "colyseus.js";
+import { GameState } from "../state/GameState";
+import { StartGame } from "../interfaces";
+import { createMapGameObject } from "../map";
+import { character } from "../resources/assets";
+import { vec3 } from "gl-matrix";
+import { getPlayerSkin, updatePlayerSkin } from "../players";
+import { Player } from "../state/Player";
+import { GameComponentContext } from "webgl-engine/lib/interfaces";
+import { KeyboardKey } from "webgl-engine/lib/services/KeyboardService";
 
-const PLAYER_SPEED = 1;
+const PLAYER_SPEED = 1.5;
 
-export function movingTracker = () => {
-	let moving = 0;
+const MOVEMENT_TAG = "Moving";
 
-	return () => {
+export class MovingTracker {
+	movingTimer = 0;
+	tag = MOVEMENT_TAG;
 
-	};
-};
+	update(context: GameComponentContext) {
+		this.movingTimer = Math.max(this.movingTimer - context.deltaInSeconds, 0);
+	}
+
+	reset(t: number) {
+		this.movingTimer += t;
+	}
+
+	isMoving() {
+		return this.movingTimer > 0;
+	}
+}
 
 export function configurePlayerModel(engine: Engine, player: Player) {
 	const characterModel = loadGLB(
@@ -37,20 +48,23 @@ export function configurePlayerModel(engine: Engine, player: Player) {
 	characterModel.rotateY(player.rotation);
 	updatePlayerSkin(engine, characterModel, getPlayerSkin(player.index));
 
+	const movementTracker = new MovingTracker();
+	characterModel.addComponent(movementTracker);
+
 	characterModel.animation.addTransition(
 		"Idle",
 		"Walk",
 		() => {
-			return player.moving;
+			return movementTracker.isMoving();
 		},
-		0.33
+		0.1
 	);
 
 	characterModel.animation.addTransition(
 		"Walk",
 		"Idle",
 		() => {
-			return !player.moving;
+			return !movementTracker.isMoving();
 		},
 		0.1
 	);
@@ -125,13 +139,18 @@ export class Play extends Scene {
 		}
 
 		if (dirX || dirY) {
-			this.room.send("move", { x: dirX, y: dirY });
-
 			const player = this.getObjectById(this.room.sessionId);
 			if (player) {
 				player.position[0] += dirX * PLAYER_SPEED * context.deltaInSeconds;
 				player.position[2] += dirY * PLAYER_SPEED * context.deltaInSeconds;
+
+				const movement = player.findComponent<MovingTracker>(MOVEMENT_TAG);
+				if (movement) {
+					movement.reset(context.deltaInSeconds + 0.0000001);
+				}
 			}
+
+			this.room.send("move", { x: dirX, y: dirY });
 		}
 	}
 }
