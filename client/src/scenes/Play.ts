@@ -31,16 +31,28 @@ export class MovingTracker {
 	}
 }
 
-export function configurePlayerModel(engine: Engine, player: Player) {
+export function mapToWorldCoordinates(
+	map: StartGame,
+	x: number,
+	y: number
+): vec3 {
+	return vec3.fromValues(x - map.mapWidth / 2, 0, y - map.mapHeight / 2);
+}
+
+export function configurePlayerModel(
+	engine: Engine,
+	map: StartGame,
+	player: Player
+) {
 	const characterModel = loadGLB(
 		engine.gl,
 		engine.programs.standard,
 		character
 	);
 	characterModel.id = player.id;
-	characterModel.position = vec3.fromValues(
+	characterModel.position = mapToWorldCoordinates(
+		map,
 		player.position.x,
-		player.position.y,
 		player.position.z
 	);
 	characterModel.scale = vec3.fromValues(0.35, 0.35, 0.35);
@@ -101,16 +113,17 @@ export class Play extends Scene {
 		Object.keys(room.state.players).forEach((key) => {
 			const player = room.state.players[key];
 
-			this.addGameObject(configurePlayerModel(engine, player));
+			this.addGameObject(configurePlayerModel(engine, startGame, player));
 		});
 
 		this.room.state.players.onChange = (player) => {
 			const model = this.getObjectById(player.id);
 
-			model.position[0] = player.position.x;
-			model.position[1] = player.position.y;
-			model.position[2] = player.position.z;
-
+			model.position = mapToWorldCoordinates(
+				startGame,
+				player.position.x,
+				player.position.z
+			);
 			model.rotateY(player.rotation);
 		};
 	}
