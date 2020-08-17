@@ -3,12 +3,59 @@ import * as mapDef from "../../../shared/mapdef.json";
 export const MAP_WIDTH = 12;
 export const MAP_HEIGHT = 12;
 
-const tiles = Object.keys(mapDef).reduce((result, key) => {
+export const tiles = Object.keys(mapDef).reduce((result, key) => {
 	return {
 		...result,
 		[(mapDef as any)[key].filename]: parseInt(key, 10),
 	};
 }, {}) as { [key: string]: number };
+
+export function getCollisionRectForTile(tile: number) {
+	if (tile === tiles["borderEast"]) {
+		return [0.5, 0, 0.5, 1];
+	} else if (tile === tiles["borderWest"]) {
+		return [0, 0, 0.5, 1];
+	} else if (tile === tiles["borderNorth"]) {
+		return [0, 0, 1, 0.5];
+	} else if (tile === tiles["borderSouth"]) {
+		return [0, 0.5, 1, 1];
+	}
+
+	return null;
+}
+
+export function tileCoordForPosition(x: number, y: number) {
+	const tx = Math.floor(x);
+	const ty = Math.floor(y);
+
+	return [tx, ty];
+}
+
+export function tileRectFromTileCoords(tx: number, ty: number) {
+	const left = tx;
+	const top = ty;
+
+	return [left, top, left + 1, top + 1];
+}
+
+export function tileAtPosition(tx: number, ty: number, map: string) {
+	return map.charCodeAt(ty * MAP_WIDTH + tx);
+}
+
+export function getTileCollisionRectForPosition(
+	gid: number,
+	tx: number,
+	ty: number
+): [number, number, number, number] | null {
+	const c = getCollisionRectForTile(gid);
+	const p = tileRectFromTileCoords(tx, ty);
+
+	if (!c) {
+		return null;
+	}
+
+	return [c[0] + p[0], c[1] + p[1], c[2] + p[0], c[3] + p[1]];
+}
 
 export function generateMap(): string {
 	const arr = new Uint8Array(MAP_WIDTH * MAP_HEIGHT);

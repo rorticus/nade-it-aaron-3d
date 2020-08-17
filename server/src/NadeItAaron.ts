@@ -14,15 +14,17 @@ export interface MoveMessage {
 }
 
 export class NadeItAaron extends Room<GameState> {
+	map: string;
+
 	onCreate(options: any) {
+		this.map = generateMap();
 		this.setState(new GameState());
 
 		this.onMessage("start", (client, message) => {
-			const map = generateMap();
 			this.broadcast("start", {
 				mapWidth: MAP_WIDTH,
 				mapHeight: MAP_HEIGHT,
-				map,
+				map: this.map,
 			});
 		});
 
@@ -46,13 +48,13 @@ export class NadeItAaron extends Room<GameState> {
 				y,
 				message.x,
 				message.y,
-				this.state
+				this.map
 			);
 			player.position.x = resolved.x;
 			player.position.z = resolved.y;
 		});
 
-		this.setSimulationInterval((t) => this.update(t), 33);
+		// this.setSimulationInterval((t) => this.update(t), 33);
 	}
 
 	onJoin(client: Client, options: any) {
