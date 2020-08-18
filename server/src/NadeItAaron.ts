@@ -6,7 +6,7 @@ import { Vector3 } from "./state/primitives";
 import { resolveCollisions } from "./player/collisions";
 
 const FPS = 0.03333333;
-const PLAYER_SPEED = 1.5;
+const PLAYER_SPEED = 2;
 
 export interface MoveMessage {
 	x: number;
@@ -90,8 +90,8 @@ export class NadeItAaron extends Room<GameState> {
 
 			if (player.index === 1) {
 				// upper right
-				player.position.x = MAP_WIDTH - 0.5;
-				player.position.z = 0.5;
+				player.position.x = MAP_WIDTH - 0.75;
+				player.position.z = 0.75;
 			} else if (player.index === 2) {
 				// upper left
 				player.position.x = 0.5;

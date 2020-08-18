@@ -80,7 +80,7 @@ export function configurePlayerModel(
 		},
 		0.1
 	);
-	characterModel.animation.states["Walk"].timeScale = 1;
+	characterModel.animation.states["Walk"].timeScale = 2;
 
 	return characterModel;
 }
@@ -154,8 +154,8 @@ export class Play extends Scene {
 		if (dirX || dirY) {
 			const player = this.getObjectById(this.room.sessionId);
 			if (player) {
-				player.position[0] += dirX * PLAYER_SPEED * context.deltaInSeconds;
-				player.position[2] += dirY * PLAYER_SPEED * context.deltaInSeconds;
+				// player.position[0] += dirX * PLAYER_SPEED * context.deltaInSeconds;
+				// player.position[2] += dirY * PLAYER_SPEED * context.deltaInSeconds;
 
 				const movement = player.findComponent<MovingTracker>(MOVEMENT_TAG);
 				if (movement) {

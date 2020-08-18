@@ -10,15 +10,37 @@ export const tiles = Object.keys(mapDef).reduce((result, key) => {
 	};
 }, {}) as { [key: string]: number };
 
-export function getCollisionRectForTile(tile: number) {
+export function getCollisionRectsForTile(
+	tile: number
+): [number, number, number, number][] {
 	if (tile === tiles["borderEast"]) {
-		return [0.5, 0, 0.5, 1];
+		return [[0.5, 0, 1, 1]];
 	} else if (tile === tiles["borderWest"]) {
-		return [0, 0, 0.5, 1];
+		return [[0, 0, 0.5, 1]];
 	} else if (tile === tiles["borderNorth"]) {
-		return [0, 0, 1, 0.5];
+		return [[0, 0, 1, 0.5]];
 	} else if (tile === tiles["borderSouth"]) {
-		return [0, 0.5, 1, 1];
+		return [[0, 0.5, 1, 1]];
+	} else if (tile === tiles["borderNorthWest"]) {
+		return [
+			[0, 0, 0.5, 1],
+			[0, 0, 1, 0.5],
+		];
+	} else if (tile === tiles["borderNorthEast"]) {
+		return [
+			[0.5, 0, 1, 1],
+			[0, 0, 1, 0.5],
+		];
+	} else if (tile === tiles["borderSouthEast"]) {
+		return [
+			[0.5, 0, 1, 1],
+			[0, 0.5, 1, 1],
+		];
+	} else if (tile === tiles["borderSouthWest"]) {
+		return [
+			[0, 0, 0.5, 1],
+			[0, 0.5, 1, 1],
+		];
 	}
 
 	return null;
@@ -42,19 +64,19 @@ export function tileAtPosition(tx: number, ty: number, map: string) {
 	return map.charCodeAt(ty * MAP_WIDTH + tx);
 }
 
-export function getTileCollisionRectForPosition(
+export function getTileCollisionRectsForPosition(
 	gid: number,
 	tx: number,
 	ty: number
-): [number, number, number, number] | null {
-	const c = getCollisionRectForTile(gid);
+): [number, number, number, number][] {
+	const c = getCollisionRectsForTile(gid);
 	const p = tileRectFromTileCoords(tx, ty);
 
 	if (!c) {
-		return null;
+		return [];
 	}
 
-	return [c[0] + p[0], c[1] + p[1], c[2] + p[0], c[3] + p[1]];
+	return c.map(c => [c[0] + p[0], c[1] + p[1], c[2] + p[0], c[3] + p[1]]);
 }
 
 export function generateMap(): string {

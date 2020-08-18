@@ -1,7 +1,7 @@
 import { GameState } from "../state/GameState";
 import {
-	getCollisionRectForTile,
-	getTileCollisionRectForPosition,
+	getCollisionRectsForTile,
+	getTileCollisionRectsForPosition,
 	MAP_WIDTH,
 	tileAtPosition,
 	tileCoordForPosition,
@@ -85,36 +85,38 @@ export function resolveCollisions(
 	const walls = getTilesInRect(playerRect, map);
 
 	walls.forEach((wall) => {
-		const collisionRect = getTileCollisionRectForPosition(
+		const collisionRects = getTileCollisionRectsForPosition(
 			wall.gid,
 			wall.tilePos[0],
 			wall.tilePos[1]
 		);
 
-		if (collisionRect) {
-			const intersection = rectangleIntersection(collisionRect, playerRect);
+		if (collisionRects.length) {
+			collisionRects.forEach((collisionRect) => {
+				const intersection = rectangleIntersection(collisionRect, playerRect);
 
-			if (intersection) {
-				const iw = intersection[2] - intersection[0];
-				const ih = intersection[3] - intersection[1];
+				if (intersection) {
+					const iw = intersection[2] - intersection[0];
+					const ih = intersection[3] - intersection[1];
 
-				if (iw > ih) {
-					if (dy < 0) {
-						// up
-						ny += ih;
-					} else if (dy > 0) {
-						ny -= ih;
+					if (iw > ih) {
+						if (dy < 0) {
+							// up
+							ny += ih;
+						} else if (dy > 0) {
+							ny -= ih;
+						}
+					} else if (iw < ih) {
+						if (dx < 0) {
+							nx += iw;
+						} else if (dx > 0) {
+							nx -= iw;
+						}
 					}
-				} else if (iw < ih) {
-					if (dx < 0) {
-						nx += iw;
-					} else if (dx > 0) {
-						nx -= iw;
-					}
+
+					playerRect = getPlayerBounds(nx, ny);
 				}
-
-				playerRect = getPlayerBounds(nx, ny);
-			}
+			});
 		}
 	});
 
