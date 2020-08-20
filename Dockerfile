@@ -1,4 +1,4 @@
-FROM node:12
+FROM node:12-alpine
 
 # Copy the client, assuming already built
 COPY client/build /app/client
