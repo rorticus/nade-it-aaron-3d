@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+  server:
+    image: docker.rortic.us/nade-it
+    build:
+      context: ./
