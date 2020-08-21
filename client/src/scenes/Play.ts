@@ -96,6 +96,7 @@ export class Play extends Scene {
 		const cam = new OrbitCamera();
 		cam.radius = 12;
 		cam.elevation = -7;
+		cam.lookAt = [0, -2, 0];
 
 		this.camera = cam;
 		this.pointLights[0].position = [0, 10, 10];
@@ -125,6 +126,11 @@ export class Play extends Scene {
 				player.position.z
 			);
 			model.rotateY(player.rotation);
+
+			const movement = model.findComponent<MovingTracker>(MOVEMENT_TAG);
+			if (movement) {
+				movement.reset(0.055);
+			}
 		};
 	}
 
@@ -152,17 +158,6 @@ export class Play extends Scene {
 		}
 
 		if (dirX || dirY) {
-			const player = this.getObjectById(this.room.sessionId);
-			if (player) {
-				// player.position[0] += dirX * PLAYER_SPEED * context.deltaInSeconds;
-				// player.position[2] += dirY * PLAYER_SPEED * context.deltaInSeconds;
-
-				const movement = player.findComponent<MovingTracker>(MOVEMENT_TAG);
-				if (movement) {
-					movement.reset(context.deltaInSeconds + 0.0000001);
-				}
-			}
-
 			this.room.send("move", { x: dirX, y: dirY });
 		}
 	}

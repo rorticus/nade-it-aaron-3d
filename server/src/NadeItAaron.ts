@@ -94,16 +94,16 @@ export class NadeItAaron extends Room<GameState> {
 				player.position.z = 0.75;
 			} else if (player.index === 2) {
 				// upper left
-				player.position.x = 0.5;
-				player.position.z = 0.5;
+				player.position.x = 0.75;
+				player.position.z = 0.75;
 			} else if (player.index === 3) {
 				// lower right
-				player.position.x = MAP_WIDTH - 0.5;
-				player.position.z = MAP_HEIGHT - 0.5;
+				player.position.x = MAP_WIDTH - 0.75;
+				player.position.z = MAP_HEIGHT - 0.75;
 			} else if (player.index === 4) {
 				// lower left
-				player.position.x = 0.5;
-				player.position.z = MAP_HEIGHT - 0.5;
+				player.position.x = 0.75;
+				player.position.z = MAP_HEIGHT - 0.75;
 			}
 		}
 
