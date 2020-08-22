@@ -1,12 +1,12 @@
 import * as mapDef from "../../../shared/mapdef.json";
-import {MapPretty} from "../state/MapPretty";
+import { MapPretty } from "../state/MapPretty";
 import possiblePretties from "../../../shared/pretties.json";
-import {Vector3} from "../state/primitives";
-import {MapInfo} from "../state/MapInfo";
-import {ArraySchema} from "@colyseus/schema";
+import { Vector3 } from "../state/primitives";
+import { MapInfo } from "../state/MapInfo";
+import { ArraySchema } from "@colyseus/schema";
 
-export const MAP_WIDTH = 12;
-export const MAP_HEIGHT = 12;
+export const MAP_WIDTH = 13;
+export const MAP_HEIGHT = 13;
 
 export const tiles = Object.keys(mapDef).reduce((result, key) => {
 	return {
@@ -46,6 +46,11 @@ export function getCollisionRectsForTile(
 			[0, 0, 0.5, 1],
 			[0, 0.5, 1, 1],
 		];
+	} else if (
+		tile === tiles["largeRock"] ||
+		tile === tiles["largeRock2"]
+	) {
+		return [[0, 0, 1, 1]];
 	}
 
 	return null;
@@ -110,6 +115,19 @@ export function generateMap(): MapInfo {
 	arr[(MAP_HEIGHT - 1) * MAP_WIDTH] = tiles["borderSouthWest"];
 	arr[(MAP_HEIGHT - 1) * MAP_WIDTH + MAP_WIDTH - 1] = tiles["borderSouthEast"];
 
+	const rockTiles = [
+		tiles["largeRock"],
+		tiles["largeRock2"]
+	];
+	for (let y = 1; y < MAP_HEIGHT; y++) {
+		for (let x = 1; x < MAP_WIDTH; x++) {
+			if (x % 2 && y % 2) {
+				arr[y * MAP_WIDTH + x] =
+					rockTiles[Math.floor(Math.random() * rockTiles.length)];
+			}
+		}
+	}
+
 	const pretties = new ArraySchema<MapPretty>();
 	const prettyCount = Math.floor((MAP_WIDTH - 1) * (MAP_HEIGHT - 1) * 0.5);
 
@@ -128,8 +146,8 @@ export function generateMap(): MapInfo {
 	const mapInfo = new MapInfo();
 	mapInfo.map = arr.reduce((str, n) => str + String.fromCharCode(n), "");
 	mapInfo.width = MAP_WIDTH;
-		mapInfo.height = MAP_HEIGHT;
-		mapInfo.mapPretties = pretties;
+	mapInfo.height = MAP_HEIGHT;
+	mapInfo.mapPretties = pretties;
 
-		return mapInfo;
+	return mapInfo;
 }
