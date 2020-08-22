@@ -1,12 +1,7 @@
 import { Engine, GameObject, loadGLB } from "webgl-engine";
 import { quat, vec3 } from "gl-matrix";
 import * as mapDef from "../../shared/mapdef.json";
-
-export interface MapDefinition {
-	width: number;
-	height: number;
-	map: string;
-}
+import {MapInfo} from "./state/MapInfo";
 
 const tiles: ArrayBuffer[] = [];
 Object.keys(mapDef).forEach((key) => {
@@ -15,7 +10,7 @@ Object.keys(mapDef).forEach((key) => {
 	}.glb`);
 });
 
-export function createMapGameObject(engine: Engine, def: MapDefinition) {
+export function createMapGameObject(engine: Engine, def: MapInfo) {
 	const root = new GameObject();
 
 	const tileWidth = 1;

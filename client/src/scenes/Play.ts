@@ -1,7 +1,6 @@
 import { Engine, loadGLB, OrbitCamera, Scene } from "webgl-engine";
 import { Room } from "colyseus.js";
 import { GameState } from "../state/GameState";
-import { StartGame } from "../interfaces";
 import { createMapGameObject } from "../map";
 import { character } from "../resources/assets";
 import { vec3 } from "gl-matrix";
@@ -9,6 +8,7 @@ import { getPlayerSkin, updatePlayerSkin } from "../players";
 import { Player } from "../state/Player";
 import { GameComponentContext } from "webgl-engine/lib/interfaces";
 import { KeyboardKey } from "webgl-engine/lib/services/KeyboardService";
+import { MapInfo } from "../state/MapInfo";
 
 const PLAYER_SPEED = 1.5;
 
@@ -32,16 +32,16 @@ export class MovingTracker {
 }
 
 export function mapToWorldCoordinates(
-	map: StartGame,
+	map: MapInfo,
 	x: number,
 	y: number
 ): vec3 {
-	return vec3.fromValues(x - map.mapWidth / 2, 0, y - map.mapHeight / 2);
+	return vec3.fromValues(x - map.width / 2, 0, y - map.height / 2);
 }
 
 export function configurePlayerModel(
 	engine: Engine,
-	map: StartGame,
+	map: MapInfo,
 	player: Player
 ) {
 	const characterModel = loadGLB(
@@ -86,11 +86,7 @@ export function configurePlayerModel(
 }
 
 export class Play extends Scene {
-	constructor(
-		public engine: Engine,
-		startGame: StartGame,
-		public room: Room<GameState>
-	) {
+	constructor(public engine: Engine, public room: Room<GameState>) {
 		super();
 
 		const cam = new OrbitCamera();
@@ -102,11 +98,7 @@ export class Play extends Scene {
 		this.pointLights[0].position = [0, 10, 10];
 		this.pointLights[0].color = [1, 1, 1];
 
-		const map = createMapGameObject(engine, {
-			width: startGame.mapWidth,
-			height: startGame.mapHeight,
-			map: startGame.map,
-		});
+		const map = createMapGameObject(engine, room.state.map);
 
 		this.addGameObject(map);
 
@@ -114,14 +106,14 @@ export class Play extends Scene {
 		Object.keys(room.state.players).forEach((key) => {
 			const player = room.state.players[key];
 
-			this.addGameObject(configurePlayerModel(engine, startGame, player));
+			this.addGameObject(configurePlayerModel(engine, room.state.map, player));
 		});
 
 		this.room.state.players.onChange = (player) => {
 			const model = this.getObjectById(player.id);
 
 			model.position = mapToWorldCoordinates(
-				startGame,
+				room.state.map,
 				player.position.x,
 				player.position.z
 			);

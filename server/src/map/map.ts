@@ -1,4 +1,9 @@
 import * as mapDef from "../../../shared/mapdef.json";
+import {MapPretty} from "../state/MapPretty";
+import possiblePretties from "../../../shared/pretties.json";
+import {Vector3} from "../state/primitives";
+import {MapInfo} from "../state/MapInfo";
+import {ArraySchema} from "@colyseus/schema";
 
 export const MAP_WIDTH = 12;
 export const MAP_HEIGHT = 12;
@@ -76,10 +81,10 @@ export function getTileCollisionRectsForPosition(
 		return [];
 	}
 
-	return c.map(c => [c[0] + p[0], c[1] + p[1], c[2] + p[0], c[3] + p[1]]);
+	return c.map((c) => [c[0] + p[0], c[1] + p[1], c[2] + p[0], c[3] + p[1]]);
 }
 
-export function generateMap(): string {
+export function generateMap(): MapInfo {
 	const arr = new Uint8Array(MAP_WIDTH * MAP_HEIGHT);
 
 	for (let y = 0; y < MAP_HEIGHT; y++) {
@@ -105,5 +110,26 @@ export function generateMap(): string {
 	arr[(MAP_HEIGHT - 1) * MAP_WIDTH] = tiles["borderSouthWest"];
 	arr[(MAP_HEIGHT - 1) * MAP_WIDTH + MAP_WIDTH - 1] = tiles["borderSouthEast"];
 
-	return arr.reduce((str, n) => str + String.fromCharCode(n), "");
+	const pretties = new ArraySchema<MapPretty>();
+	const prettyCount = Math.floor((MAP_WIDTH - 1) * (MAP_HEIGHT - 1) * 0.5);
+
+	for (let i = 0; i < prettyCount; i++) {
+		const p = new MapPretty();
+
+		p.type = Math.floor(Math.random() * possiblePretties.length);
+		p.position = new Vector3();
+		p.position.x = 1 + Math.random() * (MAP_WIDTH - 2);
+		p.position.y = 0;
+		p.position.z = 1 + Math.random() * (MAP_HEIGHT - 2);
+
+		pretties.push(p);
+	}
+
+	const mapInfo = new MapInfo();
+	mapInfo.map = arr.reduce((str, n) => str + String.fromCharCode(n), "");
+	mapInfo.width = MAP_WIDTH;
+		mapInfo.height = MAP_HEIGHT;
+		mapInfo.mapPretties = pretties;
+
+		return mapInfo;
 }

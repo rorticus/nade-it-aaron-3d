@@ -1,11 +1,9 @@
-import { GameState } from "../state/GameState";
 import {
-	getCollisionRectsForTile,
 	getTileCollisionRectsForPosition,
-	MAP_WIDTH,
 	tileAtPosition,
 	tileCoordForPosition,
 } from "../map/map";
+import { MapInfo } from "../state/MapInfo";
 
 const playerWidth = 0.2;
 const playerHeight = 0.1;
@@ -55,7 +53,7 @@ function tilesOnVerticalLine(x: number, y1: number, y2: number) {
 	return results;
 }
 
-function getTilesInRect(rect: [number, number, number, number], map: string) {
+function getTilesInRect(rect: [number, number, number, number], map: MapInfo) {
 	const allTiles = [
 		...tilesOnHorizontalLine(rect[0], rect[2], rect[3]),
 		...tilesOnHorizontalLine(rect[0], rect[2], rect[1]),
@@ -64,7 +62,7 @@ function getTilesInRect(rect: [number, number, number, number], map: string) {
 	];
 
 	return allTiles.map((tile) => ({
-		gid: tileAtPosition(tile[0], tile[1], map),
+		gid: tileAtPosition(tile[0], tile[1], map.map),
 		x: tile[0],
 		y: tile[1],
 		tilePos: tile,
@@ -76,7 +74,7 @@ export function resolveCollisions(
 	y: number,
 	dx: number,
 	dy: number,
-	map: string
+	map: MapInfo
 ): { x: number; y: number } {
 	let playerRect = getPlayerBounds(x, y);
 	let nx = x;

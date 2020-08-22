@@ -3,7 +3,6 @@ import * as Colyseus from "colyseus.js";
 import Lobby from "./scenes/Lobby";
 import { GameState } from "./state/GameState";
 import {Play} from "./scenes/Play";
-import {StartGame} from "./interfaces";
 
 const canvas = document.createElement("canvas");
 canvas.setAttribute("width", "1024");
@@ -29,7 +28,7 @@ client
 
 		engine.scene = new Lobby(engine, room.sessionId, room);
 
-		room.onMessage<StartGame>("start", (message) => {
-			engine.scene = new Play(engine, message, room);
+		room.onMessage("start", (message) => {
+			engine.scene = new Play(engine, room);
 		});
 	});

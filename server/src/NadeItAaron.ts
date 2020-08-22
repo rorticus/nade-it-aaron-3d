@@ -14,18 +14,13 @@ export interface MoveMessage {
 }
 
 export class NadeItAaron extends Room<GameState> {
-	map: string;
-
 	onCreate(options: any) {
-		this.map = generateMap();
-		this.setState(new GameState());
+		const state = new GameState();
+		state.map = generateMap();
+		this.setState(state);
 
 		this.onMessage("start", (client, message) => {
-			this.broadcast("start", {
-				mapWidth: MAP_WIDTH,
-				mapHeight: MAP_HEIGHT,
-				map: this.map,
-			});
+			this.broadcast("start");
 		});
 
 		this.onMessage<MoveMessage>("move", (client, message) => {
@@ -43,13 +38,7 @@ export class NadeItAaron extends Room<GameState> {
 				player.rotation = ((180 * Math.PI) / 180) * (message.y > 0 ? 0 : -1);
 			}
 
-			const resolved = resolveCollisions(
-				x,
-				y,
-				message.x,
-				message.y,
-				this.map
-			);
+			const resolved = resolveCollisions(x, y, message.x, message.y, state.map);
 			player.position.x = resolved.x;
 			player.position.z = resolved.y;
 		});
