@@ -2,6 +2,7 @@ import { Engine, GameObject, loadGLB } from "webgl-engine";
 import { quat, vec3 } from "gl-matrix";
 import * as mapDef from "../../shared/mapdef.json";
 import {MapInfo} from "./state/MapInfo";
+import * as pretties from '../../shared/pretties.json';
 
 const tiles: ArrayBuffer[] = [];
 Object.keys(mapDef).forEach((key) => {
@@ -9,6 +10,8 @@ Object.keys(mapDef).forEach((key) => {
 		(mapDef as any)[key].filename
 	}.glb`);
 });
+
+const prettyModels = pretties.map(pretty => require(`./resources/models/${pretty}`));
 
 export function createMapGameObject(engine: Engine, def: MapInfo) {
 	const root = new GameObject();
@@ -33,6 +36,16 @@ export function createMapGameObject(engine: Engine, def: MapInfo) {
 			root.add(tile);
 		}
 	}
+
+	const allPretties = prettyModels.map(prettyData => loadGLB(engine.gl, engine.programs.standard, prettyData).children[0]);
+
+	def.mapPretties.forEach(mapPretty => {
+		const model = new GameObject();
+		model.renderable = allPretties[mapPretty.type].renderable;
+		model.position = vec3.fromValues(mapPretty.position.x, mapPretty.position.y, mapPretty.position.z);
+
+		root.add(model);
+	});
 
 	root.position = vec3.fromValues(
 		(-tileWidth * (def.width - 1)) / 2,

@@ -118,9 +118,9 @@ export function generateMap(): MapInfo {
 
 		p.type = Math.floor(Math.random() * possiblePretties.length);
 		p.position = new Vector3();
-		p.position.x = 1 + Math.random() * (MAP_WIDTH - 2);
+		p.position.x = 0.25 + Math.random() * (MAP_WIDTH - 1);
 		p.position.y = 0;
-		p.position.z = 1 + Math.random() * (MAP_HEIGHT - 2);
+		p.position.z = 0.25 + Math.random() * (MAP_HEIGHT - 1);
 
 		pretties.push(p);
 	}

@@ -95,8 +95,11 @@ export class Play extends Scene {
 		cam.lookAt = [0, -2, 0];
 
 		this.camera = cam;
-		this.pointLights[0].position = [0, 10, 10];
+		this.pointLights[0].position = [0, 10, 20];
 		this.pointLights[0].color = [1, 1, 1];
+
+		this.pointLights[1].position = [0, 10, -20];
+		this.pointLights[1].color = [1, 1, 1];
 
 		const map = createMapGameObject(engine, room.state.map);
 
