@@ -5,3 +5,5 @@ export const waitingForPlayers = require("../resources/images/waiting-for-player
 export const startButton = require("../resources/images/start-button.png").default;
 
 export const character = require("../resources/models/character.glb");
+
+export const bomb = require('../resources/models/bomb.glb');

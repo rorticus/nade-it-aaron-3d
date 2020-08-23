@@ -1,4 +1,4 @@
-import { Engine, loadGLB, OrbitCamera, Scene } from "webgl-engine";
+import { Engine, GameObject, loadGLB, OrbitCamera, Scene } from "webgl-engine";
 import { Room } from "colyseus.js";
 import { GameState } from "../state/GameState";
 import { createMapGameObject } from "../map";
@@ -9,8 +9,7 @@ import { Player } from "../state/Player";
 import { GameComponentContext } from "webgl-engine/lib/interfaces";
 import { KeyboardKey } from "webgl-engine/lib/services/KeyboardService";
 import { MapInfo } from "../state/MapInfo";
-
-const PLAYER_SPEED = 1.5;
+import { bomb } from "../resources/assets";
 
 const MOVEMENT_TAG = "Moving";
 
@@ -80,9 +79,28 @@ export function configurePlayerModel(
 		},
 		0.1
 	);
+
+	characterModel.animation.addTransition("Walk", "Walk", () => false);
+
+	characterModel.animation.addTransition(
+		"Interact_ground",
+		"Idle",
+		(condition, gameObject, duration) => {
+			return condition.deltaInSeconds > duration / 2;
+		},
+		0.33
+	);
+
 	characterModel.animation.states["Walk"].timeScale = 2;
+	characterModel.animation.states["Interact_ground"].timeScale = 2;
 
 	return characterModel;
+}
+
+function createBomb(engine: Engine) {
+	const model = loadGLB(engine.gl, engine.programs.standard, bomb);
+
+	return model;
 }
 
 export class Play extends Scene {
@@ -127,6 +145,24 @@ export class Play extends Scene {
 				movement.reset(0.055);
 			}
 		};
+
+		// bomb is dropped
+		this.room.state.bombs.onAdd = (bomb) => {
+			const model = createBomb(engine);
+			model.position = vec3.fromValues(
+				bomb.position.x,
+				bomb.position.y,
+				bomb.position.z
+			);
+			model.scale = vec3.fromValues(0.5, 0.5, 0.5);
+			model.id = bomb.id;
+
+			this.addGameObject(model);
+
+			const player = this.getObjectById(bomb.owner);
+			player.animation.transitionTo("Interact_ground", 0.33);
+		};
+		this.room.state.bombs.onRemove = (bomb) => {};
 	}
 
 	update(context: GameComponentContext) {
@@ -153,7 +189,15 @@ export class Play extends Scene {
 		}
 
 		if (dirX || dirY) {
-			this.room.send("move", { x: dirX, y: dirY });
+			const player = this.getObjectById(this.room.sessionId);
+
+			if (player && player.animation.canTransition("Walk")) {
+				this.room.send("move", { x: dirX, y: dirY });
+			}
+		}
+
+		if (keyboardService.pressed(KeyboardKey.Space)) {
+			this.room.send("place_bomb");
 		}
 	}
 }
