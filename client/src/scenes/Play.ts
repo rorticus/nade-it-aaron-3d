@@ -1,15 +1,14 @@
-import { Engine, GameObject, loadGLB, OrbitCamera, Scene } from "webgl-engine";
-import { Room } from "colyseus.js";
-import { GameState } from "../state/GameState";
-import { createMapGameObject } from "../map";
-import { character } from "../resources/assets";
-import { vec3 } from "gl-matrix";
-import { getPlayerSkin, updatePlayerSkin } from "../players";
-import { Player } from "../state/Player";
-import { GameComponentContext } from "webgl-engine/lib/interfaces";
-import { KeyboardKey } from "webgl-engine/lib/services/KeyboardService";
-import { MapInfo } from "../state/MapInfo";
-import { bomb } from "../resources/assets";
+import {Engine, loadGLB, OrbitCamera, Scene} from "webgl-engine";
+import {Room} from "colyseus.js";
+import {GameState} from "../state/GameState";
+import {createMapGameObject} from "../map";
+import {bomb, character} from "../resources/assets";
+import {vec3} from "gl-matrix";
+import {getPlayerSkin, updatePlayerSkin} from "../players";
+import {Player} from "../state/Player";
+import {GameComponentContext} from "webgl-engine/lib/interfaces";
+import {KeyboardKey} from "webgl-engine/lib/services/KeyboardService";
+import {MapInfo} from "../state/MapInfo";
 
 const MOVEMENT_TAG = "Moving";
 
@@ -98,9 +97,7 @@ export function configurePlayerModel(
 }
 
 function createBomb(engine: Engine) {
-	const model = loadGLB(engine.gl, engine.programs.standard, bomb);
-
-	return model;
+	return loadGLB(engine.gl, engine.programs.standard, bomb);
 }
 
 export class Play extends Scene {
@@ -149,13 +146,13 @@ export class Play extends Scene {
 		// bomb is dropped
 		this.room.state.bombs.onAdd = (bomb) => {
 			const model = createBomb(engine);
-			model.position = vec3.fromValues(
+			model.position = mapToWorldCoordinates(
+				room.state.map,
 				bomb.position.x,
-				bomb.position.y,
 				bomb.position.z
 			);
-			model.scale = vec3.fromValues(0.5, 0.5, 0.5);
 			model.id = bomb.id;
+			model.scale = [0.5, 0.5, 0.5];
 
 			this.addGameObject(model);
 
