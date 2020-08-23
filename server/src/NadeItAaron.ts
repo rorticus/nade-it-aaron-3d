@@ -4,6 +4,8 @@ import { Player } from "./state/Player";
 import { generateMap, MAP_HEIGHT, MAP_WIDTH } from "./map/map";
 import { Vector3 } from "./state/primitives";
 import { resolveCollisions } from "./player/collisions";
+import { Bomb } from "./state/Bomb";
+import * as uuid from "uuid";
 
 const FPS = 0.03333333;
 const PLAYER_SPEED = 2;
@@ -43,7 +45,34 @@ export class NadeItAaron extends Room<GameState> {
 			player.position.z = resolved.y;
 		});
 
-		// this.setSimulationInterval((t) => this.update(t), 33);
+		this.onMessage("place_bomb", (client, message) => {
+			const player: Player = this.state.players[client.id];
+
+			if (
+				player.bombsUsed < player.bombsAllowed &&
+				player.bombDelayElapsed >= player.bombDelay
+			) {
+				const bomb = new Bomb();
+				bomb.id = uuid.v4();
+				bomb.owner = client.id;
+
+				bomb.position = new Vector3(
+					Math.floor(player.position.x) + 0.5,
+					0,
+					Math.floor(player.position.z) + 0.5
+				);
+				bomb.explosionTimer = 0;
+				bomb.explosionLength = player.bombLength;
+				bomb.explosionDelay = 3;
+
+				player.bombsUsed++;
+				player.bombDelayElapsed = 0;
+
+				this.state.bombs.push(bomb);
+			}
+		});
+
+		this.setSimulationInterval((t) => this.update(t), 33);
 	}
 
 	onJoin(client: Client, options: any) {
@@ -111,5 +140,29 @@ export class NadeItAaron extends Room<GameState> {
 
 	update(deltaInMs: number) {
 		const deltaInSeconds = deltaInMs / 1000;
+
+		// update time since last bomb drop
+		for (let id in this.state.players) {
+			const player: Player = this.state.players[id];
+
+			player.bombDelayElapsed += deltaInSeconds;
+		}
+
+		// count down bomb timers
+		const explodedBombs: Bomb[] = [];
+		this.state.bombs.forEach((bomb) => {
+			bomb.explosionTimer += deltaInSeconds;
+
+			if (bomb.explosionTimer > bomb.explosionDelay) {
+				explodedBombs.push(bomb);
+			}
+		});
+
+		explodedBombs.forEach((bomb) => {
+			// calculate explosion bounds, hits, etc
+			this.state.bombs.splice(this.state.bombs.indexOf(bomb), 1);
+
+			// TODO: send out explosion message
+		});
 	}
 }

@@ -8,9 +8,11 @@
 import { Schema, type, ArraySchema, MapSchema, DataChange } from "@colyseus/schema";
 import { MapInfo } from "./MapInfo"
 import { Player } from "./Player"
+import { Bomb } from "./Bomb"
 
 export class GameState extends Schema {
     @type(MapInfo) public map: MapInfo = new MapInfo();
     @type({ map: Player }) public players: MapSchema<Player> = new MapSchema<Player>();
     @type("boolean") public isStarted: boolean;
+    @type([ Bomb ]) public bombs: ArraySchema<Bomb> = new ArraySchema<Bomb>();
 }
