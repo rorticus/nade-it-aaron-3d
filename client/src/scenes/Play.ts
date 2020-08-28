@@ -1,33 +1,16 @@
-import {Engine, loadGLB, OrbitCamera, Scene} from "webgl-engine";
-import {Room} from "colyseus.js";
-import {GameState} from "../state/GameState";
-import {createMapGameObject} from "../map";
-import {bomb, character} from "../resources/assets";
-import {vec3} from "gl-matrix";
-import {getPlayerSkin, updatePlayerSkin} from "../players";
-import {Player} from "../state/Player";
-import {GameComponentContext} from "webgl-engine/lib/interfaces";
-import {KeyboardKey} from "webgl-engine/lib/services/KeyboardService";
-import {MapInfo} from "../state/MapInfo";
-
-const MOVEMENT_TAG = "Moving";
-
-export class MovingTracker {
-	movingTimer = 0;
-	tag = MOVEMENT_TAG;
-
-	update(context: GameComponentContext) {
-		this.movingTimer = Math.max(this.movingTimer - context.deltaInSeconds, 0);
-	}
-
-	reset(t: number) {
-		this.movingTimer += t;
-	}
-
-	isMoving() {
-		return this.movingTimer > 0;
-	}
-}
+import { Engine, loadGLB, OrbitCamera, Scene } from "webgl-engine";
+import { Room } from "colyseus.js";
+import { GameState } from "../state/GameState";
+import { createMapGameObject } from "../map";
+import { bomb, character } from "../resources/assets";
+import { vec3 } from "gl-matrix";
+import { getPlayerSkin, updatePlayerSkin } from "../players";
+import { Player } from "../state/Player";
+import { GameComponentContext } from "webgl-engine/lib/interfaces";
+import { KeyboardKey } from "webgl-engine/lib/services/KeyboardService";
+import { MapInfo } from "../state/MapInfo";
+import {AnimationWrapMode} from "webgl-engine/lib/animation/AnimationState";
+import {PlayerMovement, PlayerMovementTag} from "../components/PlayerMovement";
 
 export function mapToWorldCoordinates(
 	map: MapInfo,
@@ -58,7 +41,7 @@ export function configurePlayerModel(
 	characterModel.rotateY(player.rotation);
 	updatePlayerSkin(engine, characterModel, getPlayerSkin(player.index));
 
-	const movementTracker = new MovingTracker();
+	const movementTracker = new PlayerMovement();
 	characterModel.addComponent(movementTracker);
 
 	characterModel.animation.addTransition(
@@ -97,7 +80,25 @@ export function configurePlayerModel(
 }
 
 function createBomb(engine: Engine) {
-	return loadGLB(engine.gl, engine.programs.standard, bomb);
+	const model = loadGLB(engine.gl, engine.programs.standard, bomb);
+
+	model.animation.configure('Spawn', {
+		wrap: AnimationWrapMode.None
+	});
+	model.animation.configure('Pulses', {
+		wrap: AnimationWrapMode.Loop
+	});
+
+	model.animation.initialState = "Spawn";
+	model.animation.addTransition(
+		"Spawn",
+		"Pulses",
+		(context, gameObject, playDuration, totalDuration) => {
+			return playDuration > totalDuration;
+		}
+	);
+
+	return model;
 }
 
 export class Play extends Scene {
@@ -130,17 +131,14 @@ export class Play extends Scene {
 		this.room.state.players.onChange = (player) => {
 			const model = this.getObjectById(player.id);
 
-			model.position = mapToWorldCoordinates(
-				room.state.map,
-				player.position.x,
-				player.position.z
-			);
+			const movement = model.findComponent<PlayerMovement>(PlayerMovementTag);
+			if (movement) {
+				const pos = mapToWorldCoordinates(room.state.map, player.position.x, player.position.z);
+				movement.setTarget(model, pos[0], model.position[1], pos[2]);
+			}
+
 			model.rotateY(player.rotation);
 
-			const movement = model.findComponent<MovingTracker>(MOVEMENT_TAG);
-			if (movement) {
-				movement.reset(0.055);
-			}
 		};
 
 		// bomb is dropped
