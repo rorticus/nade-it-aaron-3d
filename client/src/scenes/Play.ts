@@ -9,8 +9,11 @@ import { Player } from "../state/Player";
 import { GameComponentContext } from "webgl-engine/lib/interfaces";
 import { KeyboardKey } from "webgl-engine/lib/services/KeyboardService";
 import { MapInfo } from "../state/MapInfo";
-import {AnimationWrapMode} from "webgl-engine/lib/animation/AnimationState";
-import {PlayerMovement, PlayerMovementTag} from "../components/PlayerMovement";
+import { AnimationWrapMode } from "webgl-engine/lib/animation/AnimationState";
+import {
+	PlayerMovement,
+	PlayerMovementTag,
+} from "../components/PlayerMovement";
 
 export function mapToWorldCoordinates(
 	map: MapInfo,
@@ -68,7 +71,7 @@ export function configurePlayerModel(
 		"Interact_ground",
 		"Idle",
 		(condition, gameObject, duration) => {
-			return condition.deltaInSeconds > duration / 2;
+			return condition.deltaInSeconds > (duration / 2 - 0.66);
 		},
 		0.33
 	);
@@ -82,11 +85,11 @@ export function configurePlayerModel(
 function createBomb(engine: Engine) {
 	const model = loadGLB(engine.gl, engine.programs.standard, bomb);
 
-	model.animation.configure('Spawn', {
-		wrap: AnimationWrapMode.None
+	model.animation.configure("Spawn", {
+		wrap: AnimationWrapMode.None,
 	});
-	model.animation.configure('Pulses', {
-		wrap: AnimationWrapMode.Loop
+	model.animation.configure("Pulses", {
+		wrap: AnimationWrapMode.Loop,
 	});
 
 	model.animation.initialState = "Spawn";
@@ -133,12 +136,15 @@ export class Play extends Scene {
 
 			const movement = model.findComponent<PlayerMovement>(PlayerMovementTag);
 			if (movement) {
-				const pos = mapToWorldCoordinates(room.state.map, player.position.x, player.position.z);
+				const pos = mapToWorldCoordinates(
+					room.state.map,
+					player.position.x,
+					player.position.z
+				);
 				movement.setTarget(model, pos[0], model.position[1], pos[2]);
 			}
 
 			model.rotateY(player.rotation);
-
 		};
 
 		// bomb is dropped
@@ -157,7 +163,13 @@ export class Play extends Scene {
 			const player = this.getObjectById(bomb.owner);
 			player.animation.transitionTo("Interact_ground", 0.33);
 		};
-		this.room.state.bombs.onRemove = (bomb) => {};
+		this.room.state.bombs.onRemove = (bomb) => {
+			const model = this.getObjectById(bomb.id);
+
+			if (model) {
+				this.removeGameObject(model);
+			}
+		};
 	}
 
 	update(context: GameComponentContext) {

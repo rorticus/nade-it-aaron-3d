@@ -161,6 +161,7 @@ export class NadeItAaron extends Room<GameState> {
 		explodedBombs.forEach((bomb) => {
 			// calculate explosion bounds, hits, etc
 			this.state.bombs.splice(this.state.bombs.indexOf(bomb), 1);
+			this.state.players[bomb.owner].bombsUsed--;
 
 			// TODO: send out explosion message
 		});
