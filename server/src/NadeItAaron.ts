@@ -68,7 +68,7 @@ export class NadeItAaron extends Room<GameState> {
 				player.bombsUsed++;
 				player.bombDelayElapsed = 0;
 
-				this.state.bombs.push(bomb);
+				this.state.bombs[bomb.id] = bomb;
 			}
 		});
 
@@ -149,21 +149,20 @@ export class NadeItAaron extends Room<GameState> {
 		}
 
 		// count down bomb timers
-		const explodedBombs: Bomb[] = [];
-		this.state.bombs.forEach((bomb) => {
+		for (let key in this.state.bombs) {
+			const bomb = this.state.bombs[key];
+
 			bomb.explosionTimer += deltaInSeconds;
 
 			if (bomb.explosionTimer > bomb.explosionDelay) {
-				explodedBombs.push(bomb);
+				delete this.state.bombs[key];
+
+				this.state.players[bomb.owner].bombsUsed--;
+
+				console.log(`Removing ${bomb.id}`);
+
+				// TODO: send out explosion message
 			}
-		});
-
-		explodedBombs.forEach((bomb) => {
-			// calculate explosion bounds, hits, etc
-			this.state.bombs.splice(this.state.bombs.indexOf(bomb), 1);
-			this.state.players[bomb.owner].bombsUsed--;
-
-			// TODO: send out explosion message
-		});
+		}
 	}
 }

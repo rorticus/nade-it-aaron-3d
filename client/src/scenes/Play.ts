@@ -148,7 +148,9 @@ export class Play extends Scene {
 		};
 
 		// bomb is dropped
-		this.room.state.bombs.onAdd = (bomb) => {
+		this.room.state.bombs.onAdd = (bomb, key) => {
+			console.log(`Adding bomb ${bomb.id}, key ${key}`);
+
 			const model = createBomb(engine);
 			model.position = mapToWorldCoordinates(
 				room.state.map,
@@ -163,11 +165,15 @@ export class Play extends Scene {
 			const player = this.getObjectById(bomb.owner);
 			player.animation.transitionTo("Interact_ground", 0.33);
 		};
-		this.room.state.bombs.onRemove = (bomb) => {
+		this.room.state.bombs.onRemove = (bomb, key) => {
+			console.log(`Removing bomb ${bomb.id} index ${key}`);
+
 			const model = this.getObjectById(bomb.id);
 
 			if (model) {
 				this.removeGameObject(model);
+			} else {
+				console.error(`Cannot find bomb with id ${bomb.id}`);
 			}
 		};
 	}
