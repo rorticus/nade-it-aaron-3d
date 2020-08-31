@@ -46,10 +46,9 @@ export function getCollisionRectsForTile(
 			[0, 0, 0.5, 1],
 			[0, 0.5, 1, 1],
 		];
-	} else if (
-		tile === tiles["largeRock"] ||
-		tile === tiles["largeRock2"]
-	) {
+	} else if (tile === tiles["largeRock"] || tile === tiles["largeRock2"]) {
+		return [[0, 0, 1, 1]];
+	} else if (tile === tiles["box"]) {
 		return [[0, 0, 1, 1]];
 	}
 
@@ -115,15 +114,23 @@ export function generateMap(): MapInfo {
 	arr[(MAP_HEIGHT - 1) * MAP_WIDTH] = tiles["borderSouthWest"];
 	arr[(MAP_HEIGHT - 1) * MAP_WIDTH + MAP_WIDTH - 1] = tiles["borderSouthEast"];
 
-	const rockTiles = [
-		tiles["largeRock"],
-		tiles["largeRock2"]
-	];
+	const rockTiles = [tiles["largeRock"], tiles["largeRock2"]];
 	for (let y = 1; y < MAP_HEIGHT; y++) {
 		for (let x = 1; x < MAP_WIDTH; x++) {
 			if (x % 2 && y % 2) {
 				arr[y * MAP_WIDTH + x] =
 					rockTiles[Math.floor(Math.random() * rockTiles.length)];
+			}
+		}
+	}
+
+	// place boxes
+	for (let y = 1; y < MAP_HEIGHT - 1; y++) {
+		for (let x = 1; x < MAP_WIDTH - 1; x++) {
+			if(arr[y * MAP_WIDTH + x] === tiles['grass']) {
+				if(Math.random() * 100 < 75) {
+					arr[y * MAP_WIDTH + x] = tiles["box"];
+				}
 			}
 		}
 	}
