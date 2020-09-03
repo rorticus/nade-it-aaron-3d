@@ -1,9 +1,16 @@
 import { Room, Client } from "colyseus";
 import { GameState } from "./state/GameState";
 import { Player } from "./state/Player";
-import { generateMap, MAP_HEIGHT, MAP_WIDTH } from "./map/map";
+import {
+	generateMap,
+	MAP_HEIGHT,
+	MAP_WIDTH,
+	setTileToGrass,
+	tileAtPosition,
+	tileCoordForPosition,
+} from "./map/map";
 import { Vector3 } from "./state/primitives";
-import { resolveCollisions } from "./player/collisions";
+import { getExplosionResults, resolveCollisions } from "./player/collisions";
 import { Bomb } from "./state/Bomb";
 import * as uuid from "uuid";
 
@@ -159,9 +166,18 @@ export class NadeItAaron extends Room<GameState> {
 
 				this.state.players[bomb.owner].bombsUsed--;
 
-				console.log(`Removing ${bomb.id}`);
-
 				// TODO: send out explosion message
+				const results = getExplosionResults(
+					this.state.map,
+					tileCoordForPosition(bomb.position.x, bomb.position.z),
+					bomb.explosionLength
+				);
+
+				let map = this.state.map.map;
+				results.tiles.forEach((tilePos) => {
+					map = setTileToGrass(tilePos[0], tilePos[1], map);
+				});
+				this.state.map.map = map;
 			}
 		}
 	}

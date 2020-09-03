@@ -1,7 +1,7 @@
 import { Engine, loadGLB, OrbitCamera, Scene } from "webgl-engine";
 import { Room } from "colyseus.js";
 import { GameState } from "../state/GameState";
-import { createMapGameObject } from "../map";
+import {createMapGameObject, createTileAt} from "../map";
 import { bomb, character } from "../resources/assets";
 import { vec3 } from "gl-matrix";
 import { getPlayerSkin, updatePlayerSkin } from "../players";
@@ -71,7 +71,7 @@ export function configurePlayerModel(
 		"Interact_ground",
 		"Idle",
 		(condition, gameObject, duration) => {
-			return condition.deltaInSeconds > (duration / 2 - 0.66);
+			return condition.deltaInSeconds > duration / 2 - 0.66;
 		},
 		0.33
 	);
@@ -175,6 +175,28 @@ export class Play extends Scene {
 			} else {
 				console.error(`Cannot find bomb with id ${bomb.id}`);
 			}
+		};
+
+		this.room.state.map.onChange = (changes) => {
+			changes.forEach((change) => {
+				if (change.field === "map") {
+					for (let y = 0; y < this.room.state.map.height; y++) {
+						for (let x = 0; x < this.room.state.map.width; x++) {
+							const index = y * this.room.state.map.width + x;
+							if (
+								change.value.charCodeAt(index) !==
+								change.previousValue.charCodeAt(index)
+							) {
+								const tile = this.getObjectById(`tile-${x}-${y}`);
+								if (tile) {
+									const newTile = createTileAt(this.engine, x, y, 13);
+									tile.children[0].renderable = newTile.children[0].renderable;
+								}
+							}
+						}
+					}
+				}
+			});
 		};
 	}
 

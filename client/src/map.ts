@@ -1,8 +1,8 @@
 import { Engine, GameObject, loadGLB } from "webgl-engine";
 import { quat, vec3 } from "gl-matrix";
 import * as mapDef from "../../shared/mapdef.json";
-import {MapInfo} from "./state/MapInfo";
-import * as pretties from '../../shared/pretties.json';
+import { MapInfo } from "./state/MapInfo";
+import * as pretties from "../../shared/pretties.json";
 
 const tiles: ArrayBuffer[] = [];
 Object.keys(mapDef).forEach((key) => {
@@ -11,7 +11,9 @@ Object.keys(mapDef).forEach((key) => {
 	}.glb`);
 });
 
-const prettyModels = pretties.map(pretty => require(`./resources/models/${pretty}`));
+const prettyModels = pretties.map((pretty) =>
+	require(`./resources/models/${pretty}`)
+);
 
 export function createMapGameObject(engine: Engine, def: MapInfo) {
 	const root = new GameObject();
@@ -30,6 +32,7 @@ export function createMapGameObject(engine: Engine, def: MapInfo) {
 			const tileCopy = tileModels[tileIndex];
 
 			const tile = tileCopy.clone();
+			tile.id = `tile-${x}-${y}`;
 			tile.position = vec3.fromValues(x * tileWidth, 0, y * tileHeight);
 			// quat.rotateY(tile.rotation, quat.create(), 0);
 
@@ -37,12 +40,19 @@ export function createMapGameObject(engine: Engine, def: MapInfo) {
 		}
 	}
 
-	const allPretties = prettyModels.map(prettyData => loadGLB(engine.gl, engine.programs.standard, prettyData).children[0]);
+	const allPretties = prettyModels.map(
+		(prettyData) =>
+			loadGLB(engine.gl, engine.programs.standard, prettyData).children[0]
+	);
 
-	def.mapPretties.forEach(mapPretty => {
+	def.mapPretties.forEach((mapPretty) => {
 		const model = new GameObject();
 		model.renderable = allPretties[mapPretty.type].renderable;
-		model.position = vec3.fromValues(mapPretty.position.x, mapPretty.position.y, mapPretty.position.z);
+		model.position = vec3.fromValues(
+			mapPretty.position.x,
+			mapPretty.position.y,
+			mapPretty.position.z
+		);
 
 		root.add(model);
 	});
@@ -54,4 +64,17 @@ export function createMapGameObject(engine: Engine, def: MapInfo) {
 	);
 
 	return root;
+}
+
+export function createTileAt(
+	engine: Engine,
+	x: number,
+	y: number,
+	tileIndex: number
+) {
+	const model = loadGLB(engine.gl, engine.programs.standard, tiles[tileIndex]);
+	model.position = vec3.fromValues(x, 0, y);
+	model.id = `tile-${x}-${y}`;
+
+	return model;
 }

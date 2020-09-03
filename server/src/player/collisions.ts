@@ -1,4 +1,6 @@
 import {
+	canTileExplode,
+	getCollisionRectsForTile,
 	getTileCollisionRectsForPosition,
 	tileAtPosition,
 	tileCoordForPosition,
@@ -119,4 +121,71 @@ export function resolveCollisions(
 	});
 
 	return { x: nx, y: ny };
+}
+
+export interface ExplosionResults {
+	origin: [number, number];
+	north: number;
+	east: number;
+	south: number;
+	west: number;
+	tiles: [number, number][];
+}
+
+export function getExplosionResults(
+	map: MapInfo,
+	origin: [number, number],
+	size: number
+): ExplosionResults {
+	function firstCollidingTile(
+		ox: number,
+		oy: number,
+		dx: number,
+		dy: number,
+		maxSize: number
+	) {
+		for (let i = 0, y = oy, x = ox; i <= maxSize; i++, y += dy, x += dx) {
+			x = Math.min(map.width - 1, Math.max(0, x));
+			y = Math.min(map.height - 1, Math.max(0, y));
+
+			const tile = tileAtPosition(x, y, map.map);
+			const collisions = getCollisionRectsForTile(tile);
+			if (collisions && collisions.length > 0) {
+				if (canTileExplode(tile)) {
+					return {
+						pos: [x, y] as [number, number],
+						steps: i,
+						tile,
+					};
+				} else {
+					return {
+						pos: [x, y] as [number, number],
+						steps: i - 1,
+						tile: null,
+					};
+				}
+			}
+		}
+
+		return undefined;
+	}
+
+	let northTile = firstCollidingTile(origin[0], origin[1], 0, -1, size);
+	let eastTile = firstCollidingTile(origin[0], origin[1], 1, 0, size);
+	let southTile = firstCollidingTile(origin[0], origin[1], 0, 1, size);
+	let westTile = firstCollidingTile(origin[0], origin[1], -1, 0, size);
+
+	return {
+		origin,
+		north: northTile ? northTile.steps : size,
+		east: eastTile ? eastTile.steps : size,
+		south: southTile ? southTile.steps : size,
+		west: westTile ? westTile.steps : size,
+		tiles: [
+			northTile && northTile.tile ? northTile.pos : null,
+			eastTile && eastTile.tile ? eastTile.pos : null,
+			southTile && southTile.tile ? southTile.pos : null,
+			westTile && westTile.tile ? westTile.pos : null,
+		].filter((t) => t),
+	};
 }

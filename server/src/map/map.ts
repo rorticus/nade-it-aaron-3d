@@ -55,7 +55,7 @@ export function getCollisionRectsForTile(
 	return null;
 }
 
-export function tileCoordForPosition(x: number, y: number) {
+export function tileCoordForPosition(x: number, y: number): [number, number] {
 	const tx = Math.floor(x);
 	const ty = Math.floor(y);
 
@@ -86,6 +86,19 @@ export function getTileCollisionRectsForPosition(
 	}
 
 	return c.map((c) => [c[0] + p[0], c[1] + p[1], c[2] + p[0], c[3] + p[1]]);
+}
+
+export function canTileExplode(gid: number) {
+	return gid === tiles["box"];
+}
+
+export function setTileToGrass(tx: number, ty: number, map: string) {
+	const index = ty * MAP_WIDTH + tx;
+	return (
+		map.substring(0, index) +
+		String.fromCharCode(tiles["grass"]) +
+		map.substring(index + 1)
+	);
 }
 
 export function generateMap(): MapInfo {
@@ -127,8 +140,8 @@ export function generateMap(): MapInfo {
 	// place boxes
 	for (let y = 1; y < MAP_HEIGHT - 1; y++) {
 		for (let x = 1; x < MAP_WIDTH - 1; x++) {
-			if(arr[y * MAP_WIDTH + x] === tiles['grass']) {
-				if(Math.random() * 100 < 75) {
+			if (arr[y * MAP_WIDTH + x] === tiles["grass"]) {
+				if (Math.random() * 100 < 75) {
 					arr[y * MAP_WIDTH + x] = tiles["box"];
 				}
 			}
