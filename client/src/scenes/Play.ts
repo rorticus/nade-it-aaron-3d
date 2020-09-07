@@ -1,7 +1,14 @@
-import { Engine, loadGLB, OrbitCamera, Scene } from "webgl-engine";
+import {
+	Engine,
+	GameObject,
+	loadGLB,
+	OrbitCamera,
+	ScaleAnimationChannel,
+	Scene,
+} from "webgl-engine";
 import { Room } from "colyseus.js";
 import { GameState } from "../state/GameState";
-import {createMapGameObject, createTileAt} from "../map";
+import { createMapGameObject, createTileAt } from "../map";
 import { bomb, character } from "../resources/assets";
 import { vec3 } from "gl-matrix";
 import { getPlayerSkin, updatePlayerSkin } from "../players";
@@ -9,11 +16,25 @@ import { Player } from "../state/Player";
 import { GameComponentContext } from "webgl-engine/lib/interfaces";
 import { KeyboardKey } from "webgl-engine/lib/services/KeyboardService";
 import { MapInfo } from "../state/MapInfo";
-import { AnimationWrapMode } from "webgl-engine/lib/animation/AnimationState";
+import {
+	AnimationState,
+	AnimationWrapMode,
+} from "webgl-engine/lib/animation/AnimationState";
 import {
 	PlayerMovement,
 	PlayerMovementTag,
 } from "../components/PlayerMovement";
+import { createCubeVertices } from "webgl-engine/lib/webgl/primitives";
+import { createAttributesFromArrays } from "webgl-engine/lib/webgl/utils";
+import { quad } from "webgl-engine/src/webgl/primitives";
+
+export interface ExplosionDescription {
+	origin: [number, number];
+	north: number;
+	east: number;
+	south: number;
+	west: number;
+}
 
 export function mapToWorldCoordinates(
 	map: MapInfo,
@@ -104,6 +125,62 @@ function createBomb(engine: Engine) {
 	return model;
 }
 
+export function createExplosion(engine: Engine, desc: ExplosionDescription) {
+	const ew = new GameObject();
+	const ns = new GameObject();
+
+	ew.renderable = {
+		programInfo: engine.programs.standard,
+		renderables: [
+			{
+				attributes: createAttributesFromArrays(
+					engine.gl,
+					createCubeVertices(1)
+				),
+				uniforms: {
+					u_color: [0.91, 0.64, 0.09],
+					u_hasTexture: false,
+				},
+			},
+		],
+	};
+	ns.renderable = ew.renderable;
+
+	ns.rotateY((90 * Math.PI) / 180);
+
+	const model = new GameObject();
+	model.add(ew);
+	model.add(ns);
+
+	const nsScaleIn = new ScaleAnimationChannel(
+		ns,
+		[0, 0.25, 0.5],
+		[
+			vec3.fromValues(0.01, 0.01, 0.01),
+			vec3.fromValues(1 + desc.north + desc.south, 1, 1),
+			vec3.fromValues(0.01, 0.01, 0.01)
+		]
+	);
+
+	const ewScaleIn = new ScaleAnimationChannel(
+		ew,
+		[0, 0.25, 0.5],
+		[
+			vec3.fromValues(0.01, 0.01, 0.01),
+			vec3.fromValues(1 + desc.east + desc.west, 1, 1),
+			vec3.fromValues(0.01, 0.01, 0.01)
+		]
+	);
+
+	const state = new AnimationState();
+	state.channels = [nsScaleIn, ewScaleIn];
+
+	model.animation.registerState("explode", state);
+	model.animation.initialState = 'explode';
+
+	return model;
+}
+
 export class Play extends Scene {
 	constructor(public engine: Engine, public room: Room<GameState>) {
 		super();
@@ -149,8 +226,6 @@ export class Play extends Scene {
 
 		// bomb is dropped
 		this.room.state.bombs.onAdd = (bomb, key) => {
-			console.log(`Adding bomb ${bomb.id}, key ${key}`);
-
 			const model = createBomb(engine);
 			model.position = mapToWorldCoordinates(
 				room.state.map,
@@ -166,8 +241,6 @@ export class Play extends Scene {
 			player.animation.transitionTo("Interact_ground", 0.33);
 		};
 		this.room.state.bombs.onRemove = (bomb, key) => {
-			console.log(`Removing bomb ${bomb.id} index ${key}`);
-
 			const model = this.getObjectById(bomb.id);
 
 			if (model) {
@@ -198,6 +271,19 @@ export class Play extends Scene {
 				}
 			});
 		};
+
+		this.room.onMessage("explode", (payload: ExplosionDescription) => {
+			// construct the explosion
+			const model = createExplosion(this.engine, payload);
+
+			model.position = vec3.fromValues(
+				payload.origin[0],
+				0.5,
+				payload.origin[1]
+			);
+
+			map.add(model);
+		});
 	}
 
 	update(context: GameComponentContext) {

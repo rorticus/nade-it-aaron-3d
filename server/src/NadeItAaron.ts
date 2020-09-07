@@ -166,10 +166,14 @@ export class NadeItAaron extends Room<GameState> {
 
 				this.state.players[bomb.owner].bombsUsed--;
 
-				// TODO: send out explosion message
+				const bombTilePos = tileCoordForPosition(
+					bomb.position.x,
+					bomb.position.z
+				);
+
 				const results = getExplosionResults(
 					this.state.map,
-					tileCoordForPosition(bomb.position.x, bomb.position.z),
+					bombTilePos,
 					bomb.explosionLength
 				);
 
@@ -178,6 +182,14 @@ export class NadeItAaron extends Room<GameState> {
 					map = setTileToGrass(tilePos[0], tilePos[1], map);
 				});
 				this.state.map.map = map;
+
+				this.broadcast("explode", {
+					origin: bombTilePos,
+					north: results.north,
+					east: results.east,
+					south: results.south,
+					west: results.west,
+				});
 			}
 		}
 	}
