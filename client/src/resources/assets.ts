@@ -7,3 +7,5 @@ export const startButton = require("../resources/images/start-button.png").defau
 export const character = require("../resources/models/character.glb");
 
 export const bomb = require('../resources/models/bomb.glb');
+
+export const explosion = require('../resources/models/explosion.glb');

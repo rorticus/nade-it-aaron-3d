@@ -9,7 +9,7 @@ import {
 import { Room } from "colyseus.js";
 import { GameState } from "../state/GameState";
 import { createMapGameObject, createTileAt } from "../map";
-import { bomb, character } from "../resources/assets";
+import {bomb, character, explosion} from "../resources/assets";
 import { vec3 } from "gl-matrix";
 import { getPlayerSkin, updatePlayerSkin } from "../players";
 import { Player } from "../state/Player";
@@ -126,25 +126,10 @@ function createBomb(engine: Engine) {
 }
 
 export function createExplosion(engine: Engine, desc: ExplosionDescription) {
-	const ew = new GameObject();
 	const ns = new GameObject();
 
-	ew.renderable = {
-		programInfo: engine.programs.standard,
-		renderables: [
-			{
-				attributes: createAttributesFromArrays(
-					engine.gl,
-					createCubeVertices(1)
-				),
-				uniforms: {
-					u_color: [0.91, 0.64, 0.09],
-					u_hasTexture: false,
-				},
-			},
-		],
-	};
-	ns.renderable = ew.renderable;
+	const ew = loadGLB(engine.gl, engine.programs.standard, explosion);
+	ns.renderable = ew.children[0].renderable;
 
 	ns.rotateY((90 * Math.PI) / 180);
 
@@ -158,7 +143,7 @@ export function createExplosion(engine: Engine, desc: ExplosionDescription) {
 		[
 			vec3.fromValues(0.01, 0.01, 0.01),
 			vec3.fromValues(1 + desc.north + desc.south, 1, 1),
-			vec3.fromValues(0.01, 0.01, 0.01)
+			vec3.fromValues(0.01, 0.01, 0.01),
 		]
 	);
 
@@ -168,7 +153,7 @@ export function createExplosion(engine: Engine, desc: ExplosionDescription) {
 		[
 			vec3.fromValues(0.01, 0.01, 0.01),
 			vec3.fromValues(1 + desc.east + desc.west, 1, 1),
-			vec3.fromValues(0.01, 0.01, 0.01)
+			vec3.fromValues(0.01, 0.01, 0.01),
 		]
 	);
 
@@ -176,7 +161,20 @@ export function createExplosion(engine: Engine, desc: ExplosionDescription) {
 	state.channels = [nsScaleIn, ewScaleIn];
 
 	model.animation.registerState("explode", state);
-	model.animation.initialState = 'explode';
+	model.animation.initialState = "explode";
+	model.animation.registerState("finished", new AnimationState());
+	model.animation.configure("finished", {
+		onEnter() {
+			model.removeFromParent();
+		},
+	});
+	model.animation.addTransition(
+		"explode",
+		"finished",
+		(context, gameObject, playDuration, totalDuration) => {
+			return playDuration > totalDuration;
+		}
+	);
 
 	return model;
 }
