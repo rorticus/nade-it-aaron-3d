@@ -9,9 +9,11 @@ export const MAP_WIDTH = 13;
 export const MAP_HEIGHT = 13;
 
 export const tiles = Object.keys(mapDef).reduce((result, key) => {
+	const k = (mapDef as any)[key];
+
 	return {
 		...result,
-		[(mapDef as any)[key].filename]: parseInt(key, 10),
+		[k.filename]: k.index,
 	};
 }, {}) as { [key: string]: number };
 

@@ -5,10 +5,14 @@ import { MapInfo } from "./state/MapInfo";
 import * as pretties from "../../shared/pretties.json";
 
 const tiles: ArrayBuffer[] = [];
+const tilesByName: Record<string, number> = {};
+
 Object.keys(mapDef).forEach((key) => {
-	tiles[parseInt(key, 10)] = require(`./resources/models/${
-		(mapDef as any)[key].filename
-	}.glb`);
+	const k = (mapDef as any)[key];
+	const index = k.index;
+	tiles[index] = require(`./resources/models/${k.filename}.glb`);
+
+	tilesByName[key] = index;
 });
 
 const prettyModels = pretties.map((pretty) =>
@@ -24,6 +28,11 @@ export function createMapGameObject(engine: Engine, def: MapInfo) {
 	const tileModels = tiles.map((tileData) =>
 		loadGLB(engine.gl, engine.programs.standard, tileData)
 	);
+
+	tileModels[tilesByName["borderNorth"]].rotateY((Math.PI * 180) / 180);
+	tileModels[tilesByName["borderSouth"]].rotateY(0);
+	tileModels[tilesByName["borderWest"]].rotateY((Math.PI * 270) / 180);
+	tileModels[tilesByName["borderEast"]].rotateY((Math.PI * 90) / 180);
 
 	for (let y = 0; y < def.height; y++) {
 		for (let x = 0; x < def.width; x++) {

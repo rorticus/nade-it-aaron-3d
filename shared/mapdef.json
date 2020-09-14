@@ -1,38 +1,50 @@
 {
-  "0": {
-    "filename": "borderNorthWest"
+  "borderNorthWest": {
+    "filename": "borderInner",
+    "index": 0
   },
-  "1": {
-    "filename": "borderNorth"
+  "borderNorth": {
+    "filename": "border",
+    "index": 1
   },
-  "2": {
-    "filename": "borderNorthEast"
+  "borderNorthEast": {
+    "filename": "borderInner",
+    "index": 2
   },
-  "3": {
-    "filename": "largeRock"
+  "largeRock": {
+    "filename": "largeRock",
+    "index": 3
   },
-  "4": {
-    "filename": "largeRock2"
+  "largeRock2": {
+    "filename": "largeRock2",
+    "index": 4
   },
-  "12": {
-    "filename": "borderWest"
+  "borderWest": {
+    "filename": "border",
+    "index": 12
   },
-  "13": {
-    "filename": "grass"
+  "grass": {
+    "filename": "grass",
+    "index": 13
   },
-  "14": {
-    "filename": "borderEast"
+  "borderEast": {
+    "filename": "border",
+    "index": 14
   },
-  "15": {
-    "filename": "box"
+  "box": {
+    "filename": "box",
+    "index": 15
   },
-  "24": {
-    "filename": "borderSouthWest"
+  "borderSouthWest": {
+    "filename": "borderInner",
+    "index": 24
   },
-  "25": {
-    "filename": "borderSouth"
+  "borderSouth": {
+    "filename": "border",
+    "index": 25
   },
-  "26": {
-    "filename": "borderSouthEast"
+  "borderSouthEast": {
+    "filename": "borderInner",
+    "index": 26
   }
 }
