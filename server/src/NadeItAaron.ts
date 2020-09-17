@@ -113,23 +113,9 @@ export class NadeItAaron extends Room<GameState> {
 		if (indices.length > 0) {
 			player.index = indices[0];
 
-			if (player.index === 1) {
-				// upper right
-				player.position.x = MAP_WIDTH - 0.75;
-				player.position.z = 0.75;
-			} else if (player.index === 2) {
-				// upper left
-				player.position.x = 0.75;
-				player.position.z = 0.75;
-			} else if (player.index === 3) {
-				// lower right
-				player.position.x = MAP_WIDTH - 0.75;
-				player.position.z = MAP_HEIGHT - 0.75;
-			} else if (player.index === 4) {
-				// lower left
-				player.position.x = 0.75;
-				player.position.z = MAP_HEIGHT - 0.75;
-			}
+			const spawn = this.state.map.spawns[indices[0]];
+			player.position.x = spawn[0];
+			player.position.z = spawn[1];
 		}
 
 		player.id = client.id;
