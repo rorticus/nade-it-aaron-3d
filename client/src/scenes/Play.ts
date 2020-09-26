@@ -5,11 +5,12 @@ import {
 	OrbitCamera,
 	ScaleAnimationChannel,
 	Scene,
+	TranslationAnimationChannel,
 } from "webgl-engine";
 import { Room } from "colyseus.js";
 import { GameState } from "../state/GameState";
 import { createMapGameObject, createTileAt } from "../map";
-import {bomb, character, explosion} from "../resources/assets";
+import { bomb, character, explosion } from "../resources/assets";
 import { vec3 } from "gl-matrix";
 import { getPlayerSkin, updatePlayerSkin } from "../players";
 import { Player } from "../state/Player";
@@ -126,39 +127,49 @@ function createBomb(engine: Engine) {
 }
 
 export function createExplosion(engine: Engine, desc: ExplosionDescription) {
-	const ns = new GameObject();
+	const north = loadGLB(engine.gl, engine.programs.standard, explosion);
+	north.scale = [0.5, 0.5, 0.5];
+	north.rotateY((90 * Math.PI) / 180);
 
-	const ew = loadGLB(engine.gl, engine.programs.standard, explosion);
-	ns.renderable = ew.children[0].renderable;
+	const east = loadGLB(engine.gl, engine.programs.standard, explosion);
+	east.scale = [0.5, 0.5, 0.5];
 
-	ns.rotateY((90 * Math.PI) / 180);
+	const west = loadGLB(engine.gl, engine.programs.standard, explosion);
+	west.scale = [0.5, 0.5, 0.5];
+	west.rotateY((180 * Math.PI) / 180);
+
+	const south = loadGLB(engine.gl, engine.programs.standard, explosion);
+	south.scale = [0.5, 0.5, 0.5];
+	south.rotateY((270 * Math.PI) / 180);
 
 	const model = new GameObject();
-	model.add(ew);
-	model.add(ns);
+	model.add(north);
+	model.add(east);
+	model.add(west);
+	model.add(south);
 
-	const nsScaleIn = new ScaleAnimationChannel(
-		ns,
-		[0, 0.25, 0.5],
-		[
-			vec3.fromValues(0.01, 0.01, 0.01),
-			vec3.fromValues(1 + desc.north + desc.south, 1, 1),
-			vec3.fromValues(0.01, 0.01, 0.01),
-		]
-	);
+	function animationIn(model: GameObject, size: number) {
+		const originalPosition = vec3.clone(
+			model.getObjectById("Slider", true).position
+		);
+		const newPosition = vec3.create();
 
-	const ewScaleIn = new ScaleAnimationChannel(
-		ew,
-		[0, 0.25, 0.5],
-		[
-			vec3.fromValues(0.01, 0.01, 0.01),
-			vec3.fromValues(1 + desc.east + desc.west, 1, 1),
-			vec3.fromValues(0.01, 0.01, 0.01),
-		]
-	);
+		vec3.add(newPosition, originalPosition, vec3.fromValues(0, size, 0));
+
+		return new TranslationAnimationChannel(
+			model.getObjectById("Slider", true),
+			[0, 0.25, 0.5],
+			[originalPosition, newPosition, originalPosition]
+		);
+	}
 
 	const state = new AnimationState();
-	state.channels = [nsScaleIn, ewScaleIn];
+	state.channels = [
+		animationIn(north, desc.north),
+		animationIn(east, desc.east),
+		animationIn(west, desc.west),
+		animationIn(south, desc.south),
+	];
 
 	model.animation.registerState("explode", state);
 	model.animation.initialState = "explode";
