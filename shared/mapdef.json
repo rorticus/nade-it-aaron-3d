@@ -1,92 +1,67 @@
 {
-  "borderNorthWest": {
-    "filename": "borderInner",
-    "index": 0,
-    "collisions": [
-      [0, 0, 1, 1],
-      [0, 0, 1, 1]
-    ]
-  },
-  "borderNorth": {
-    "filename": "border",
-    "index": 1,
-    "collisions": [
-      [
-        0,
-        0,
-        1,
-        1
-      ]
-    ]
-  },
-  "borderNorthEast": {
-    "filename": "borderInner",
-    "index": 2,
-    "collisions": [
-      [1, 0, 1, 1],
-      [0, 0, 1, 1]
-    ]
-  },
-  "largeRock": {
-    "filename": "largeRock",
-    "index": 3,
-    "collisions": [[0, 0, 1, 1]]
-  },
-  "largeRock2": {
-    "filename": "largeRock2",
-    "index": 4,
-    "collisions": [[0, 0, 1, 1]]
-  },
-  "borderWest": {
-    "filename": "border",
-    "index": 12,
-    "collisions": [
-      [
-        0,
-        0,
-        1,
-        1
-      ]
-    ]
-  },
-  "grass": {
-    "filename": "grass",
-    "index": 13
-  },
-  "borderEast": {
-    "filename": "border",
-    "index": 14,
-    "collisions": [
-      [
-        1,
-        0,
-        1,
-        1
-      ]
-    ]
-  },
-  "box": {
-    "filename": "box",
-    "index": 15,
-    "collisions": [[0, 0, 1, 1]]
-  },
-  "borderSouthWest": {
-    "filename": "borderInner",
-    "index": 24,
-    "collisions": [
-      [0, 0, 1, 1],
-      [0, 1, 1, 1]
-    ]  },
-  "borderSouth": {
-    "filename": "border",
-    "index": 25
-  },
-  "borderSouthEast": {
-    "filename": "borderInner",
-    "index": 26,
-    "collisions": [
-      [1, 0, 1, 1],
-      [0, 1, 1, 1]
-    ]
-  }
+	"borderNorthWest": {
+		"filename": "borderInner",
+		"index": 0,
+		"collisions": [
+			[0, 0, 1, 1],
+			[0, 0, 1, 1]
+		]
+	},
+	"borderNorth": {
+		"filename": "border",
+		"index": 1,
+		"collisions": [[0, 0, 1, 1]]
+	},
+	"borderNorthEast": {
+		"filename": "borderInner",
+		"index": 2,
+		"collisions": [
+			[1, 0, 1, 1],
+			[0, 0, 1, 1]
+		]
+	},
+	"largeRock": {
+		"filename": "largeRock",
+		"index": 3,
+		"collisions": [[0, 0, 1, 1]]
+	},
+	"largeRock2": {
+		"filename": "largeRock2",
+		"index": 4,
+		"collisions": [[0, 0, 1, 1]]
+	},
+	"borderWest": {
+		"filename": "border",
+		"index": 12,
+		"collisions": [[0, 0, 1, 1]]
+	},
+	"grass": {
+		"filename": "grass",
+		"index": 13
+	},
+	"borderEast": {
+		"filename": "border",
+		"index": 14,
+		"collisions": [[0, 0, 1, 1]]
+	},
+	"box": {
+		"filename": "box",
+		"index": 15,
+		"collisions": [[0, 0, 1, 1]]
+	},
+	"borderSouthWest": {
+		"filename": "borderInner",
+		"index": 24,
+		"collisions": [[0, 0, 1, 1]]
+	},
+	"borderSouth": {
+		"filename": "border",
+		"index": 25,
+		"collisions": [[0, 0, 1, 1]]
+	},
+	"borderSouthEast": {
+		"filename": "borderInner",
+		"index": 26,
+		"collisions": [[0, 0, 1, 1]]
+	}
 }

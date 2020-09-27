@@ -148,6 +148,7 @@ export function createExplosion(engine: Engine, desc: ExplosionDescription) {
 		const originalPosition = vec3.clone(
 			model.getObjectById("Slider", true).position
 		);
+		vec3.add(originalPosition, originalPosition, vec3.fromValues(0, -0.5, 0));
 		const newPosition = vec3.create();
 
 		vec3.add(newPosition, originalPosition, vec3.fromValues(0, size, 0));
