@@ -128,18 +128,14 @@ function createBomb(engine: Engine) {
 
 export function createExplosion(engine: Engine, desc: ExplosionDescription) {
 	const north = loadGLB(engine.gl, engine.programs.standard, explosion);
-	north.scale = [0.5, 0.5, 0.5];
 	north.rotateY((90 * Math.PI) / 180);
 
 	const east = loadGLB(engine.gl, engine.programs.standard, explosion);
-	east.scale = [0.5, 0.5, 0.5];
 
 	const west = loadGLB(engine.gl, engine.programs.standard, explosion);
-	west.scale = [0.5, 0.5, 0.5];
 	west.rotateY((180 * Math.PI) / 180);
 
 	const south = loadGLB(engine.gl, engine.programs.standard, explosion);
-	south.scale = [0.5, 0.5, 0.5];
 	south.rotateY((270 * Math.PI) / 180);
 
 	const model = new GameObject();
