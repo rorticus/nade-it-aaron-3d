@@ -16,4 +16,5 @@ export class Player extends Schema {
     @type("int8") public index: number;
     @type("boolean") public isHost: boolean;
     @type("boolean") public moving: boolean;
+    @type("int8") public score: number;
 }

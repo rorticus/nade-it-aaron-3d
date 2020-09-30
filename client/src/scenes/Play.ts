@@ -26,7 +26,7 @@ import {
 	PlayerMovementTag,
 } from "../components/PlayerMovement";
 import { createCubeVertices } from "webgl-engine/lib/webgl/primitives";
-import { createAttributesFromArrays } from "webgl-engine/lib/webgl/utils";
+import {createAttributesFromArrays, positionSpriteOnCanvas, sprite} from "webgl-engine/lib/webgl/utils";
 import { quad } from "webgl-engine/src/webgl/primitives";
 
 export interface ExplosionDescription {
@@ -187,6 +187,25 @@ export function createExplosion(engine: Engine, desc: ExplosionDescription) {
 	return model;
 }
 
+function createScoreBox(engine: Engine, player: Player) {
+	const scoreBox = new GameObject();
+
+	const canvas = document.createElement('canvas');
+	canvas.width = 300;
+	canvas.height = 150;
+	const context = canvas.getContext('2d');
+
+	context.fillStyle = 'red';
+	context.fillRect(0, 0, 300, 150);
+
+	const canvasSprite = sprite(engine, canvas);
+
+	scoreBox.addComponent(canvasSprite);
+	positionSpriteOnCanvas(engine, scoreBox, 0, 0, 300, 150);
+
+	return scoreBox;
+}
+
 export class Play extends Scene {
 	constructor(public engine: Engine, public room: Room<GameState>) {
 		super();
@@ -212,6 +231,7 @@ export class Play extends Scene {
 			const player = room.state.players[key];
 
 			this.addGameObject(configurePlayerModel(engine, room.state.map, player));
+			this.addGameObject(createScoreBox(engine, player));
 		});
 
 		this.room.state.players.onChange = (player) => {
