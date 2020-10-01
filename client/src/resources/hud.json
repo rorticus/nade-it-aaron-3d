@@ -1,0 +1,24 @@
+{
+	"positions": [
+		{
+			"x": 0,
+			"y": 0,
+			"alignment": "left"
+		},
+		{
+			"x": 724,
+			"y": 0,
+			"alignment": "right"
+		},
+		{
+			"x": 0,
+			"y": 618,
+			"alignment": "left"
+		},
+		{
+			"x": 724,
+			"y": 618,
+			"alignment": "right"
+		}
+	]
+}

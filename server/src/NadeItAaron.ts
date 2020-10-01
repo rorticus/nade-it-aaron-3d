@@ -113,7 +113,7 @@ export class NadeItAaron extends Room<GameState> {
 		if (indices.length > 0) {
 			player.index = indices[0];
 
-			const spawn = this.state.map.spawns[indices[0]];
+			const spawn = this.state.map.spawns[indices[0] - 1];
 			player.position.x = spawn[0];
 			player.position.z = spawn[1];
 		}

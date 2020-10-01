@@ -3,7 +3,6 @@ import {
 	GameObject,
 	loadGLB,
 	OrbitCamera,
-	ScaleAnimationChannel,
 	Scene,
 	TranslationAnimationChannel,
 } from "webgl-engine";
@@ -25,9 +24,8 @@ import {
 	PlayerMovement,
 	PlayerMovementTag,
 } from "../components/PlayerMovement";
-import { createCubeVertices } from "webgl-engine/lib/webgl/primitives";
-import {createAttributesFromArrays, positionSpriteOnCanvas, sprite} from "webgl-engine/lib/webgl/utils";
-import { quad } from "webgl-engine/src/webgl/primitives";
+import { positionSpriteOnCanvas, sprite } from "webgl-engine/lib/webgl/utils";
+import * as hudInfo from "../resources/hud.json";
 
 export interface ExplosionDescription {
 	origin: [number, number];
@@ -189,19 +187,53 @@ export function createExplosion(engine: Engine, desc: ExplosionDescription) {
 
 function createScoreBox(engine: Engine, player: Player) {
 	const scoreBox = new GameObject();
+	const hudPosition = hudInfo.positions[player.index - 1];
 
-	const canvas = document.createElement('canvas');
+	const canvas = document.createElement("canvas");
 	canvas.width = 300;
 	canvas.height = 150;
-	const context = canvas.getContext('2d');
+	const context = canvas.getContext("2d");
 
-	context.fillStyle = 'red';
-	context.fillRect(0, 0, 300, 150);
+	function renderScorebox() {
+		context.fillStyle = "white";
+		context.font = "bold 75px sans-serif";
+		context.textBaseline = "top";
+
+		const score = `${player.score}`.padStart(6, "0");
+
+		const textBounds = context.measureText(score);
+
+		if (hudPosition.alignment === "left") {
+			context.fillText(
+				score,
+				0,
+				100 -
+					(textBounds.fontBoundingBoxDescent - textBounds.fontBoundingBoxAscent)
+			);
+		} else if (hudPosition.alignment === "right") {
+			context.fillText(
+				score,
+				300 - textBounds.width,
+				100 -
+					(textBounds.fontBoundingBoxDescent - textBounds.fontBoundingBoxAscent)
+			);
+		}
+	}
+
+	renderScorebox();
 
 	const canvasSprite = sprite(engine, canvas);
 
-	scoreBox.addComponent(canvasSprite);
-	positionSpriteOnCanvas(engine, scoreBox, 0, 0, 300, 150);
+	scoreBox.add(canvasSprite);
+
+	positionSpriteOnCanvas(
+		engine,
+		scoreBox,
+		hudPosition.x,
+		hudPosition.y,
+		300,
+		150
+	);
 
 	return scoreBox;
 }
