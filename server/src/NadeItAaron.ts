@@ -2,7 +2,7 @@ import { Room, Client } from "colyseus";
 import { GameState } from "./state/GameState";
 import { Player } from "./state/Player";
 import {
-	generateMap,
+	generateMap, getTileScore,
 	MAP_HEIGHT,
 	MAP_WIDTH,
 	setTileToGrass,
@@ -165,6 +165,13 @@ export class NadeItAaron extends Room<GameState> {
 
 				let map = this.state.map.map;
 				results.tiles.forEach((tilePos) => {
+					const tile = tileAtPosition(tilePos[0], tilePos[1], map);
+					const score = getTileScore(tile);
+
+					if(score) {
+						this.state.players[bomb.owner].score += score;
+					}
+
 					map = setTileToGrass(tilePos[0], tilePos[1], map);
 				});
 				this.state.map.map = map;

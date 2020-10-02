@@ -24,7 +24,7 @@ import {
 	PlayerMovement,
 	PlayerMovementTag,
 } from "../components/PlayerMovement";
-import { positionSpriteOnCanvas, sprite } from "webgl-engine/lib/webgl/utils";
+import {positionSpriteOnCanvas, sprite, updateSpriteFromSource} from "webgl-engine/lib/webgl/utils";
 import * as hudInfo from "../resources/hud.json";
 
 export interface ExplosionDescription {
@@ -199,6 +199,8 @@ function createScoreBox(engine: Engine, player: Player) {
 		context.font = "bold 75px sans-serif";
 		context.textBaseline = "top";
 
+		context.clearRect(0, 0, 300, 150);
+
 		const score = `${player.score}`.padStart(6, "0");
 
 		const textBounds = context.measureText(score);
@@ -223,6 +225,15 @@ function createScoreBox(engine: Engine, player: Player) {
 	renderScorebox();
 
 	const canvasSprite = sprite(engine, canvas);
+
+	player.onChange = (changes) => {
+		changes.forEach((change) => {
+			if (change.field === "score") {
+				renderScorebox();
+				updateSpriteFromSource(engine, canvasSprite, canvas);
+			}
+		});
+	};
 
 	scoreBox.add(canvasSprite);
 

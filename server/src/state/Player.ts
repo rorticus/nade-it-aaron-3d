@@ -9,7 +9,7 @@ export class Player extends Schema {
     @type('int8') index = 0;
     @type('boolean') isHost = false;
     @type('boolean') moving = false;
-    @type('int8') score = 0;
+    @type('int32') score = 0;
 
     bombDelay: number = 1;
     bombDelayElapsed: number = 0;

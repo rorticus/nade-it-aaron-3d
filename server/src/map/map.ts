@@ -5,6 +5,7 @@ import { Vector3 } from "../state/primitives";
 import { MapInfo } from "../state/MapInfo";
 import { ArraySchema } from "@colyseus/schema";
 import { RectangleGrid, RecursiveBackTracker } from "./maze";
+import * as scores from "../player/scores.json";
 
 export const MAP_WIDTH = 13;
 export const MAP_HEIGHT = 13;
@@ -87,6 +88,14 @@ export function setTileToGrass(tx: number, ty: number, map: string) {
 
 export function centeredInTile(tileX: number, tileY: number): [number, number] {
 	return [tileX + 0.5, tileY + 0.5];
+}
+
+export function getTileScore(gid: number) {
+	if (gid === tiles["box"]) {
+		return scores.BOX_DESTROYED;
+	}
+
+	return 0;
 }
 
 export const GRID_CELL_SPAWN = 1;
