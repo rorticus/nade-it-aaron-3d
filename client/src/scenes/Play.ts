@@ -9,7 +9,14 @@ import {
 import { Room } from "colyseus.js";
 import { GameState } from "../state/GameState";
 import { createMapGameObject, createTileAt } from "../map";
-import { bomb, character, explosion } from "../resources/assets";
+import {
+	bomb,
+	character,
+	explosion,
+	hudBombs,
+	hudBombsImage,
+	hudPowerImage,
+} from "../resources/assets";
 import { vec3 } from "gl-matrix";
 import { getPlayerSkin, updatePlayerSkin } from "../players";
 import { Player } from "../state/Player";
@@ -24,7 +31,11 @@ import {
 	PlayerMovement,
 	PlayerMovementTag,
 } from "../components/PlayerMovement";
-import {positionSpriteOnCanvas, sprite, updateSpriteFromSource} from "webgl-engine/lib/webgl/utils";
+import {
+	positionSpriteOnCanvas,
+	sprite,
+	updateSpriteFromSource,
+} from "webgl-engine/lib/webgl/utils";
 import * as hudInfo from "../resources/hud.json";
 
 export interface ExplosionDescription {
@@ -198,12 +209,33 @@ function createScoreBox(engine: Engine, player: Player) {
 		context.fillStyle = "white";
 		context.font = "bold 75px sans-serif";
 		context.textBaseline = "top";
+		context.textAlign = "left";
 
 		context.clearRect(0, 0, 300, 150);
 
 		const score = `${player.score}`.padStart(6, "0");
 
 		const textBounds = context.measureText(score);
+
+		function drawIconWithBadge(
+			image: CanvasImageSource,
+			x: number,
+			y: number,
+			badge: number
+		) {
+			context.drawImage(hudBombsImage, x, y);
+			context.fillStyle = "red";
+			context.beginPath();
+			context.arc(x + 48, y + 42, 12, 0, 360);
+			context.fill();
+			context.closePath();
+
+			context.fillStyle = "white";
+			context.font = "bold 12px sans-serif";
+			context.textBaseline = "middle";
+			context.textAlign = "center";
+			context.fillText(String(badge), x + 48, y + 42);
+		}
 
 		if (hudPosition.alignment === "left") {
 			context.fillText(
@@ -212,6 +244,9 @@ function createScoreBox(engine: Engine, player: Player) {
 				100 -
 					(textBounds.fontBoundingBoxDescent - textBounds.fontBoundingBoxAscent)
 			);
+
+			drawIconWithBadge(hudBombsImage, 0, 90, player.bombsAllowed);
+			drawIconWithBadge(hudPowerImage, 64, 90, player.bombLength);
 		} else if (hudPosition.alignment === "right") {
 			context.fillText(
 				score,
@@ -219,6 +254,9 @@ function createScoreBox(engine: Engine, player: Player) {
 				100 -
 					(textBounds.fontBoundingBoxDescent - textBounds.fontBoundingBoxAscent)
 			);
+
+			drawIconWithBadge(hudBombsImage, 300 - 128, 90, player.bombsAllowed);
+			drawIconWithBadge(hudPowerImage, 300 - 64, 90, player.bombLength);
 		}
 	}
 

@@ -17,4 +17,6 @@ export class Player extends Schema {
     @type("boolean") public isHost: boolean;
     @type("boolean") public moving: boolean;
     @type("int32") public score: number;
+    @type("int8") public bombsAllowed: number;
+    @type("int8") public bombLength: number;
 }

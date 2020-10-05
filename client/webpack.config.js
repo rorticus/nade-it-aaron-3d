@@ -17,7 +17,11 @@ module.exports = {
                 use: 'ts-loader'
             },
             {
-                test: /\.(png|jpg)$/,
+                test: /data.*\.png$/,
+                use: 'raw-loader'
+            },
+            {
+                test: /^(?!.*data).*\.png$/,
                 use: 'file-loader'
             },
             {

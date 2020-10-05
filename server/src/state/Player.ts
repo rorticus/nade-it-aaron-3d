@@ -10,10 +10,10 @@ export class Player extends Schema {
     @type('boolean') isHost = false;
     @type('boolean') moving = false;
     @type('int32') score = 0;
+    @type('int8') bombsAllowed: number = 1;
+    @type('int8') bombLength: number = 1;
 
     bombDelay: number = 1;
     bombDelayElapsed: number = 0;
-    bombsAllowed: number = 1;
     bombsUsed: number = 0;
-    bombLength: number = 1;
 }
