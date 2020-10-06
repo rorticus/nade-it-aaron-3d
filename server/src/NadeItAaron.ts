@@ -2,7 +2,8 @@ import { Room, Client } from "colyseus";
 import { GameState } from "./state/GameState";
 import { Player } from "./state/Player";
 import {
-	generateMap, getTileScore,
+	generateMap,
+	getTileScore,
 	MAP_HEIGHT,
 	MAP_WIDTH,
 	setTileToGrass,
@@ -13,6 +14,7 @@ import { Vector3 } from "./state/primitives";
 import { getExplosionResults, resolveCollisions } from "./player/collisions";
 import { Bomb } from "./state/Bomb";
 import * as uuid from "uuid";
+import { PowerUp } from "./state/PowerUp";
 
 const FPS = 0.03333333;
 const PLAYER_SPEED = 2;
@@ -168,11 +170,25 @@ export class NadeItAaron extends Room<GameState> {
 					const tile = tileAtPosition(tilePos[0], tilePos[1], map);
 					const score = getTileScore(tile);
 
-					if(score) {
+					if (score) {
 						this.state.players[bomb.owner].score += score;
 					}
 
 					map = setTileToGrass(tilePos[0], tilePos[1], map);
+
+					// chance of spawning a powerup
+					if (Math.random() * 100 < 10) {
+						const powerUps = ["bomb", "power"];
+						const powerUpType =
+							powerUps[Math.floor(Math.random() * powerUps.length)];
+
+						const p = new PowerUp();
+						p.id = uuid.v4();
+						p.type = powerUpType;
+						p.position = new Vector3(tilePos[0] + 0.5, tilePos[1] + 0.5);
+
+						this.state.powerUps[p.id] = p;
+					}
 				});
 				this.state.map.map = map;
 
