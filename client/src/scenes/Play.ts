@@ -11,11 +11,13 @@ import { GameState } from "../state/GameState";
 import { createMapGameObject, createTileAt } from "../map";
 import {
 	bomb,
+	bombPowerUp,
 	character,
 	explosion,
 	hudBombs,
 	hudBombsImage,
 	hudPowerImage,
+	powerPowerUp,
 } from "../resources/assets";
 import { vec3 } from "gl-matrix";
 import { getPlayerSkin, updatePlayerSkin } from "../players";
@@ -37,6 +39,7 @@ import {
 	updateSpriteFromSource,
 } from "webgl-engine/lib/webgl/utils";
 import * as hudInfo from "../resources/hud.json";
+import { PowerUp } from "../state/PowerUp";
 
 export interface ExplosionDescription {
 	origin: [number, number];
@@ -287,6 +290,30 @@ function createScoreBox(engine: Engine, player: Player) {
 	return scoreBox;
 }
 
+export function createPowerUp(engine: Engine, powerUp: PowerUp) {
+	const models: Record<string, ArrayBuffer> = {
+		bomb: bombPowerUp,
+		power: powerPowerUp,
+	};
+
+	const model = loadGLB(
+		engine.gl,
+		engine.programs.standard,
+		models[powerUp.type]
+	);
+	model.id = powerUp.id;
+
+	model.animation.initialState = "Spawn";
+	model.animation.addTransition(
+		"Spawn",
+		"Advertise",
+		(context, gameObject, playDuration, totalDuration) =>
+			playDuration > totalDuration
+	);
+
+	return model;
+}
+
 export class Play extends Scene {
 	constructor(public engine: Engine, public room: Room<GameState>) {
 		super();
@@ -355,6 +382,18 @@ export class Play extends Scene {
 			} else {
 				console.error(`Cannot find bomb with id ${bomb.id}`);
 			}
+		};
+
+		// powerups
+		this.room.state.powerUps.onAdd = (powerUp, key) => {
+			const model = createPowerUp(engine, powerUp);
+			model.position = mapToWorldCoordinates(
+				this.room.state.map,
+				powerUp.position.x,
+				powerUp.position.y
+			);
+
+			this.addGameObject(model);
 		};
 
 		this.room.state.map.onChange = (changes) => {
