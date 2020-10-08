@@ -303,14 +303,6 @@ export function createPowerUp(engine: Engine, powerUp: PowerUp) {
 	);
 	model.id = powerUp.id;
 
-	model.animation.initialState = "Spawn";
-	model.animation.addTransition(
-		"Spawn",
-		"Advertise",
-		(context, gameObject, playDuration, totalDuration) =>
-			playDuration > totalDuration
-	);
-
 	return model;
 }
 
@@ -394,6 +386,10 @@ export class Play extends Scene {
 			);
 
 			this.addGameObject(model);
+		};
+		this.room.state.powerUps.onRemove = (powerUp) => {
+			const model = this.getObjectById(powerUp.id);
+			model.removeFromParent();
 		};
 
 		this.room.state.map.onChange = (changes) => {

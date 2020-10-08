@@ -11,10 +11,15 @@ import {
 	tileCoordForPosition,
 } from "./map/map";
 import { Vector3 } from "./state/primitives";
-import { getExplosionResults, resolveCollisions } from "./player/collisions";
+import {
+	getExplosionResults,
+	resolveCollisions,
+	resolvePowerUpCollisions,
+} from "./player/collisions";
 import { Bomb } from "./state/Bomb";
 import * as uuid from "uuid";
 import { PowerUp } from "./state/PowerUp";
+import * as scores from "./player/scores.json";
 
 const FPS = 0.03333333;
 const PLAYER_SPEED = 2;
@@ -52,6 +57,22 @@ export class NadeItAaron extends Room<GameState> {
 			const resolved = resolveCollisions(x, y, message.x, message.y, state.map);
 			player.position.x = resolved.x;
 			player.position.z = resolved.y;
+
+			// power ups
+			const powerUpList: PowerUp[] = [];
+			for (let k in this.state.powerUps) {
+				powerUpList.push(this.state.powerUps[k]);
+			}
+
+			const powerUps = resolvePowerUpCollisions(
+				player.position.x,
+				player.position.z,
+				powerUpList
+			);
+
+			powerUps.forEach((powerUp) => {
+				delete this.state.powerUps[powerUp.id];
+			});
 		});
 
 		this.onMessage("place_bomb", (client, message) => {
@@ -166,9 +187,11 @@ export class NadeItAaron extends Room<GameState> {
 				);
 
 				let map = this.state.map.map;
+				const scoreMultiplier =
+					1 + scores.BOX_MULTIPLIER * results.tiles.length;
 				results.tiles.forEach((tilePos) => {
 					const tile = tileAtPosition(tilePos[0], tilePos[1], map);
-					const score = getTileScore(tile);
+					const score = getTileScore(tile) * scoreMultiplier;
 
 					if (score) {
 						this.state.players[bomb.owner].score += score;
@@ -177,7 +200,7 @@ export class NadeItAaron extends Room<GameState> {
 					map = setTileToGrass(tilePos[0], tilePos[1], map);
 
 					// chance of spawning a powerup
-					if (Math.random() * 100 < 10) {
+					if (Math.random() * 100 < 90) {
 						const powerUps = ["bomb", "power"];
 						const powerUpType =
 							powerUps[Math.floor(Math.random() * powerUps.length)];

@@ -6,15 +6,26 @@ import {
 	tileCoordForPosition,
 } from "../map/map";
 import { MapInfo } from "../state/MapInfo";
+import { PowerUp } from "../state/PowerUp";
 
 const playerWidth = 0.2;
 const playerHeight = 0.1;
+
+const powerUpWidth = 0.1;
+const powerUpHeight = 0.1;
 
 export function getPlayerBounds(
 	x: number,
 	y: number
 ): [number, number, number, number] {
 	return [x - playerWidth / 2, y - playerHeight, x + playerWidth / 2, y];
+}
+
+export function getPowerUpBounds(
+	x: number,
+	y: number
+): [number, number, number, number] {
+	return [x - powerUpWidth / 2, y - powerUpHeight, x + powerUpWidth / 2, y];
 }
 
 export function rectangleIntersection(
@@ -121,6 +132,28 @@ export function resolveCollisions(
 	});
 
 	return { x: nx, y: ny };
+}
+
+export function resolvePowerUpCollisions(
+	x: number,
+	y: number,
+	powerUps: PowerUp[]
+) {
+	const playerBounds = getPlayerBounds(x, y);
+	const results: PowerUp[] = [];
+
+	powerUps.forEach((powerUp) => {
+		const powerUpBounds = getPowerUpBounds(
+			powerUp.position.x,
+			powerUp.position.y
+		);
+
+		if (rectangleIntersection(playerBounds, powerUpBounds)) {
+			results.push(powerUp);
+		}
+	});
+
+	return results;
 }
 
 export interface ExplosionResults {
