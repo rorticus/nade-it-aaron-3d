@@ -10,7 +10,7 @@ import {
 	tileAtPosition,
 	tileCoordForPosition,
 } from "./map/map";
-import { Vector3 } from "./state/primitives";
+import { Vector2 } from "./state/primitives";
 import {
 	getExplosionResults,
 	resolveCollisions,
@@ -40,9 +40,9 @@ export class NadeItAaron extends Room<GameState> {
 		});
 
 		this.onMessage<MoveMessage>("move", (client, message) => {
-			const player = this.state.players[client.id];
+			const player: Player = this.state.players[client.id];
 			let x = player.position.x;
-			let y = player.position.z;
+			let y = player.position.y;
 
 			if (message.x !== 0) {
 				x += (message.x > 0 ? 1 : -1) * PLAYER_SPEED * FPS;
@@ -56,7 +56,7 @@ export class NadeItAaron extends Room<GameState> {
 
 			const resolved = resolveCollisions(x, y, message.x, message.y, state.map);
 			player.position.x = resolved.x;
-			player.position.z = resolved.y;
+			player.position.y = resolved.y;
 
 			// power ups
 			const powerUpList: PowerUp[] = [];
@@ -66,7 +66,7 @@ export class NadeItAaron extends Room<GameState> {
 
 			const powerUps = resolvePowerUpCollisions(
 				player.position.x,
-				player.position.z,
+				player.position.y,
 				powerUpList
 			);
 
@@ -94,10 +94,9 @@ export class NadeItAaron extends Room<GameState> {
 				bomb.id = uuid.v4();
 				bomb.owner = client.id;
 
-				bomb.position = new Vector3(
+				bomb.position = new Vector2(
 					Math.floor(player.position.x) + 0.5,
-					0,
-					Math.floor(player.position.z) + 0.5
+					Math.floor(player.position.y) + 0.5
 				);
 				bomb.explosionTimer = 0;
 				bomb.explosionLength = player.bombLength;
@@ -116,15 +115,7 @@ export class NadeItAaron extends Room<GameState> {
 	onJoin(client: Client, options: any) {
 		console.log("client joined", client.id);
 
-		const p = new Vector3();
-		p.x = 0;
-		p.y = 0;
-		p.z = 0;
-
-		const v = new Vector3();
-		v.x = 0;
-		v.y = 0;
-		v.z = 0;
+		const p = new Vector2(0, 0);
 
 		const player = new Player();
 		player.isReady = true;
@@ -146,7 +137,7 @@ export class NadeItAaron extends Room<GameState> {
 
 			const spawn = this.state.map.spawns[indices[0] - 1];
 			player.position.x = spawn[0];
-			player.position.z = spawn[1];
+			player.position.y = spawn[1];
 		}
 
 		player.id = client.id;
@@ -174,7 +165,7 @@ export class NadeItAaron extends Room<GameState> {
 
 		// count down bomb timers
 		for (let key in this.state.bombs) {
-			const bomb = this.state.bombs[key];
+			const bomb: Bomb = this.state.bombs[key];
 
 			bomb.explosionTimer += deltaInSeconds;
 
@@ -190,7 +181,7 @@ export class NadeItAaron extends Room<GameState> {
 
 				const bombTilePos = tileCoordForPosition(
 					bomb.position.x,
-					bomb.position.z
+					bomb.position.y
 				);
 
 				const results = getExplosionResults(
@@ -222,7 +213,7 @@ export class NadeItAaron extends Room<GameState> {
 						const p = new PowerUp();
 						p.id = uuid.v4();
 						p.type = powerUpType;
-						p.position = new Vector3(tilePos[0] + 0.5, tilePos[1] + 0.5);
+						p.position = new Vector2(tilePos[0] + 0.5, tilePos[1] + 0.5);
 
 						this.state.powerUps[p.id] = p;
 					}

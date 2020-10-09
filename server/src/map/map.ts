@@ -1,7 +1,7 @@
 import * as mapDef from "../../../shared/mapdef.json";
 import { MapPretty } from "../state/MapPretty";
 import possiblePretties from "../../../shared/pretties.json";
-import { Vector3 } from "../state/primitives";
+import { Vector2 } from "../state/primitives";
 import { MapInfo } from "../state/MapInfo";
 import { ArraySchema } from "@colyseus/schema";
 import { RectangleGrid, RecursiveBackTracker } from "./maze";
@@ -213,11 +213,10 @@ export function generateMap(): MapInfo {
 		const p = new MapPretty();
 
 		p.type = Math.floor(Math.random() * possiblePretties.length);
-		p.position = new Vector3();
-		p.position.x = 0.25 + Math.random() * (MAP_WIDTH - 1);
-		p.position.y = 0;
-		p.position.z = 0.25 + Math.random() * (MAP_HEIGHT - 1);
-
+		p.position = new Vector2(
+			0.25 + Math.random() * (MAP_WIDTH - 1),
+			0.25 + Math.random() * (MAP_HEIGHT - 1)
+		);
 		pretties.push(p);
 	}
 

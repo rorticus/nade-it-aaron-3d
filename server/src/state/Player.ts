@@ -1,9 +1,9 @@
 import { Schema, type } from '@colyseus/schema';
-import {Vector3} from "./primitives";
+import {Vector2} from "./primitives";
 
 export class Player extends Schema {
     @type("string") id: string;
-    @type(Vector3) position: Vector3;
+    @type(Vector2) position: Vector2;
     @type('float32') rotation: number;
     @type('boolean') isReady = false;
     @type('int8') index = 0;

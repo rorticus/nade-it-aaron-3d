@@ -59,8 +59,8 @@ export function createMapGameObject(engine: Engine, def: MapInfo) {
 		model.renderable = allPretties[mapPretty.type].renderable;
 		model.position = vec3.fromValues(
 			mapPretty.position.x,
+			0,
 			mapPretty.position.y,
-			mapPretty.position.z
 		);
 
 		root.add(model);

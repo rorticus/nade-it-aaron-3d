@@ -71,7 +71,7 @@ export function configurePlayerModel(
 	characterModel.position = mapToWorldCoordinates(
 		map,
 		player.position.x,
-		player.position.z
+		player.position.y
 	);
 	characterModel.scale = vec3.fromValues(0.35, 0.35, 0.35);
 	characterModel.animation.transitionTo("Idle", 0);
@@ -346,7 +346,7 @@ export class Play extends Scene {
 				const pos = mapToWorldCoordinates(
 					room.state.map,
 					player.position.x,
-					player.position.z
+					player.position.y
 				);
 				movement.setTarget(model, pos[0], model.position[1], pos[2]);
 			}
@@ -360,7 +360,7 @@ export class Play extends Scene {
 			model.position = mapToWorldCoordinates(
 				room.state.map,
 				bomb.position.x,
-				bomb.position.z
+				bomb.position.y
 			);
 			model.id = bomb.id;
 			model.scale = [0.5, 0.5, 0.5];

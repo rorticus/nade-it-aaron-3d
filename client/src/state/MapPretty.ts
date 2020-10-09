@@ -6,9 +6,9 @@
 // 
 
 import { Schema, type, ArraySchema, MapSchema, DataChange } from "@colyseus/schema";
-import { Vector3 } from "./Vector3"
+import { Vector2 } from "./Vector2"
 
 export class MapPretty extends Schema {
     @type("number") public type: number;
-    @type(Vector3) public position: Vector3 = new Vector3();
+    @type(Vector2) public position: Vector2 = new Vector2();
 }
