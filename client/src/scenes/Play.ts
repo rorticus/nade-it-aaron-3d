@@ -269,7 +269,11 @@ function createScoreBox(engine: Engine, player: Player) {
 
 	player.onChange = (changes) => {
 		changes.forEach((change) => {
-			if (change.field === "score") {
+			if (
+				change.field === "score" ||
+				change.field === "bombsAllowed" ||
+				change.field === "bombLength"
+			) {
 				renderScorebox();
 				updateSpriteFromSource(engine, canvasSprite, canvas);
 			}

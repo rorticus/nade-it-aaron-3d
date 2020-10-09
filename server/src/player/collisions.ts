@@ -11,8 +11,8 @@ import { PowerUp } from "../state/PowerUp";
 const playerWidth = 0.2;
 const playerHeight = 0.1;
 
-const powerUpWidth = 0.1;
-const powerUpHeight = 0.1;
+const powerUpWidth = 0.25;
+const powerUpHeight = 0.25;
 
 export function getPlayerBounds(
 	x: number,
@@ -25,7 +25,7 @@ export function getPowerUpBounds(
 	x: number,
 	y: number
 ): [number, number, number, number] {
-	return [x - powerUpWidth / 2, y - powerUpHeight, x + powerUpWidth / 2, y];
+	return [x - powerUpWidth / 2, y - powerUpHeight / 2, x + powerUpWidth / 2, y + powerUpHeight / 2];
 }
 
 export function rectangleIntersection(

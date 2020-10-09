@@ -71,6 +71,14 @@ export class NadeItAaron extends Room<GameState> {
 			);
 
 			powerUps.forEach((powerUp) => {
+				switch (powerUp.type) {
+					case "bomb":
+						player.bombsAllowed++;
+						break;
+					case "power":
+						player.bombLength++;
+						break;
+				}
 				delete this.state.powerUps[powerUp.id];
 			});
 		});
