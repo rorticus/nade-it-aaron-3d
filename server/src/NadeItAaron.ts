@@ -79,6 +79,8 @@ export class NadeItAaron extends Room<GameState> {
 						player.bombLength++;
 						break;
 				}
+
+				this.broadcast('powerup_collected', { powerUp });
 				delete this.state.powerUps[powerUp.id];
 			});
 		});
@@ -194,6 +196,7 @@ export class NadeItAaron extends Room<GameState> {
 				let map = this.state.map.map;
 				const scoreMultiplier =
 					1 + scores.BOX_MULTIPLIER * results.tiles.length;
+
 				results.tiles.forEach((tilePos) => {
 					const tile = tileAtPosition(tilePos[0], tilePos[1], map);
 					const score = getTileScore(tile) * scoreMultiplier;
@@ -216,6 +219,8 @@ export class NadeItAaron extends Room<GameState> {
 						p.position = new Vector2(tilePos[0] + 0.5, tilePos[1] + 0.5);
 
 						this.state.powerUps[p.id] = p;
+
+						this.broadcast("powerup_added", { powerUp: p });
 					}
 				});
 

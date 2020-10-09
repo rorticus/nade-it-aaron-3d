@@ -381,20 +381,35 @@ export class Play extends Scene {
 		};
 
 		// powerups
-		this.room.state.powerUps.onAdd = (powerUp, key) => {
-			const model = createPowerUp(engine, powerUp);
-			model.position = mapToWorldCoordinates(
-				this.room.state.map,
-				powerUp.position.x,
-				powerUp.position.y
-			);
+		this.room.onMessage(
+			"powerup_added",
+			({ powerUp }: { powerUp: PowerUp }) => {
+				const model = createPowerUp(engine, powerUp);
+				model.position = mapToWorldCoordinates(
+					this.room.state.map,
+					powerUp.position.x,
+					powerUp.position.y
+				);
 
-			this.addGameObject(model);
-		};
-		this.room.state.powerUps.onRemove = (powerUp) => {
-			const model = this.getObjectById(powerUp.id);
-			model.removeFromParent();
-		};
+				this.addGameObject(model);
+			}
+		);
+
+		this.room.onMessage(
+			"powerup_collected",
+			({ powerUp }: { powerUp: PowerUp }) => {
+				const model = this.getObjectById(powerUp.id);
+				model.removeFromParent();
+			}
+		);
+
+		this.room.onMessage(
+			"powerup_exploded",
+			({ powerUp }: { powerUp: PowerUp }) => {
+				const model = this.getObjectById(powerUp.id);
+				model.removeFromParent();
+			}
+		);
 
 		this.room.state.map.onChange = (changes) => {
 			changes.forEach((change) => {
