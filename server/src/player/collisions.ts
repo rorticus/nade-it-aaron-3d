@@ -25,7 +25,12 @@ export function getPowerUpBounds(
 	x: number,
 	y: number
 ): [number, number, number, number] {
-	return [x - powerUpWidth / 2, y - powerUpHeight / 2, x + powerUpWidth / 2, y + powerUpHeight / 2];
+	return [
+		x - powerUpWidth / 2,
+		y - powerUpHeight / 2,
+		x + powerUpWidth / 2,
+		y + powerUpHeight / 2,
+	];
 }
 
 export function rectangleIntersection(
@@ -163,10 +168,12 @@ export interface ExplosionResults {
 	south: number;
 	west: number;
 	tiles: [number, number][];
+	powerUps: PowerUp[];
 }
 
 export function getExplosionResults(
 	map: MapInfo,
+	powerUps: PowerUp[],
 	origin: [number, number],
 	size: number
 ): ExplosionResults {
@@ -203,22 +210,64 @@ export function getExplosionResults(
 		return undefined;
 	}
 
+	function findCollidedPowerUps(
+		ox: number,
+		oy: number,
+		dx: number,
+		dy: number,
+		maxSize: number,
+		powerUps: PowerUp[]
+	) {
+		const found: PowerUp[] = [];
+
+		for (let i = 0, y = oy, x = ox; i <= maxSize; i++, y += dy, x += dx) {
+			x = Math.min(map.width - 1, Math.max(0, x));
+			y = Math.min(map.height - 1, Math.max(0, y));
+
+			powerUps.forEach((powerUp) => {
+				const [px, py] = tileCoordForPosition(
+					powerUp.position.x,
+					powerUp.position.y
+				);
+
+				if (px === x && py === y) {
+					found.push(powerUp);
+				}
+			});
+		}
+
+		return found;
+	}
+
 	let northTile = firstCollidingTile(origin[0], origin[1], 0, -1, size);
 	let eastTile = firstCollidingTile(origin[0], origin[1], 1, 0, size);
 	let southTile = firstCollidingTile(origin[0], origin[1], 0, 1, size);
 	let westTile = firstCollidingTile(origin[0], origin[1], -1, 0, size);
 
+	const northSize = northTile ? northTile.steps : size;
+	const eastSize = eastTile ? eastTile.steps : size;
+	const southSize = southTile ? southTile.steps : size;
+	const westSize = westTile ? westTile.steps : size;
+
+	const collidedPowerUps = [
+		...findCollidedPowerUps(origin[0], origin[1], 0, -1, northSize, powerUps),
+		...findCollidedPowerUps(origin[0], origin[1], 1, 0, eastSize, powerUps),
+		...findCollidedPowerUps(origin[0], origin[1], 0, 1, southSize, powerUps),
+		...findCollidedPowerUps(origin[0], origin[1], -1, 0, westSize, powerUps),
+	].filter((p, i, c) => c.indexOf(p) === i);
+
 	return {
 		origin,
-		north: northTile ? northTile.steps : size,
-		east: eastTile ? eastTile.steps : size,
-		south: southTile ? southTile.steps : size,
-		west: westTile ? westTile.steps : size,
+		north: northSize,
+		east: eastSize,
+		south: southSize,
+		west: westSize,
 		tiles: [
 			northTile && northTile.tile ? northTile.pos : null,
 			eastTile && eastTile.tile ? eastTile.pos : null,
 			southTile && southTile.tile ? southTile.pos : null,
 			westTile && westTile.tile ? westTile.pos : null,
 		].filter((t) => t),
+		powerUps: collidedPowerUps,
 	};
 }

@@ -179,6 +179,11 @@ export class NadeItAaron extends Room<GameState> {
 			bomb.explosionTimer += deltaInSeconds;
 
 			if (bomb.explosionTimer > bomb.explosionDelay) {
+				const powerUpList: PowerUp[] = [];
+				for (let k in this.state.powerUps) {
+					powerUpList.push(this.state.powerUps[k]);
+				}
+
 				delete this.state.bombs[key];
 
 				this.state.players[bomb.owner].bombsUsed--;
@@ -190,6 +195,7 @@ export class NadeItAaron extends Room<GameState> {
 
 				const results = getExplosionResults(
 					this.state.map,
+					powerUpList,
 					bombTilePos,
 					bomb.explosionLength
 				);
@@ -221,6 +227,13 @@ export class NadeItAaron extends Room<GameState> {
 						this.state.powerUps[p.id] = p;
 					}
 				});
+
+				results.powerUps.forEach((powerUp) => {
+					this.state.players[bomb.owner].score += scores.POWERUP_DESTROYED;
+					this.broadcast("powerup_explode", { powerUp });
+					delete this.state.powerUps[powerUp.id];
+				});
+
 				this.state.map.map = map;
 
 				this.broadcast("explode", {
