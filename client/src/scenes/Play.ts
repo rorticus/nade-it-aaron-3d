@@ -307,6 +307,11 @@ export function createPowerUp(engine: Engine, powerUp: PowerUp) {
 	);
 	model.id = powerUp.id;
 
+	model.animation.initialState = 'Spawn';
+	model.animation.addTransition('Spawn', 'Advertise', (context, gameObject, playDuration, totalDuration) => {
+		return playDuration > totalDuration
+	});
+
 	return model;
 }
 
