@@ -1,6 +1,6 @@
 import { Engine, LightType, loadGLB, Scene } from "webgl-engine";
 import { positionSpriteOnCanvas, sprite } from "webgl-engine/lib/webgl/utils";
-import { vec3 } from "gl-matrix";
+import { vec3, vec4 } from "gl-matrix";
 import { GameState } from "../state/GameState";
 import { getPlayerSkin, removePlayerSkin, updatePlayerSkin } from "../players";
 import { UIButton } from "../components/UIButton";
@@ -23,7 +23,7 @@ function loadCharacter(
 	characterModel.getObjectById(
 		"characterMedium",
 		true
-	).renderable.renderables[0].uniforms["u_color"] = vec3.fromValues(0, 0, 0);
+	).renderable.renderables[0].uniforms["u_color"] = vec4.fromValues(0, 0, 0, 1);
 
 	return characterModel;
 }
