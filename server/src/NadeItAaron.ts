@@ -208,7 +208,7 @@ export class NadeItAaron extends Room<GameState> {
 					map = setTileToGrass(tilePos[0], tilePos[1], map);
 
 					// chance of spawning a powerup
-					if (Math.random() * 100 < 90) {
+					if (Math.random() * 100 < 15) {
 						const powerUps = ["bomb", "power"];
 						const powerUpType =
 							powerUps[Math.floor(Math.random() * powerUps.length)];

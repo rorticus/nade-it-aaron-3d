@@ -409,7 +409,7 @@ export class Play extends Scene {
 		);
 
 		this.room.onMessage(
-			"powerup_exploded",
+			"powerup_explode",
 			({ powerUp }: { powerUp: PowerUp }) => {
 				const model = this.getObjectById(powerUp.id);
 				model.removeFromParent();

@@ -11,6 +11,9 @@ canvas.setAttribute("height", "768");
 
 document.body.appendChild(canvas);
 
+const debug = document.createElement('div');
+document.body.appendChild(debug);
+
 const host = window.document.location.host.replace(/:.*/, "");
 const client = new Colyseus.Client(
 	location.protocol.replace("http", "ws") +
@@ -23,6 +26,9 @@ async function main() {
 	await loadAssets();
 
 	const engine = new Engine(canvas);
+	engine.fpsUpdated = (fps) => {
+		debug.innerHTML = `${fps}`;
+	};
 	engine.start();
 
 	client
