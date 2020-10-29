@@ -9,7 +9,9 @@
   "libview.twoColumn": false,
   "libview.expandedNodes": [
     "4rc2pv9a",
-    "/"
+    "/",
+    "4rc2pv9a",
+    "/UI/"
   ],
   "doc.openedDocs": [
     "ui://4rc2pv9anfsc0"

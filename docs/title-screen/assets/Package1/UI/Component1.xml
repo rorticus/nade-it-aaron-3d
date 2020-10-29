@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="1024,768">
+  <displayList>
+    <image id="n4_ar2m" name="background" src="ar2m44" fileName="title-screen.jpg" xy="0,0"/>
+    <image id="n5_ar2m" name="logo" src="ar2m45" fileName="logo.png" xy="92,361" rotation="-28"/>
+    <image id="n7_ar2m" name="player-box-name" src="rj2s2d" fileName="UI/grey_panel.png" xy="21,87" size="246,39" group="n9_ar2m"/>
+    <image id="n8_ar2m" name="player-box-preview" src="rj2s1e" fileName="UI/green_panel.png" xy="19,8" size="250,89" group="n9_ar2m"/>
+    <text id="n10_ar2m" name="player-box-name" xy="26,98" size="236,28" group="n9_ar2m" font="KenVector Future" fontSize="17" align="center" vAlign="middle" autoSize="none" text="rorticus&#xA;"/>
+    <group id="n9_ar2m" name="top-left-player-box" xy="19,8" size="250,118"/>
+    <image id="n11_ar2m" name="player-box-name" src="rj2s2d" fileName="UI/grey_panel.png" xy="758,90" size="246,39" group="n14_ar2m"/>
+    <image id="n12_ar2m" name="player-box-preview" src="rj2s1e" fileName="UI/green_panel.png" xy="756,11" size="250,89" group="n14_ar2m"/>
+    <text id="n13_ar2m" name="player-box-name" xy="763,101" size="236,28" group="n14_ar2m" font="KenVector Future" fontSize="17" align="center" vAlign="middle" autoSize="none" text="rorticus&#xA;"/>
+    <group id="n14_ar2m" name="top-left-player-box" xy="756,11" size="250,118"/>
+    <image id="n15_ar2m" name="player-box-name" src="rj2s2d" fileName="UI/grey_panel.png" xy="23,712" size="246,39" group="n18_ar2m"/>
+    <image id="n16_ar2m" name="player-box-preview" src="rj2s1e" fileName="UI/green_panel.png" xy="21,633" size="250,89" group="n18_ar2m"/>
+    <text id="n17_ar2m" name="player-box-name" xy="28,723" size="236,28" group="n18_ar2m" font="KenVector Future" fontSize="17" align="center" vAlign="middle" autoSize="none" text="rorticus&#xA;"/>
+    <group id="n18_ar2m" name="top-left-player-box" xy="21,633" size="250,118"/>
+    <image id="n19_ar2m" name="player-box-name" src="rj2s2d" fileName="UI/grey_panel.png" xy="755,713" size="246,39" group="n22_ar2m"/>
+    <image id="n20_ar2m" name="player-box-preview" src="rj2s1e" fileName="UI/green_panel.png" xy="753,634" size="250,89" group="n22_ar2m"/>
+    <text id="n21_ar2m" name="player-box-name" xy="760,724" size="236,28" group="n22_ar2m" font="KenVector Future" fontSize="17" align="center" vAlign="middle" autoSize="none" text="rorticus&#xA;"/>
+    <group id="n22_ar2m" name="top-left-player-box" xy="753,634" size="250,118"/>
+  </displayList>
+</component>
