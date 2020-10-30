@@ -22,7 +22,7 @@
     <image id="rj2si" name="blue_checkmark.png" path="/UI/"/>
     <image id="rj2sj" name="blue_circle.png" path="/UI/"/>
     <image id="rj2sk" name="blue_cross.png" path="/UI/"/>
-    <image id="rj2sl" name="blue_panel.png" path="/UI/"/>
+    <image id="rj2sl" name="blue_panel.png" path="/UI/" scale="9grid" scale9grid="10,10,80,80"/>
     <image id="rj2sm" name="blue_sliderDown.png" path="/UI/"/>
     <image id="rj2sn" name="blue_sliderLeft.png" path="/UI/"/>
     <image id="rj2so" name="blue_sliderRight.png" path="/UI/"/>
@@ -109,14 +109,14 @@
     <image id="rj2s2x" name="red_button07.png" path="/UI/"/>
     <image id="rj2s2y" name="red_button08.png" path="/UI/"/>
     <image id="rj2s2z" name="red_button09.png" path="/UI/"/>
-    <image id="rj2s30" name="red_button10.png" path="/UI/"/>
+    <image id="rj2s30" name="red_button10.png" path="/UI/" scale="9grid" scale9grid="47,12,94,24"/>
     <image id="rj2s31" name="red_button11.png" path="/UI/"/>
     <image id="rj2s32" name="red_button12.png" path="/UI/"/>
     <image id="rj2s33" name="red_button13.png" path="/UI/"/>
     <image id="rj2s34" name="red_checkmark.png" path="/UI/"/>
     <image id="rj2s35" name="red_circle.png" path="/UI/"/>
     <image id="rj2s36" name="red_cross.png" path="/UI/"/>
-    <image id="rj2s37" name="red_panel.png" path="/UI/"/>
+    <image id="rj2s37" name="red_panel.png" path="/UI/" scale="9grid" scale9grid="10,10,80,80"/>
     <image id="rj2s38" name="red_sliderDown.png" path="/UI/"/>
     <image id="rj2s39" name="red_sliderLeft.png" path="/UI/"/>
     <image id="rj2s3a" name="red_sliderRight.png" path="/UI/"/>
@@ -142,7 +142,7 @@
     <image id="rj2s3u" name="yellow_checkmark.png" path="/UI/"/>
     <image id="rj2s3v" name="yellow_circle.png" path="/UI/"/>
     <image id="rj2s3w" name="yellow_cross.png" path="/UI/"/>
-    <image id="rj2s3x" name="yellow_panel.png" path="/UI/"/>
+    <image id="rj2s3x" name="yellow_panel.png" path="/UI/" scale="9grid" scale9grid="10,10,80,80"/>
     <image id="rj2s3y" name="yellow_sliderDown.png" path="/UI/"/>
     <image id="rj2s3z" name="yellow_sliderLeft.png" path="/UI/"/>
     <image id="rj2s40" name="yellow_sliderRight.png" path="/UI/"/>
@@ -151,6 +151,8 @@
     <image id="rj2s43" name="n3.png" path="/UI/"/>
     <image id="ar2m44" name="title-screen.jpg" path="/"/>
     <image id="ar2m45" name="logo.png" path="/"/>
+    <font id="p67146" name="Title Font.ttf" path="/" renderMode="" samplePointSize="16"/>
+    <image id="p67148" name="n29.png" path="/"/>
   </resources>
-  <publish name=""/>
+  <publish name="" path="/Users/rory/Desktop" packageCount="2"/>
 </packageDescription>
