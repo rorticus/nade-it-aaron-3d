@@ -111,6 +111,16 @@ export class NadeItAaron extends Room<GameState> {
 			}
 		});
 
+		this.onMessage('ready', (client, message) => {
+			const player: Player = this.state.players[client.id];
+			player.isReady = true;
+		});
+
+		this.onMessage('not-ready', (client, message) => {
+			const player: Player = this.state.players[client.id];
+			player.isReady = false;
+		});
+
 		this.setSimulationInterval((t) => this.update(t), 33);
 	}
 
@@ -120,7 +130,7 @@ export class NadeItAaron extends Room<GameState> {
 		const p = new Vector2(0, 0);
 
 		const player = new Player();
-		player.isReady = true;
+		player.isReady = false;
 		player.rotation = 0;
 		player.position = p;
 

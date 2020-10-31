@@ -21,7 +21,7 @@ module.exports = {
                 use: 'raw-loader'
             },
             {
-                test: /^(?!.*data).*\.png$/,
+                test: /^(?!.*data).*(\.png|\.jpg)$/,
                 use: 'file-loader'
             },
             {
