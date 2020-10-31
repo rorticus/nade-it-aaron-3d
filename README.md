@@ -43,7 +43,6 @@ npm run watch
 
 After a few seconds, the server should print out a URL to let you know its ready. You'll probably want to also wait for your client build to finish. After both builds have settled down, you should be able to hit http://localhost:2567 and see the menu screen.
 
-
 ## Map Assets
 
 Map assets are generated using Asset Forge.
