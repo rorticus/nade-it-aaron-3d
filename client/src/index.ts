@@ -32,7 +32,7 @@ async function main() {
 	engine.start();
 
 	client
-		.joinOrCreate<GameState>("nadeit", { sessionId: "123" })
+		.joinOrCreate<GameState>("nadeit", { sessionId: "123", name: 'Unnamed' })
 		.then((room) => {
 			console.log("sessionId", room.sessionId);
 

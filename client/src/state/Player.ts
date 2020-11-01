@@ -11,6 +11,7 @@ import { Vector2 } from "./Vector2"
 export class Player extends Schema {
     @type("string") public id: string;
     @type(Vector2) public position: Vector2 = new Vector2();
+    @type("string") public name: string;
     @type("float32") public rotation: number;
     @type("boolean") public isReady: boolean;
     @type("int8") public index: number;

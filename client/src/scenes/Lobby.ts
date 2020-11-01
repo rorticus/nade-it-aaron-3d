@@ -68,7 +68,7 @@ export class Lobby extends Scene {
 		this.addGameObject(logoSprite, 1);
 
 		const instructionsSprite = sprite(engine, instructions);
-		positionSpriteOnCanvas(engine, instructionsSprite, 142, 407, 839, 185);
+		positionSpriteOnCanvas(engine, instructionsSprite, 142, 435, 756, 147);
 		this.addGameObject(instructionsSprite, 2);
 
 		const waiting = sprite(engine, waitingForPlayers);
@@ -107,7 +107,7 @@ export class Lobby extends Scene {
 			);
 			preview.id = `preview-${player.id}`;
 
-			const playerName = playerText("rorticus");
+			const playerName = playerText(player.name);
 			const name = sprite(engine, playerName);
 			positionSpriteOnCanvas(
 				engine,

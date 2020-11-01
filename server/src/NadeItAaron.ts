@@ -133,6 +133,7 @@ export class NadeItAaron extends Room<GameState> {
 		player.isReady = false;
 		player.rotation = 0;
 		player.position = p;
+		player.name = options.name;
 
 		player.isHost = Object.keys(this.state.players).length === 0;
 
