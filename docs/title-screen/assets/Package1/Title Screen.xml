@@ -27,8 +27,7 @@
     <group id="n41_p671" name="bottom-right-player-box" xy="754,579" size="250,169"/>
     <image id="n25_fu08" name="n25" src="rj2s2d" fileName="UI/grey_panel.png" xy="142,435" size="756,124" group="n42_p671" alpha="0.74"/>
     <text id="n26_fu08" name="n26" xy="161,450" size="718,142" group="n42_p671" font="ui://4rc2pv9ap67146" fontSize="17" autoSize="none" text="&quot;Help&quot; your teammates by blowing them up, or by blowing up enough other stuff to get more points before time runs out!&#xA;&#xA;ARROW KEYS TO MOVE, SPACE TO DROP A BOMB."/>
-    <image id="n63_qz9m" name="n63" src="qz9m4d" fileName="bomb.png" xy="897,407" size="84,101" group="n42_p671" rotation="40"/>
-    <group id="n42_p671" name="instructions" xy="142,407" size="839,185"/>
+    <group id="n42_p671" name="instructions" xy="142,435" size="756,157"/>
     <image id="n23_fu08" name="n23" src="rj2s37" fileName="UI/red_panel.png" xy="11,6" size="266,42" group="n27_p671"/>
     <text id="n24_fu08" name="n24" xy="17,12" size="255,38" group="n27_p671" font="ui://4rc2pv9ap67146" fontSize="20" color="#ffffff" align="center" autoSize="none" text="PARTY LEADER"/>
     <group id="n27_p671" name="Host text" xy="11,6" size="266,44"/>

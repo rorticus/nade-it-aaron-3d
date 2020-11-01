@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <packageDescription id="4rc2pv9a">
   <resources>
-    <component id="nfsc0" name="Component1.xml" path="/" exported="true"/>
+    <component id="nfsc0" name="Title Screen.xml" path="/" exported="true"/>
     <image id="rj2s1" name="blue_boxCheckmark.png" path="/UI/"/>
     <image id="rj2s2" name="blue_boxCross.png" path="/UI/"/>
     <image id="rj2s3" name="blue_boxTick.png" path="/UI/"/>

@@ -9,6 +9,7 @@ import {
 import { UIButton } from "../components/UIButton";
 import {
 	backgroundImage,
+	bomberman17,
 	emptySlot,
 	filledSlot,
 	instructions,
@@ -23,6 +24,7 @@ import {
 } from "../resources/assets";
 import { GameState } from "../state/GameState";
 import { Player } from "../state/Player";
+import { drawTextOnCanvas, textDimensions } from "./helpers";
 
 const slotCoordinates = [
 	[20, 20],
@@ -30,6 +32,19 @@ const slotCoordinates = [
 	[20, 579],
 	[754, 579],
 ];
+
+function playerText(name: string) {
+	const dim = textDimensions(bomberman17, name);
+
+	const c = document.createElement("canvas");
+	c.width = dim.width;
+	c.height = dim.height;
+
+	const context = c.getContext("2d");
+	drawTextOnCanvas(context, name, bomberman17, 0, 0);
+
+	return c;
+}
 
 export class Lobby extends Scene {
 	constructor(public engine: Engine, clientId: string, room: Room<GameState>) {
@@ -91,6 +106,22 @@ export class Lobby extends Scene {
 				122
 			);
 			preview.id = `preview-${player.id}`;
+
+			const playerName = playerText("rorticus");
+			const name = sprite(engine, playerName);
+			positionSpriteOnCanvas(
+				engine,
+				name,
+				slotCoordinates[player.index - 1][0] +
+					5 +
+					240 / 2 -
+					playerName.width / 2,
+				slotCoordinates[player.index - 1][1] + 135 + playerName.height / 2 - 3,
+				playerName.width,
+				playerName.height
+			);
+			name.id = `player-name-${player.id}`;
+			this.addGameObject(name, 4);
 
 			this.addGameObject(preview, 4);
 
@@ -175,6 +206,7 @@ export class Lobby extends Scene {
 			updateSpriteFromSource(engine, players[player.index - 1], emptySlot);
 			this.getObjectById(`preview-${player.id}`)?.removeFromParent();
 			this.getObjectById(`ready-badge-${player.id}`)?.removeFromParent();
+			this.getObjectById(`player-name-${player.id}`)?.removeFromParent();
 
 			if (player.isHost) {
 				this.getObjectById("host-sprite")?.removeFromParent();

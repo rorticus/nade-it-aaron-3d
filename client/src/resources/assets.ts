@@ -1,3 +1,5 @@
+import { CharacterPlacement, FontDefinition } from "../interfaces";
+
 export const backgroundImage = require("../resources/images/title-screen.jpg")
 	.default;
 export const startButton = require("../resources/images/start-button.png")
@@ -32,6 +34,9 @@ export const notReady = require("./images/not-ready.png").default;
 export const ready = require("./images/ready.png").default;
 export const readyBadge = require("./images/ready-badge.png").default;
 
+const bomberman17Image = require("./bomberman17.png").default;
+const bomberman17Font = require("./bomberman17.fnt");
+
 export let hudBombsImage: HTMLImageElement;
 export let hudPowerImage: HTMLImageElement;
 
@@ -45,7 +50,50 @@ export async function loadImage(url: string) {
 	});
 }
 
+export let bomberman17: FontDefinition;
+
 export async function loadAssets() {
 	hudBombsImage = await loadImage(hudBombs.default);
 	hudPowerImage = await loadImage(hudPower.default);
+
+	bomberman17 = await loadFont(bomberman17Image, bomberman17Font);
+}
+
+export async function loadFont(
+	imageName: string,
+	definition: string
+): Promise<FontDefinition> {
+	const image = await loadImage(imageName);
+
+	const characterInfo: Record<string, CharacterPlacement> = {};
+
+	definition.split("\n").forEach((line) => {
+		if (line.indexOf("char ") === 0) {
+			const lineParts = line.split(" ").reduce((res, part) => {
+				const [name, ...rest] = part.split("=");
+
+				return {
+					...res,
+					[name]: parseInt(rest.join("="), 10),
+				};
+			}, {} as Record<string, number>);
+
+			characterInfo[String.fromCharCode(lineParts["id"])] = {
+				x: lineParts["x"] || 0,
+				y: lineParts["y"] || 0,
+				width: lineParts["width"] || 0,
+				height: lineParts["height"] || 0,
+				xAdvance: lineParts["xadvance"] || 0,
+				xOffset: lineParts["xoffset"] || 0,
+				yOffset: lineParts["yoffset"] || 0,
+			};
+		}
+	});
+
+	return {
+		imageName,
+		definition,
+		image,
+		characterInfo,
+	};
 }

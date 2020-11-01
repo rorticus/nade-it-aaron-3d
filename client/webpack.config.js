@@ -21,6 +21,17 @@ module.exports = {
                 use: 'raw-loader'
             },
             {
+                test: /\.fnt$/,
+                use: [
+                    {
+                        loader: 'raw-loader',
+                        options: {
+                            esModule: false
+                        }
+                    }
+                ]
+            },
+            {
                 test: /^(?!.*data).*(\.png|\.jpg)$/,
                 use: 'file-loader'
             },
