@@ -17,6 +17,7 @@ import {
 	hudBombs,
 	hudBombsImage,
 	hudPowerImage,
+	levelBackground,
 	powerPowerUp,
 } from "../resources/assets";
 import { vec3 } from "gl-matrix";
@@ -307,10 +308,14 @@ export function createPowerUp(engine: Engine, powerUp: PowerUp) {
 	);
 	model.id = powerUp.id;
 
-	model.animation.initialState = 'Spawn';
-	model.animation.addTransition('Spawn', 'Advertise', (context, gameObject, playDuration, totalDuration) => {
-		return playDuration > totalDuration
-	});
+	model.animation.initialState = "Spawn";
+	model.animation.addTransition(
+		"Spawn",
+		"Advertise",
+		(context, gameObject, playDuration, totalDuration) => {
+			return playDuration > totalDuration;
+		}
+	);
 
 	return model;
 }
@@ -330,6 +335,13 @@ export class Play extends Scene {
 
 		this.pointLights[1].position = [0, 10, -20];
 		this.pointLights[1].color = [1, 1, 1];
+
+		const background = loadGLB(
+			engine.gl,
+			engine.programs.standard,
+			levelBackground
+		);
+		this.addGameObject(background);
 
 		const map = createMapGameObject(engine, room.state.map);
 
