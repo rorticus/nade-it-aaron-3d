@@ -159,6 +159,8 @@
     <image id="qz9m4d" name="bomb.png" path="/Title Screen/"/>
     <image id="qo4g4e" name="game-screen.jpg" path="/HUD/"/>
     <component id="qo4g4f" name="HUD.xml" path="/HUD/"/>
+    <image id="keim4g" name="bomb.png" path="/HUD/"/>
+    <image id="keim4h" name="fire.png" path="/HUD/"/>
   </resources>
   <publish name="" path="/Users/rory/Desktop" packageCount="2"/>
 </packageDescription>

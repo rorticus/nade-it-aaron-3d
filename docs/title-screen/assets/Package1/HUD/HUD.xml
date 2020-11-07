@@ -2,9 +2,41 @@
 <component size="1024,768">
   <displayList>
     <image id="n0_qo4g" name="background" src="qo4g4e" fileName="HUD/game-screen.jpg" xy="0,0" size="1024,768"/>
-    <image id="n2_xwxr" name="n2" src="rj2s2d" fileName="UI/grey_panel.png" xy="13,62" size="274,41"/>
-    <image id="n1_qo4g" name="n1" src="rj2sl" fileName="UI/blue_panel.png" xy="10,19" size="281,49"/>
-    <text id="n3_xwxr" name="n3" xy="101,72" size="98,25" font="ui://4rc2pv9ap67146" fontSize="17" text="rorticus"/>
-    <text id="n4_xwxr" name="n4" xy="187,22" size="97,42" font="ui://4rc2pv9ap67146" fontSize="30" color="#ffffff" text="15000"/>
+    <image id="n2_xwxr" name="n2" src="rj2s2d" fileName="UI/grey_panel.png" xy="5,46" size="175,41" group="n10_keim"/>
+    <image id="n1_qo4g" name="n1" src="rj2sl" fileName="UI/blue_panel.png" xy="5,5" size="175,49" group="n10_keim"/>
+    <text id="n3_xwxr" name="n3" xy="44,57" size="98,25" group="n10_keim" font="ui://4rc2pv9ap67146" fontSize="17" text="rorticus"/>
+    <text id="n4_xwxr" name="n4" xy="77,10" size="97,42" group="n10_keim" font="ui://4rc2pv9ap67146" fontSize="30" color="#ffffff" text="15000"/>
+    <image id="n5_keim" name="n5" src="keim4g" fileName="HUD/bomb.png" xy="9,10" size="24,24" group="n10_keim"/>
+    <image id="n6_keim" name="n6" src="keim4h" fileName="HUD/fire.png" xy="38,9" size="24,24" group="n10_keim"/>
+    <text id="n7_keim" name="n7" xy="13,31" size="11,22" group="n10_keim" font="ui://4rc2pv9ap67146" fontSize="14" text="1"/>
+    <text id="n9_keim" name="n9" xy="45,30" size="11,22" group="n10_keim" font="ui://4rc2pv9ap67146" fontSize="14" text="1"/>
+    <group id="n10_keim" name="Player 1" xy="5,5" size="175,82"/>
+    <image id="n11_keim" name="n11" src="rj2s2d" fileName="UI/grey_panel.png" xy="835,46" size="184,41" group="n19_keim"/>
+    <image id="n12_keim" name="n12" src="rj2sl" fileName="UI/blue_panel.png" xy="835,5" size="184,49" group="n19_keim"/>
+    <text id="n13_keim" name="n13" xy="878,57" size="98,25" group="n19_keim" font="ui://4rc2pv9ap67146" fontSize="17" text="rorticus"/>
+    <text id="n14_keim" name="n14" xy="916,10" size="97,42" group="n19_keim" font="ui://4rc2pv9ap67146" fontSize="30" color="#ffffff" text="15000"/>
+    <image id="n15_keim" name="n15" src="keim4g" fileName="HUD/bomb.png" xy="839,10" size="24,24" group="n19_keim"/>
+    <image id="n16_keim" name="n16" src="keim4h" fileName="HUD/fire.png" xy="868,9" size="24,24" group="n19_keim"/>
+    <text id="n17_keim" name="n17" xy="843,31" size="11,22" group="n19_keim" font="ui://4rc2pv9ap67146" fontSize="14" text="1"/>
+    <text id="n18_keim" name="n18" xy="875,30" size="11,22" group="n19_keim" font="ui://4rc2pv9ap67146" fontSize="14" text="1"/>
+    <group id="n19_keim" name="Player 2" xy="835,5" size="184,82"/>
+    <image id="n20_keim" name="n20" src="rj2s2d" fileName="UI/grey_panel.png" xy="6,135" size="184,41" group="n28_keim"/>
+    <image id="n21_keim" name="n21" src="rj2sl" fileName="UI/blue_panel.png" xy="6,94" size="184,49" group="n28_keim"/>
+    <text id="n22_keim" name="n22" xy="49,146" size="98,25" group="n28_keim" font="ui://4rc2pv9ap67146" fontSize="17" text="rorticus"/>
+    <text id="n23_keim" name="n23" xy="87,99" size="97,42" group="n28_keim" font="ui://4rc2pv9ap67146" fontSize="30" color="#ffffff" text="15000"/>
+    <image id="n24_keim" name="n24" src="keim4g" fileName="HUD/bomb.png" xy="10,99" size="24,24" group="n28_keim"/>
+    <image id="n25_keim" name="n25" src="keim4h" fileName="HUD/fire.png" xy="39,98" size="24,24" group="n28_keim"/>
+    <text id="n26_keim" name="n26" xy="14,120" size="11,22" group="n28_keim" font="ui://4rc2pv9ap67146" fontSize="14" text="1"/>
+    <text id="n27_keim" name="n27" xy="46,119" size="11,22" group="n28_keim" font="ui://4rc2pv9ap67146" fontSize="14" text="1"/>
+    <group id="n28_keim" name="Player 3" xy="6,94" size="184,82"/>
+    <image id="n29_keim" name="n29" src="rj2s2d" fileName="UI/grey_panel.png" xy="834,133" size="184,41" group="n37_keim"/>
+    <image id="n30_keim" name="n30" src="rj2sl" fileName="UI/blue_panel.png" xy="834,92" size="184,49" group="n37_keim"/>
+    <text id="n31_keim" name="n31" xy="877,144" size="98,25" group="n37_keim" font="ui://4rc2pv9ap67146" fontSize="17" text="rorticus"/>
+    <text id="n32_keim" name="n32" xy="915,97" size="97,42" group="n37_keim" font="ui://4rc2pv9ap67146" fontSize="30" color="#ffffff" text="15000"/>
+    <image id="n33_keim" name="n33" src="keim4g" fileName="HUD/bomb.png" xy="838,97" size="24,24" group="n37_keim"/>
+    <image id="n34_keim" name="n34" src="keim4h" fileName="HUD/fire.png" xy="867,96" size="24,24" group="n37_keim"/>
+    <text id="n35_keim" name="n35" xy="842,118" size="11,22" group="n37_keim" font="ui://4rc2pv9ap67146" fontSize="14" text="1"/>
+    <text id="n36_keim" name="n36" xy="874,117" size="11,22" group="n37_keim" font="ui://4rc2pv9ap67146" fontSize="14" text="1"/>
+    <group id="n37_keim" name="Player 4" xy="834,92" size="184,82"/>
   </displayList>
 </component>
