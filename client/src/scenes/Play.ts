@@ -1,45 +1,44 @@
+import { Room } from "colyseus.js";
+import { vec3 } from "gl-matrix";
 import {
+	Camera,
 	Engine,
 	GameObject,
 	loadGLB,
-	OrbitCamera,
 	Scene,
 	TranslationAnimationChannel,
 } from "webgl-engine";
-import { Room } from "colyseus.js";
-import { GameState } from "../state/GameState";
-import { createMapGameObject, createTileAt } from "../map";
-import {
-	bomb,
-	bombPowerUp,
-	character,
-	explosion,
-	hudBombs,
-	hudBombsImage,
-	hudPowerImage,
-	levelBackground,
-	powerPowerUp,
-} from "../resources/assets";
-import { vec3 } from "gl-matrix";
-import { getPlayerSkin, updatePlayerSkin } from "../players";
-import { Player } from "../state/Player";
-import { GameComponentContext } from "webgl-engine/lib/interfaces";
-import { KeyboardKey } from "webgl-engine/lib/services/KeyboardService";
-import { MapInfo } from "../state/MapInfo";
 import {
 	AnimationState,
 	AnimationWrapMode,
 } from "webgl-engine/lib/animation/AnimationState";
-import {
-	PlayerMovement,
-	PlayerMovementTag,
-} from "../components/PlayerMovement";
+import { GameComponentContext } from "webgl-engine/lib/interfaces";
+import { KeyboardKey } from "webgl-engine/lib/services/KeyboardService";
 import {
 	positionSpriteOnCanvas,
 	sprite,
 	updateSpriteFromSource,
 } from "webgl-engine/lib/webgl/utils";
+import {
+	PlayerMovement,
+	PlayerMovementTag,
+} from "../components/PlayerMovement";
+import { createMapGameObject, createTileAt } from "../map";
+import { getPlayerSkin, updatePlayerSkin } from "../players";
+import {
+	bomb,
+	bombPowerUp,
+	character,
+	explosion,
+	hudBombsImage,
+	hudPowerImage,
+	levelBackground,
+	powerPowerUp,
+} from "../resources/assets";
 import * as hudInfo from "../resources/hud.json";
+import { GameState } from "../state/GameState";
+import { MapInfo } from "../state/MapInfo";
+import { Player } from "../state/Player";
 import { PowerUp } from "../state/PowerUp";
 
 export interface ExplosionDescription {
@@ -324,17 +323,16 @@ export class Play extends Scene {
 	constructor(public engine: Engine, public room: Room<GameState>) {
 		super();
 
-		const cam = new OrbitCamera();
-		cam.radius = 12;
-		cam.elevation = -7;
-		cam.lookAt = [0, -2, 0];
+		const cam = new Camera();
+		cam.position = vec3.fromValues(0, 10, 3);
+		cam.lookAt = vec3.fromValues(0, 0, 0.5);
 
 		this.camera = cam;
-		this.pointLights[0].position = [0, 10, 20];
-		this.pointLights[0].color = [1, 1, 1];
+		this.pointLights[0].position = [0, 10, 3];
+		this.pointLights[0].color = [0.6, 0.6, 0.6];
 
-		this.pointLights[1].position = [0, 10, -20];
-		this.pointLights[1].color = [1, 1, 1];
+		this.pointLights[1].position = [0, 10, -3];
+		this.pointLights[1].color = [0.5, 0.5, 0.5];
 
 		const background = loadGLB(
 			engine.gl,

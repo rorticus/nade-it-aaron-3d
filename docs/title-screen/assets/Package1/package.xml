@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <packageDescription id="4rc2pv9a">
   <resources>
-    <component id="nfsc0" name="Title Screen.xml" path="/" exported="true"/>
+    <component id="nfsc0" name="Title Screen.xml" path="/Title Screen/" exported="true"/>
     <image id="rj2s1" name="blue_boxCheckmark.png" path="/UI/"/>
     <image id="rj2s2" name="blue_boxCross.png" path="/UI/"/>
     <image id="rj2s3" name="blue_boxTick.png" path="/UI/"/>
@@ -149,14 +149,16 @@
     <image id="rj2s41" name="yellow_sliderUp.png" path="/UI/"/>
     <image id="rj2s42" name="yellow_tick.png" path="/UI/"/>
     <image id="rj2s43" name="n3.png" path="/UI/"/>
-    <image id="ar2m44" name="title-screen.jpg" path="/"/>
-    <image id="ar2m45" name="logo.png" path="/"/>
-    <font id="p67146" name="Title Font.ttf" path="/" renderMode="" samplePointSize="16"/>
-    <image id="qz9m49" name="player-skin-1-preview.png" path="/"/>
-    <image id="qz9m4a" name="player-skin-2-preview.png" path="/"/>
-    <image id="qz9m4b" name="player-skin-3-preview.png" path="/"/>
-    <image id="qz9m4c" name="player-skin-4-preview.png" path="/"/>
-    <image id="qz9m4d" name="bomb.png" path="/"/>
+    <image id="ar2m44" name="title-screen.jpg" path="/Title Screen/"/>
+    <image id="ar2m45" name="logo.png" path="/Title Screen/"/>
+    <font id="p67146" name="Title Font.ttf" path="/Title Screen/" renderMode="" samplePointSize="16"/>
+    <image id="qz9m49" name="player-skin-1-preview.png" path="/Title Screen/"/>
+    <image id="qz9m4a" name="player-skin-2-preview.png" path="/Title Screen/"/>
+    <image id="qz9m4b" name="player-skin-3-preview.png" path="/Title Screen/"/>
+    <image id="qz9m4c" name="player-skin-4-preview.png" path="/Title Screen/"/>
+    <image id="qz9m4d" name="bomb.png" path="/Title Screen/"/>
+    <image id="qo4g4e" name="game-screen.jpg" path="/HUD/"/>
+    <component id="qo4g4f" name="HUD.xml" path="/HUD/"/>
   </resources>
   <publish name="" path="/Users/rory/Desktop" packageCount="2"/>
 </packageDescription>

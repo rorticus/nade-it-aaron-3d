@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="1024,768">
+  <displayList>
+    <image id="n0_qo4g" name="background" src="qo4g4e" fileName="HUD/game-screen.jpg" xy="0,0" size="1024,768"/>
+    <image id="n2_xwxr" name="n2" src="rj2s2d" fileName="UI/grey_panel.png" xy="13,62" size="274,41"/>
+    <image id="n1_qo4g" name="n1" src="rj2sl" fileName="UI/blue_panel.png" xy="10,19" size="281,49"/>
+    <text id="n3_xwxr" name="n3" xy="101,72" size="98,25" font="ui://4rc2pv9ap67146" fontSize="17" text="rorticus"/>
+    <text id="n4_xwxr" name="n4" xy="187,22" size="97,42" font="ui://4rc2pv9ap67146" fontSize="30" color="#ffffff" text="15000"/>
+  </displayList>
+</component>
