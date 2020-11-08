@@ -5,22 +5,22 @@
     <image id="n20_keim" name="n20" src="rj2s2d" fileName="UI/grey_panel.png" xy="6,224" size="116,41" group="n28_keim"/>
     <image id="n21_keim" name="n21" src="rj2s37" fileName="UI/red_panel.png" xy="6,183" size="116,49" group="n28_keim"/>
     <text id="n22_keim" name="n22" xy="12,235" size="98,25" group="n28_keim" font="ui://4rc2pv9ap67146" fontSize="17" text="rorticus"/>
-    <text id="n23_keim" name="n23" xy="13,187" size="97,42" group="n28_keim" font="ui://4rc2pv9ap67146" fontSize="30" color="#ffffff" text="15000"/>
+    <text id="n23_keim" name="n23" xy="13,187" size="97,42" group="n28_keim" font="ui://4rc2pv9ap67146" fontSize="30" color="#ffffff" strokeColor="#000000" strokeSize="2" text="15000"/>
     <group id="n28_keim" name="Player 3" xy="6,183" size="116,82"/>
     <image id="n38_wxlc" name="n38" src="rj2s2d" fileName="UI/grey_panel.png" xy="8,136" size="116,41" group="n42_wxlc"/>
     <image id="n39_wxlc" name="n39" src="rj2s1e" fileName="UI/green_panel.png" xy="8,95" size="116,49" group="n42_wxlc"/>
     <text id="n40_wxlc" name="n40" xy="14,147" size="98,25" group="n42_wxlc" font="ui://4rc2pv9ap67146" fontSize="17" text="rorticus"/>
-    <text id="n41_wxlc" name="n41" xy="15,99" size="97,42" group="n42_wxlc" font="ui://4rc2pv9ap67146" fontSize="30" color="#ffffff" text="15000"/>
+    <text id="n41_wxlc" name="n41" xy="15,99" size="97,42" group="n42_wxlc" font="ui://4rc2pv9ap67146" fontSize="30" color="#ffffff" strokeColor="#000000" strokeSize="2" text="15000"/>
     <group id="n42_wxlc" name="Player 3" xy="8,95" size="116,82"/>
     <image id="n43_wxlc" name="n43" src="rj2s2d" fileName="UI/grey_panel.png" xy="8,49" size="116,41" group="n47_wxlc"/>
     <image id="n44_wxlc" name="n44" src="rj2sl" fileName="UI/blue_panel.png" xy="8,8" size="116,49" group="n47_wxlc"/>
     <text id="n45_wxlc" name="n45" xy="14,60" size="98,25" group="n47_wxlc" font="ui://4rc2pv9ap67146" fontSize="17" text="rorticus"/>
-    <text id="n46_wxlc" name="n46" xy="15,12" size="97,42" group="n47_wxlc" font="ui://4rc2pv9ap67146" fontSize="30" color="#ffffff" text="15000"/>
+    <text id="n46_wxlc" name="n46" xy="15,12" size="97,42" group="n47_wxlc" font="ui://4rc2pv9ap67146" fontSize="30" color="#ffffff" strokeColor="#000000" strokeSize="2" text="15000"/>
     <group id="n47_wxlc" name="Player 3" xy="8,8" size="116,82"/>
     <image id="n48_wxlc" name="n48" src="rj2s2d" fileName="UI/grey_panel.png" xy="6,314" size="116,41" group="n52_wxlc"/>
     <image id="n49_wxlc" name="n49" src="rj2s3x" fileName="UI/yellow_panel.png" xy="6,273" size="116,49" group="n52_wxlc"/>
     <text id="n50_wxlc" name="n50" xy="12,325" size="98,25" group="n52_wxlc" font="ui://4rc2pv9ap67146" fontSize="17" text="rorticus"/>
-    <text id="n51_wxlc" name="n51" xy="13,277" size="97,42" group="n52_wxlc" font="ui://4rc2pv9ap67146" fontSize="30" color="#ffffff" text="15000"/>
+    <text id="n51_wxlc" name="n51" xy="13,277" size="97,42" group="n52_wxlc" font="ui://4rc2pv9ap67146" fontSize="30" color="#ffffff" strokeColor="#000000" strokeSize="2" text="15000"/>
     <group id="n52_wxlc" name="Player 3" xy="6,273" size="116,82"/>
     <image id="n54_wxlc" name="n54" src="rj2s2d" fileName="UI/grey_panel.png" xy="931,6" size="84,41" group="n56_wxlc"/>
     <image id="n53_wxlc" name="n53" src="keim4g" fileName="HUD/bomb.png" xy="938,8" group="n56_wxlc"/>

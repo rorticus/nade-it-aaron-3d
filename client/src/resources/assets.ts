@@ -11,13 +11,13 @@ export const bomb = require("../resources/models/bomb.glb");
 
 export const explosion = require("../resources/models/explosion.glb");
 
-export const levelBackground = require('./models/level-background.glb');
+export const levelBackground = require("./models/level-background.glb");
 
 export const powerPowerUp = require("../resources/models/power_powerup.glb");
 export const bombPowerUp = require("../resources/models/bomb_powerup.glb");
 
-export const hudBombs = require("./images/hud-bombs.png");
-export const hudPower = require("./images/hud-power.png");
+export const hudBombs = require("./images/badge-bomb.png");
+export const hudPower = require("./images/badge-fire.png");
 
 export const logo = require("./images/logo.png").default;
 export const instructions = require("./images/instructions.png").default;
@@ -38,6 +38,10 @@ export const readyBadge = require("./images/ready-badge.png").default;
 
 const bomberman17Image = require("./bomberman17.png").default;
 const bomberman17Font = require("./bomberman17.fnt");
+const bomberman30Image = require("./bomberman30.png").default;
+const bomberman30Font = require("./bomberman17.fnt");
+const bomberman30BlackImage = require("./bomberman30black.png").default;
+const bomberman30BlackFont = require("./bomberman30black.fnt");
 
 export let hudBombsImage: HTMLImageElement;
 export let hudPowerImage: HTMLImageElement;
@@ -53,12 +57,19 @@ export async function loadImage(url: string) {
 }
 
 export let bomberman17: FontDefinition;
+export let bomberman30: FontDefinition;
+export let bomberman30Black: FontDefinition;
 
 export async function loadAssets() {
 	hudBombsImage = await loadImage(hudBombs.default);
 	hudPowerImage = await loadImage(hudPower.default);
 
 	bomberman17 = await loadFont(bomberman17Image, bomberman17Font);
+	bomberman30 = await loadFont(bomberman30Image, bomberman30Font);
+	bomberman30Black = await loadFont(
+		bomberman30BlackImage,
+		bomberman30BlackFont
+	);
 }
 
 export async function loadFont(

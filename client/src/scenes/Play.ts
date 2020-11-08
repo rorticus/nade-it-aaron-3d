@@ -15,6 +15,8 @@ import {
 import { ExplosionDescription } from "../interfaces";
 import { createMapGameObject, createTileAt } from "../map";
 import {
+	bomberman30Black,
+	hudBombs,
 	hudBombsImage,
 	hudPowerImage,
 	levelBackground,
@@ -28,7 +30,9 @@ import {
 	createBomb,
 	createExplosion,
 	createPowerUp,
+	drawTextOnCanvas,
 	mapToWorldCoordinates,
+	textDimensions,
 } from "./helpers";
 
 function createScoreBox(engine: Engine, player: Player) {
@@ -126,6 +130,45 @@ function createScoreBox(engine: Engine, player: Player) {
 	return scoreBox;
 }
 
+export function createBadge(
+	engine: Engine,
+	image: CanvasImageSource,
+	y: number
+) {
+	const canvas = document.createElement("canvas");
+	canvas.width = 84;
+	canvas.height = 42;
+	const context = canvas.getContext("2d");
+
+	const gameObject = sprite(engine, canvas);
+	positionSpriteOnCanvas(engine, gameObject, 931, y, 84, 42);
+
+	function update(value: number) {
+		context.clearRect(0, 0, 84, 42);
+		const num = `${value}`;
+
+		context.drawImage(image, 0, 0);
+
+		const textBounds = textDimensions(bomberman30Black, num);
+		drawTextOnCanvas(
+			context,
+			num,
+			bomberman30Black,
+			84 - textBounds.width - 8,
+			42 / 2 - textBounds.height / 2
+		);
+
+		updateSpriteFromSource(engine, gameObject, canvas);
+	}
+
+	update(1);
+
+	return {
+		gameObject,
+		update,
+	};
+}
+
 export class Play extends Scene {
 	constructor(public engine: Engine, public room: Room<GameState>) {
 		super();
@@ -152,12 +195,30 @@ export class Play extends Scene {
 
 		this.addGameObject(map);
 
+		const bombBadge = createBadge(engine, hudBombsImage, 5);
+		const fireBadge = createBadge(engine, hudPowerImage, 52);
+
+		this.addGameObject(bombBadge.gameObject);
+		this.addGameObject(fireBadge.gameObject);
+
 		// add players to the map
 		Object.keys(room.state.players).forEach((key) => {
-			const player = room.state.players[key];
+			const player: Player = room.state.players[key];
 
 			this.addGameObject(configurePlayerModel(engine, room.state.map, player));
-			this.addGameObject(createScoreBox(engine, player));
+			// this.addGameObject(createScoreBox(engine, player));
+
+			if (player.id === room.sessionId) {
+				player.onChange = (changes) => {
+					changes.forEach((change) => {
+						if (change.field === "bombsAllowed") {
+							bombBadge.update(change.value);
+						} else if (change.field === "bombLength") {
+							fireBadge.update(change.value);
+						}
+					});
+				};
+			}
 		});
 
 		this.room.state.players.onChange = (player) => {

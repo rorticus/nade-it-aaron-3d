@@ -161,6 +161,7 @@
     <component id="qo4g4f" name="HUD.xml" path="/HUD/"/>
     <image id="keim4g" name="bomb.png" path="/HUD/"/>
     <image id="keim4h" name="fire.png" path="/HUD/"/>
+    <image id="ccqv4i" name="game-screen-colored-names.jpg" path="/HUD/"/>
   </resources>
   <publish name="" path="/Users/rory/Desktop" packageCount="2"/>
 </packageDescription>
