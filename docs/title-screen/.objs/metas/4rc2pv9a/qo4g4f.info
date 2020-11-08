@@ -1,6 +1,6 @@
 {
   "objectStatus": {
-    "n59_wxlc": {
+    "n50_wxlc": {
       "hidden": true
     },
     "n42_wxlc": {
@@ -9,14 +9,26 @@
     "n28_keim": {
       "collapsed": true
     },
+    "n40_wxlc": {
+      "hidden": true
+    },
+    "n23_keim": {
+      "hidden": true
+    },
+    "n51_wxlc": {
+      "hidden": true
+    },
     "n60_wxlc": {
       "collapsed": true
     },
-    "n47_wxlc": {
-      "collapsed": true
+    "n41_wxlc": {
+      "hidden": true
     },
-    "n52_wxlc": {
-      "collapsed": true
+    "n22_keim": {
+      "hidden": true
+    },
+    "n59_wxlc": {
+      "hidden": true
     }
   }
 }

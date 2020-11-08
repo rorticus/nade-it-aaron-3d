@@ -15,11 +15,17 @@ import {
 import { ExplosionDescription } from "../interfaces";
 import { createMapGameObject, createTileAt } from "../map";
 import {
+	bomberman17,
+	bomberman28,
 	bomberman30Black,
 	hudBombs,
 	hudBombsImage,
 	hudPowerImage,
 	levelBackground,
+	scoreboxPlayer1,
+	scoreboxPlayer2,
+	scoreboxPlayer3,
+	scoreboxPlayer4,
 } from "../resources/assets";
 import * as hudInfo from "../resources/hud.json";
 import { GameState } from "../state/GameState";
@@ -169,6 +175,106 @@ export function createBadge(
 	};
 }
 
+export function createPlayerScoreBox(
+	engine: Engine,
+	index: number,
+	name: string,
+	scoreboxY: number
+) {
+	let image: string;
+
+	switch (index) {
+		case 1:
+			image = scoreboxPlayer1;
+			break;
+		case 2:
+			image = scoreboxPlayer2;
+			break;
+		case 3:
+			image = scoreboxPlayer3;
+			break;
+		case 4:
+			image = scoreboxPlayer4;
+			break;
+	}
+
+	const box = sprite(engine, image);
+
+	const canvas = document.createElement("canvas");
+	canvas.width = 116;
+	canvas.height = 49;
+	const context = canvas.getContext("2d");
+
+	const textBit = sprite(engine, canvas);
+
+	function update(value: number) {
+		context.clearRect(0, 0, 116, 49);
+		const num = `${value}`;
+
+		const textBounds = textDimensions(bomberman28, num);
+		drawTextOnCanvas(
+			context,
+			num,
+			bomberman28,
+			116 / 2 - textBounds.width / 2,
+			49 / 2 - textBounds.height / 2
+		);
+
+		updateSpriteFromSource(engine, textBit, canvas);
+	}
+
+	positionSpriteOnCanvas(engine, textBit, 5, scoreboxY, 116, 49);
+	positionSpriteOnCanvas(engine, box, 5, scoreboxY, 116, 82);
+
+	textBit.renderPhase = "alpha";
+	box.renderPhase = "alpha";
+
+	const dim = textDimensions(bomberman17, name);
+
+	const c = document.createElement("canvas");
+	c.width = dim.width;
+	c.height = dim.height;
+
+	const context2 = c.getContext("2d");
+	drawTextOnCanvas(context2, name, bomberman17, 0, 0);
+	const nameObject = sprite(engine, c);
+	nameObject.renderPhase = "alpha";
+
+	const aspect = dim.width / dim.height;
+
+	if (dim.width > 116) {
+		let newWidth = 116;
+		let newHeight = newWidth * aspect;
+
+		positionSpriteOnCanvas(
+			engine,
+			nameObject,
+			5 + 116 / 2 - newWidth / 2,
+			scoreboxY + 49 + 32 / 2 - newHeight / 2,
+			newWidth,
+			newHeight
+		);
+	} else {
+		positionSpriteOnCanvas(
+			engine,
+			nameObject,
+			5 + 116 / 2 - dim.width / 2,
+			scoreboxY + 49 + 32 / 2 - dim.height / 2,
+			dim.width,
+			dim.height
+		);
+	}
+
+	update(0);
+
+	return {
+		gameObjectScorebox: box,
+		gameObjectText: textBit,
+		gameObjectName: nameObject,
+		update,
+	};
+}
+
 export class Play extends Scene {
 	constructor(public engine: Engine, public room: Room<GameState>) {
 		super();
@@ -202,6 +308,8 @@ export class Play extends Scene {
 		this.addGameObject(fireBadge.gameObject);
 
 		// add players to the map
+		let scoreboxY = 5;
+
 		Object.keys(room.state.players).forEach((key) => {
 			const player: Player = room.state.players[key];
 
@@ -219,6 +327,18 @@ export class Play extends Scene {
 					});
 				};
 			}
+
+			const scorebox = createPlayerScoreBox(
+				engine,
+				player.index,
+				player.name,
+				scoreboxY
+			);
+			this.addGameObject(scorebox.gameObjectScorebox);
+			this.addGameObject(scorebox.gameObjectText);
+			this.addGameObject(scorebox.gameObjectName);
+
+			scoreboxY += 82 + 5;
 		});
 
 		this.room.state.players.onChange = (player) => {
