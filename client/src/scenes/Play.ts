@@ -1,17 +1,6 @@
 import { Room } from "colyseus.js";
 import { vec3 } from "gl-matrix";
-import {
-	Camera,
-	Engine,
-	GameObject,
-	loadGLB,
-	Scene,
-	TranslationAnimationChannel,
-} from "webgl-engine";
-import {
-	AnimationState,
-	AnimationWrapMode,
-} from "webgl-engine/lib/animation/AnimationState";
+import { Camera, Engine, GameObject, loadGLB, Scene } from "webgl-engine";
 import { GameComponentContext } from "webgl-engine/lib/interfaces";
 import { KeyboardKey } from "webgl-engine/lib/services/KeyboardService";
 import {
@@ -23,181 +12,24 @@ import {
 	PlayerMovement,
 	PlayerMovementTag,
 } from "../components/PlayerMovement";
+import { ExplosionDescription } from "../interfaces";
 import { createMapGameObject, createTileAt } from "../map";
-import { getPlayerSkin, updatePlayerSkin } from "../players";
 import {
-	bomb,
-	bombPowerUp,
-	character,
-	explosion,
 	hudBombsImage,
 	hudPowerImage,
 	levelBackground,
-	powerPowerUp,
 } from "../resources/assets";
 import * as hudInfo from "../resources/hud.json";
 import { GameState } from "../state/GameState";
-import { MapInfo } from "../state/MapInfo";
 import { Player } from "../state/Player";
 import { PowerUp } from "../state/PowerUp";
-
-export interface ExplosionDescription {
-	origin: [number, number];
-	north: number;
-	east: number;
-	south: number;
-	west: number;
-}
-
-export function mapToWorldCoordinates(
-	map: MapInfo,
-	x: number,
-	y: number
-): vec3 {
-	return vec3.fromValues(x - map.width / 2, 0, y - map.height / 2);
-}
-
-export function configurePlayerModel(
-	engine: Engine,
-	map: MapInfo,
-	player: Player
-) {
-	const characterModel = loadGLB(
-		engine.gl,
-		engine.programs.standard,
-		character
-	);
-	characterModel.id = player.id;
-	characterModel.position = mapToWorldCoordinates(
-		map,
-		player.position.x,
-		player.position.y
-	);
-	characterModel.scale = vec3.fromValues(0.35, 0.35, 0.35);
-	characterModel.animation.transitionTo("Idle", 0);
-	characterModel.rotateY(player.rotation);
-	updatePlayerSkin(engine, characterModel, getPlayerSkin(player.index));
-
-	const movementTracker = new PlayerMovement();
-	characterModel.addComponent(movementTracker);
-
-	characterModel.animation.addTransition(
-		"Idle",
-		"Walk",
-		() => {
-			return movementTracker.isMoving();
-		},
-		0.1
-	);
-
-	characterModel.animation.addTransition(
-		"Walk",
-		"Idle",
-		() => {
-			return !movementTracker.isMoving();
-		},
-		0.1
-	);
-
-	characterModel.animation.addTransition("Walk", "Walk", () => false);
-
-	characterModel.animation.addTransition(
-		"Interact_ground",
-		"Idle",
-		(condition, gameObject, duration) => {
-			return condition.deltaInSeconds > duration / 2 - 0.66;
-		},
-		0.33
-	);
-
-	characterModel.animation.states["Walk"].timeScale = 2;
-	characterModel.animation.states["Interact_ground"].timeScale = 2;
-
-	return characterModel;
-}
-
-function createBomb(engine: Engine) {
-	const model = loadGLB(engine.gl, engine.programs.standard, bomb);
-
-	model.animation.configure("Spawn", {
-		wrap: AnimationWrapMode.None,
-	});
-	model.animation.configure("Pulses", {
-		wrap: AnimationWrapMode.Loop,
-	});
-
-	model.animation.initialState = "Spawn";
-	model.animation.addTransition(
-		"Spawn",
-		"Pulses",
-		(context, gameObject, playDuration, totalDuration) => {
-			return playDuration > totalDuration;
-		}
-	);
-
-	return model;
-}
-
-export function createExplosion(engine: Engine, desc: ExplosionDescription) {
-	const north = loadGLB(engine.gl, engine.programs.standard, explosion);
-	north.rotateY((90 * Math.PI) / 180);
-
-	const east = loadGLB(engine.gl, engine.programs.standard, explosion);
-
-	const west = loadGLB(engine.gl, engine.programs.standard, explosion);
-	west.rotateY((180 * Math.PI) / 180);
-
-	const south = loadGLB(engine.gl, engine.programs.standard, explosion);
-	south.rotateY((270 * Math.PI) / 180);
-
-	const model = new GameObject();
-	model.add(north);
-	model.add(east);
-	model.add(west);
-	model.add(south);
-
-	function animationIn(model: GameObject, size: number) {
-		const originalPosition = vec3.clone(
-			model.getObjectById("Slider", true).position
-		);
-		vec3.add(originalPosition, originalPosition, vec3.fromValues(0, -0.5, 0));
-		const newPosition = vec3.create();
-
-		vec3.add(newPosition, originalPosition, vec3.fromValues(0, size, 0));
-
-		return new TranslationAnimationChannel(
-			model.getObjectById("Slider", true),
-			[0, 0.25, 0.5],
-			[originalPosition, newPosition, originalPosition]
-		);
-	}
-
-	const state = new AnimationState();
-	state.channels = [
-		animationIn(north, desc.north),
-		animationIn(east, desc.east),
-		animationIn(west, desc.west),
-		animationIn(south, desc.south),
-	];
-
-	model.animation.registerState("explode", state);
-	model.animation.initialState = "explode";
-	model.animation.registerState("finished", new AnimationState());
-	model.animation.configure("finished", {
-		onEnter() {
-			model.removeFromParent();
-		},
-	});
-	model.animation.addTransition(
-		"explode",
-		"finished",
-		(context, gameObject, playDuration, totalDuration) => {
-			return playDuration > totalDuration;
-		}
-	);
-
-	return model;
-}
+import {
+	configurePlayerModel,
+	createBomb,
+	createExplosion,
+	createPowerUp,
+	mapToWorldCoordinates,
+} from "./helpers";
 
 function createScoreBox(engine: Engine, player: Player) {
 	const scoreBox = new GameObject();
@@ -292,31 +124,6 @@ function createScoreBox(engine: Engine, player: Player) {
 	);
 
 	return scoreBox;
-}
-
-export function createPowerUp(engine: Engine, powerUp: PowerUp) {
-	const models: Record<string, ArrayBuffer> = {
-		bomb: bombPowerUp,
-		power: powerPowerUp,
-	};
-
-	const model = loadGLB(
-		engine.gl,
-		engine.programs.standard,
-		models[powerUp.type]
-	);
-	model.id = powerUp.id;
-
-	model.animation.initialState = "Spawn";
-	model.animation.addTransition(
-		"Spawn",
-		"Advertise",
-		(context, gameObject, playDuration, totalDuration) => {
-			return playDuration > totalDuration;
-		}
-	);
-
-	return model;
 }
 
 export class Play extends Scene {

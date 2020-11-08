@@ -14,3 +14,11 @@ export interface FontDefinition {
 	definition: string;
 	characterInfo?: Record<string, CharacterPlacement>;
 }
+
+export interface ExplosionDescription {
+	origin: [number, number];
+	north: number;
+	east: number;
+	south: number;
+	west: number;
+}
