@@ -1,5 +1,5 @@
-import {Engine, GameObject} from "webgl-engine";
-import {createTexture, loadTextureFromSource} from "webgl-engine/lib/webgl/utils";
+import { Engine, GameObject } from "webgl-engine";
+import { createTexture, loadTextureFromSource } from "webgl-engine/lib/webgl/utils";
 
 const playerSkins = [
     require('./resources/images/player1-skin.png').default,

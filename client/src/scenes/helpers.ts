@@ -1,4 +1,4 @@
-import { vec3 } from "gl-matrix";
+import { vec3, vec4 } from "gl-matrix";
 import {
 	Engine,
 	GameObject,
@@ -22,6 +22,13 @@ import {
 import { MapInfo } from "../state/MapInfo";
 import { Player } from "../state/Player";
 import { PowerUp } from "../state/PowerUp";
+
+export const playerColors = [
+	vec4.fromValues(0, 0, 1, 1),
+	vec4.fromValues(0, 1, 0, 1),
+	vec4.fromValues(1, 0, 0, 1),
+	vec4.fromValues(1, 1, 0, 1),
+];
 
 export function drawTextOnCanvas(
 	context: CanvasRenderingContext2D,

@@ -38,103 +38,10 @@ import {
 	createPowerUp,
 	drawTextOnCanvas,
 	mapToWorldCoordinates,
+	playerColors,
 	textDimensions,
 } from "./helpers";
-
-function createScoreBox(engine: Engine, player: Player) {
-	const scoreBox = new GameObject();
-	const hudPosition = hudInfo.positions[player.index - 1];
-
-	const canvas = document.createElement("canvas");
-	canvas.width = 300;
-	canvas.height = 150;
-	const context = canvas.getContext("2d");
-
-	function renderScorebox() {
-		context.fillStyle = "white";
-		context.font = "bold 75px sans-serif";
-		context.textBaseline = "top";
-		context.textAlign = "left";
-
-		context.clearRect(0, 0, 300, 150);
-
-		const score = `${player.score}`.padStart(6, "0");
-
-		const textBounds = context.measureText(score);
-
-		function drawIconWithBadge(
-			image: CanvasImageSource,
-			x: number,
-			y: number,
-			badge: number
-		) {
-			context.drawImage(hudBombsImage, x, y);
-			context.fillStyle = "red";
-			context.beginPath();
-			context.arc(x + 48, y + 42, 12, 0, 360);
-			context.fill();
-			context.closePath();
-
-			context.fillStyle = "white";
-			context.font = "bold 12px sans-serif";
-			context.textBaseline = "middle";
-			context.textAlign = "center";
-			context.fillText(String(badge), x + 48, y + 42);
-		}
-
-		if (hudPosition.alignment === "left") {
-			context.fillText(
-				score,
-				0,
-				100 -
-					(textBounds.fontBoundingBoxDescent - textBounds.fontBoundingBoxAscent)
-			);
-
-			drawIconWithBadge(hudBombsImage, 0, 90, player.bombsAllowed);
-			drawIconWithBadge(hudPowerImage, 64, 90, player.bombLength);
-		} else if (hudPosition.alignment === "right") {
-			context.fillText(
-				score,
-				300 - textBounds.width,
-				100 -
-					(textBounds.fontBoundingBoxDescent - textBounds.fontBoundingBoxAscent)
-			);
-
-			drawIconWithBadge(hudBombsImage, 300 - 128, 90, player.bombsAllowed);
-			drawIconWithBadge(hudPowerImage, 300 - 64, 90, player.bombLength);
-		}
-	}
-
-	renderScorebox();
-
-	const canvasSprite = sprite(engine, canvas);
-
-	player.onChange = (changes) => {
-		changes.forEach((change) => {
-			if (
-				change.field === "score" ||
-				change.field === "bombsAllowed" ||
-				change.field === "bombLength"
-			) {
-				renderScorebox();
-				updateSpriteFromSource(engine, canvasSprite, canvas);
-			}
-		});
-	};
-
-	scoreBox.add(canvasSprite);
-
-	positionSpriteOnCanvas(
-		engine,
-		scoreBox,
-		hudPosition.x,
-		hudPosition.y,
-		300,
-		150
-	);
-
-	return scoreBox;
-}
+import { StandardMaterialInstance } from "webgl-engine/lib/StandardMaterialInstance";
 
 export function createBadge(
 	engine: Engine,
@@ -313,11 +220,18 @@ export class Play extends Scene {
 		Object.keys(room.state.players).forEach((key) => {
 			const player: Player = room.state.players[key];
 
-			this.addGameObject(configurePlayerModel(engine, room.state.map, player));
-			// this.addGameObject(createScoreBox(engine, player));
+			const playerModel = configurePlayerModel(engine, room.state.map, player);
+			this.addGameObject(playerModel);
 
-			if (player.id === room.sessionId) {
-				player.onChange = (changes) => {
+			const material = new StandardMaterialInstance();
+			material.outlineColor = playerColors[player.index - 1];
+			playerModel.getObjectById(
+				"characterMedium",
+				true
+			).renderable.materialInstance = material;
+
+			player.onChange = (changes) => {
+				if (player.id === room.sessionId) {
 					changes.forEach((change) => {
 						if (change.field === "bombsAllowed") {
 							bombBadge.update(change.value);
@@ -325,8 +239,14 @@ export class Play extends Scene {
 							fireBadge.update(change.value);
 						}
 					});
-				};
-			}
+				}
+
+				changes.forEach((change) => {
+					if (change.field === "score") {
+						scorebox.update(change.value);
+					}
+				});
+			};
 
 			const scorebox = createPlayerScoreBox(
 				engine,
