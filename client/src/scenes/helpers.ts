@@ -3,6 +3,7 @@ import {
 	Engine,
 	GameObject,
 	loadGLB,
+	ScaleAnimationChannel,
 	TranslationAnimationChannel,
 } from "webgl-engine";
 import {
@@ -10,13 +11,19 @@ import {
 	AnimationWrapMode,
 } from "webgl-engine/lib/animation/AnimationState";
 import { PlayerMovement } from "../components/PlayerMovement";
-import { ExplosionDescription, FontDefinition } from "../interfaces";
+import {
+	ExplosionDescription,
+	FireDescription,
+	FontDefinition,
+} from "../interfaces";
 import { getPlayerSkin, updatePlayerSkin } from "../players";
 import {
 	bomb,
 	bombPowerUp,
 	character,
 	explosion,
+	explosionCube,
+	explosionTemplate,
 	powerPowerUp,
 } from "../resources/assets";
 import { MapInfo } from "../state/MapInfo";
@@ -171,65 +178,52 @@ export function createBomb(engine: Engine) {
 	return model;
 }
 
-export function createExplosion(engine: Engine, desc: ExplosionDescription) {
-	const north = loadGLB(engine.gl, engine.programs.standard, explosion);
-	north.rotateY((90 * Math.PI) / 180);
+export function createFireBlock(engine: Engine, desc: FireDescription) {
+	const e = explosionTemplate.clone();
 
-	const east = loadGLB(engine.gl, engine.programs.standard, explosion);
-
-	const west = loadGLB(engine.gl, engine.programs.standard, explosion);
-	west.rotateY((180 * Math.PI) / 180);
-
-	const south = loadGLB(engine.gl, engine.programs.standard, explosion);
-	south.rotateY((270 * Math.PI) / 180);
-
-	const model = new GameObject();
-	model.add(north);
-	model.add(east);
-	model.add(west);
-	model.add(south);
-
-	function animationIn(model: GameObject, size: number) {
-		const originalPosition = vec3.clone(
-			model.getObjectById("Slider", true).position
+	e.animation.registerState("explodingIn", new AnimationState());
+	e.animation.registerState("explodingOut", new AnimationState());
+	e.animation
+		.getState("explodingIn")
+		.channels.push(
+			new ScaleAnimationChannel(
+				e,
+				[0, 0.25],
+				[vec3.fromValues(2, 0, 2), vec3.fromValues(2, 1, 2)]
+			)
 		);
-		vec3.add(originalPosition, originalPosition, vec3.fromValues(0, -0.5, 0));
-		const newPosition = vec3.create();
-
-		vec3.add(newPosition, originalPosition, vec3.fromValues(0, size, 0));
-
-		return new TranslationAnimationChannel(
-			model.getObjectById("Slider", true),
-			[0, 0.25, 0.5],
-			[originalPosition, newPosition, originalPosition]
+	e.animation
+		.getState("explodingOut")
+		.channels.push(
+			new ScaleAnimationChannel(
+				e,
+				[desc.duration - 0.5, desc.duration - 0.25],
+				[vec3.fromValues(2, 1, 2), vec3.fromValues(2, 0, 2)]
+			)
 		);
-	}
+	e.animation.initialState = "explodingIn";
 
-	const state = new AnimationState();
-	state.channels = [
-		animationIn(north, desc.north),
-		animationIn(east, desc.east),
-		animationIn(west, desc.west),
-		animationIn(south, desc.south),
-	];
+	e.animation.addTransition(
+		"explodingIn",
+		"explodingOut",
+		(context, go, playDuration, totalDuration) => playDuration > totalDuration
+	);
 
-	model.animation.registerState("explode", state);
-	model.animation.initialState = "explode";
-	model.animation.registerState("finished", new AnimationState());
-	model.animation.configure("finished", {
+	e.animation.registerState("finished", new AnimationState());
+	e.animation.configure("finished", {
 		onEnter() {
-			model.removeFromParent();
+			e.removeFromParent();
 		},
 	});
-	model.animation.addTransition(
-		"explode",
+	e.animation.addTransition(
+		"explodingOut",
 		"finished",
 		(context, gameObject, playDuration, totalDuration) => {
 			return playDuration > totalDuration;
 		}
 	);
 
-	return model;
+	return e;
 }
 
 export function createPowerUp(engine: Engine, powerUp: PowerUp) {

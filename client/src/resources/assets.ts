@@ -1,3 +1,4 @@
+import { Engine, GameObject, loadGLB } from "webgl-engine";
 import { CharacterPlacement, FontDefinition } from "../interfaces";
 
 export const backgroundImage = require("../resources/images/title-screen.jpg")
@@ -10,6 +11,7 @@ export const character = require("../resources/models/character.glb");
 export const bomb = require("../resources/models/bomb.glb");
 
 export const explosion = require("../resources/models/explosion.glb");
+export const explosionCube = require("./models/explosion_cube.glb");
 
 export const levelBackground = require("./models/level-background.glb");
 
@@ -35,10 +37,14 @@ export const waitingForPlayers = require("./images/waiting-for-players.png")
 export const notReady = require("./images/not-ready.png").default;
 export const ready = require("./images/ready.png").default;
 export const readyBadge = require("./images/ready-badge.png").default;
-export const scoreboxPlayer1 = require("./images/scorebox-player-1.png").default;
-export const scoreboxPlayer2 = require("./images/scorebox-player-2.png").default;
-export const scoreboxPlayer3 = require("./images/scorebox-player-3.png").default;
-export const scoreboxPlayer4 = require("./images/scorebox-player-4.png").default;
+export const scoreboxPlayer1 = require("./images/scorebox-player-1.png")
+	.default;
+export const scoreboxPlayer2 = require("./images/scorebox-player-2.png")
+	.default;
+export const scoreboxPlayer3 = require("./images/scorebox-player-3.png")
+	.default;
+export const scoreboxPlayer4 = require("./images/scorebox-player-4.png")
+	.default;
 
 const bomberman17Image = require("./bomberman17.png").default;
 const bomberman17Font = require("./bomberman17.fnt");
@@ -67,7 +73,9 @@ export let bomberman30: FontDefinition;
 export let bomberman30Black: FontDefinition;
 export let bomberman28: FontDefinition;
 
-export async function loadAssets() {
+export let explosionTemplate!: GameObject;
+
+export async function loadAssets(engine: Engine) {
 	hudBombsImage = await loadImage(hudBombs.default);
 	hudPowerImage = await loadImage(hudPower.default);
 
@@ -78,6 +86,12 @@ export async function loadAssets() {
 		bomberman30BlackFont
 	);
 	bomberman28 = await loadFont(bomberman28Image, bomberman28Font);
+
+	explosionTemplate = loadGLB(
+		engine.gl,
+		engine.programs.standard,
+		explosionCube
+	);
 }
 
 export async function loadFont(

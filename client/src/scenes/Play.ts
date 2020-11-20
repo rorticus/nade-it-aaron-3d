@@ -1,47 +1,46 @@
 import { Room } from "colyseus.js";
 import { vec3 } from "gl-matrix";
-import { Camera, Engine, GameObject, loadGLB, Scene } from "webgl-engine";
+import { Camera, Engine, loadGLB, Scene } from "webgl-engine";
 import { GameComponentContext } from "webgl-engine/lib/interfaces";
 import { KeyboardKey } from "webgl-engine/lib/services/KeyboardService";
+import { StandardMaterialInstance } from "webgl-engine/lib/StandardMaterialInstance";
 import {
 	positionSpriteOnCanvas,
 	sprite,
-	updateSpriteFromSource,
+	updateSpriteFromSource
 } from "webgl-engine/lib/webgl/utils";
 import {
 	PlayerMovement,
-	PlayerMovementTag,
+	PlayerMovementTag
 } from "../components/PlayerMovement";
-import { ExplosionDescription } from "../interfaces";
+import { ExplosionDescription, FireDescription } from "../interfaces";
 import { createMapGameObject, createTileAt } from "../map";
 import {
 	bomberman17,
 	bomberman28,
 	bomberman30Black,
-	hudBombs,
+
 	hudBombsImage,
 	hudPowerImage,
 	levelBackground,
 	scoreboxPlayer1,
 	scoreboxPlayer2,
 	scoreboxPlayer3,
-	scoreboxPlayer4,
+	scoreboxPlayer4
 } from "../resources/assets";
-import * as hudInfo from "../resources/hud.json";
 import { GameState } from "../state/GameState";
 import { Player } from "../state/Player";
 import { PowerUp } from "../state/PowerUp";
 import {
 	configurePlayerModel,
 	createBomb,
-	createExplosion,
+	createFireBlock,
 	createPowerUp,
 	drawTextOnCanvas,
 	mapToWorldCoordinates,
 	playerColors,
-	textDimensions,
+	textDimensions
 } from "./helpers";
-import { StandardMaterialInstance } from "webgl-engine/lib/StandardMaterialInstance";
 
 export function createBadge(
 	engine: Engine,
@@ -356,14 +355,13 @@ export class Play extends Scene {
 			});
 		};
 
-		this.room.onMessage("explode", (payload: ExplosionDescription) => {
-			// construct the explosion
-			const model = createExplosion(this.engine, payload);
+		this.room.onMessage("fire", (payload: FireDescription) => {
+			const model = createFireBlock(this.engine, payload);
 
 			model.position = vec3.fromValues(
-				payload.origin[0],
+				payload.position[0],
 				0.5,
-				payload.origin[1]
+				payload.position[1]
 			);
 
 			map.add(model);

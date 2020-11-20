@@ -22,3 +22,8 @@ export interface ExplosionDescription {
 	south: number;
 	west: number;
 }
+
+export interface FireDescription {
+	position: [number, number];
+	duration: number;
+}

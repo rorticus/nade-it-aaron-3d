@@ -23,13 +23,13 @@ const client = new Colyseus.Client(
 );
 
 async function main() {
-	await loadAssets();
 
 	const engine = new Engine(canvas);
 	engine.backgroundColor = [44 / 255, 216 / 255, 184 / 255];
 	engine.fpsUpdated = (fps) => {
 		debug.innerHTML = `${fps}`;
 	};
+	await loadAssets(engine);
 	engine.start();
 
 	client
