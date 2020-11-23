@@ -189,7 +189,7 @@ export function createFireBlock(engine: Engine, desc: FireDescription) {
 			new ScaleAnimationChannel(
 				e,
 				[0, 0.25],
-				[vec3.fromValues(2, 0, 2), vec3.fromValues(2, 1, 2)]
+				[vec3.fromValues(1, 0, 1), vec3.fromValues(1.25, 1, 1.25)]
 			)
 		);
 	e.animation
@@ -198,7 +198,7 @@ export function createFireBlock(engine: Engine, desc: FireDescription) {
 			new ScaleAnimationChannel(
 				e,
 				[desc.duration - 0.5, desc.duration - 0.25],
-				[vec3.fromValues(2, 1, 2), vec3.fromValues(2, 0, 2)]
+				[vec3.fromValues(1.25, 1, 1.25), vec3.fromValues(1, 0, 1)]
 			)
 		);
 	e.animation.initialState = "explodingIn";
