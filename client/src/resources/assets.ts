@@ -15,7 +15,7 @@ export const explosionCube = require("./models/explosion_cube.glb");
 
 export const levelBackground = require("./models/level-background.glb");
 
-export const powerPowerUp = require("../resources/models/power_powerup.glb");
+export const powerPowerUp = require("../resources/models/explosion_powerup.glb");
 export const bombPowerUp = require("../resources/models/bomb_powerup.glb");
 
 export const hudBombs = require("./images/badge-bomb.png");
