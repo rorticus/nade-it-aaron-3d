@@ -1,8 +1,10 @@
 import { vec3, vec4 } from "gl-matrix";
 import {
+	createConicalEmitter,
 	Engine,
 	GameObject,
 	loadGLB,
+	ParticleEmitter,
 	ScaleAnimationChannel,
 	TranslationAnimationChannel,
 } from "webgl-engine";
@@ -239,14 +241,29 @@ export function createPowerUp(engine: Engine, powerUp: PowerUp) {
 	);
 	model.id = powerUp.id;
 
-	model.animation.initialState = "Spawn";
-	model.animation.addTransition(
-		"Spawn",
-		"Advertise",
-		(context, gameObject, playDuration, totalDuration) => {
-			return playDuration > totalDuration;
-		}
-	);
+	if (model.animation.states["Spawn"]) {
+		model.animation.initialState = "Spawn";
+		model.animation.addTransition(
+			"Spawn",
+			"Advertise",
+			(context, gameObject, playDuration, totalDuration) => {
+				return playDuration > totalDuration;
+			}
+		);
+	}
+
+	const ps = new ParticleEmitter(engine.programs.particle);
+	ps.configure({
+		particlesPerSecond: 5,
+		lifeMin: 1,
+		lifeMax: 5,
+		sizeMin: 0.125,
+		sizeMax: 0.125,
+		color: [1, 1, 0, 1]
+	});
+	ps.emitModel = createConicalEmitter(0.5, 0.5);
+
+	model.add(ps);
 
 	return model;
 }
