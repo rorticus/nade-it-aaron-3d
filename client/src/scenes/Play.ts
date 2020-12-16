@@ -7,11 +7,11 @@ import { StandardMaterialInstance } from "webgl-engine/lib/StandardMaterialInsta
 import {
 	positionSpriteOnCanvas,
 	sprite,
-	updateSpriteFromSource
+	updateSpriteFromSource,
 } from "webgl-engine/lib/webgl/utils";
 import {
 	PlayerMovement,
-	PlayerMovementTag
+	PlayerMovementTag,
 } from "../components/PlayerMovement";
 import { ExplosionDescription, FireDescription } from "../interfaces";
 import { createMapGameObject, createTileAt } from "../map";
@@ -19,14 +19,13 @@ import {
 	bomberman17,
 	bomberman28,
 	bomberman30Black,
-
 	hudBombsImage,
 	hudPowerImage,
 	levelBackground,
 	scoreboxPlayer1,
 	scoreboxPlayer2,
 	scoreboxPlayer3,
-	scoreboxPlayer4
+	scoreboxPlayer4,
 } from "../resources/assets";
 import { GameState } from "../state/GameState";
 import { Player } from "../state/Player";
@@ -34,12 +33,13 @@ import { PowerUp } from "../state/PowerUp";
 import {
 	configurePlayerModel,
 	createBomb,
+	createBoxExplosion,
 	createFireBlock,
 	createPowerUp,
 	drawTextOnCanvas,
 	mapToWorldCoordinates,
 	playerColors,
-	textDimensions
+	textDimensions,
 } from "./helpers";
 
 export function createBadge(
@@ -347,6 +347,10 @@ export class Play extends Scene {
 								if (tile) {
 									const newTile = createTileAt(this.engine, x, y, 13);
 									tile.children[0].renderable = newTile.children[0].renderable;
+
+									const explosion = createBoxExplosion(engine);
+									explosion.position = mapToWorldCoordinates(room.state.map, x + 0.5, y + 0.5);
+									this.addGameObject(explosion);
 								}
 							}
 						}

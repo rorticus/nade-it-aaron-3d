@@ -22,6 +22,7 @@ import { getPlayerSkin, updatePlayerSkin } from "../players";
 import {
 	bomb,
 	bombPowerUp,
+	boxExplosion,
 	character,
 	explosion,
 	explosionCube,
@@ -259,11 +260,21 @@ export function createPowerUp(engine: Engine, powerUp: PowerUp) {
 		lifeMax: 5,
 		sizeMin: 0.125,
 		sizeMax: 0.125,
-		color: [1, 1, 0, 1]
+		color: [1, 1, 0, 1],
 	});
 	ps.emitModel = createConicalEmitter(0.5, 0.5);
 
 	model.add(ps);
+
+	return model;
+}
+
+export function createBoxExplosion(engine: Engine) {
+	const model = loadGLB(engine.gl, engine.programs.standard, boxExplosion);
+
+	model.animation.initialState = "Animation";
+	model.animation.configure("Animation", { wrap: AnimationWrapMode.None });
+	model.rotateY(Math.random() * Math.PI * 2);
 
 	return model;
 }

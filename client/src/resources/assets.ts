@@ -18,6 +18,8 @@ export const levelBackground = require("./models/level-background.glb");
 export const powerPowerUp = require("../resources/models/explosion_powerup.glb");
 export const bombPowerUp = require("../resources/models/bomb_powerup.glb");
 
+export const boxExplosion = require('../resources/models/box-explosion-single.glb');
+
 export const hudBombs = require("./images/badge-bomb.png");
 export const hudPower = require("./images/badge-fire.png");
 
