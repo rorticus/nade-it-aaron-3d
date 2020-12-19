@@ -108,44 +108,28 @@ export function generateMap(): MapInfo {
 	const maze = new RecursiveBackTracker();
 	const grid = new RectangleGrid((MAP_WIDTH - 1) / 2, (MAP_HEIGHT - 1) / 2);
 
-	// the corners are always left blank
-	// upper left
-	grid.cell(0, 0).type = GRID_CELL_SPAWN;
-	grid.cell(0, 1).type = GRID_CELL_SPAWN;
-	grid.cell(1, 0).type = GRID_CELL_SPAWN;
-	grid.cell(0, 0).link(grid.cell(0, 1));
-	grid.cell(0, 0).link(grid.cell(1, 0));
-
-	// upper right
-	grid.cell(0, grid.columns - 1).type = GRID_CELL_SPAWN;
-	grid.cell(0, grid.columns - 2).type = GRID_CELL_SPAWN;
-	grid.cell(1, grid.columns - 1).type = GRID_CELL_SPAWN;
-	grid.cell(0, grid.columns - 1).link(grid.cell(0, grid.columns - 2));
-	grid.cell(0, grid.columns - 1).link(grid.cell(1, grid.columns - 1));
-
-	// lower left
-	grid.cell(grid.rows - 1, 0).type = GRID_CELL_SPAWN;
-	grid.cell(grid.rows - 2, 0).type = GRID_CELL_SPAWN;
-	grid.cell(grid.rows - 1, 1).type = GRID_CELL_SPAWN;
-	grid.cell(grid.rows - 1, 0).link(grid.cell(grid.rows - 2, 0));
-	grid.cell(grid.rows - 1, 0).link(grid.cell(grid.rows - 1, 1));
-
-	// lower right
-	grid.cell(grid.rows - 1, grid.columns - 1).type = GRID_CELL_SPAWN;
-	grid.cell(grid.rows - 2, grid.columns - 1).type = GRID_CELL_SPAWN;
-	grid.cell(grid.rows - 1, grid.columns - 2).type = GRID_CELL_SPAWN;
-	grid
-		.cell(grid.rows - 1, grid.columns - 1)
-		.link(grid.cell(grid.rows - 2, grid.columns - 1));
-	grid
-		.cell(grid.rows - 1, grid.columns - 1)
-		.link(grid.cell(grid.rows - 1, grid.columns - 2));
-
 	maze.generate(grid);
 	grid.braid(1);
-	grid.pock(0.5);
+	grid.pock(0.75);
 
 	const rows = grid.toArray(GRID_CELL_WALL);
+
+	// top left
+	rows[1][1] = GRID_CELL_SPAWN;
+	rows[1][2] = GRID_CELL_SPAWN;
+	rows[2][1] = GRID_CELL_SPAWN;
+	// top right
+	rows[1][MAP_WIDTH - 2] = GRID_CELL_SPAWN;
+	rows[1][MAP_WIDTH - 3] = GRID_CELL_SPAWN;
+	rows[2][MAP_WIDTH - 2] = GRID_CELL_SPAWN;
+	// bottom left
+	rows[MAP_HEIGHT - 2][1] = GRID_CELL_SPAWN;
+	rows[MAP_HEIGHT - 3][1] = GRID_CELL_SPAWN;
+	rows[MAP_HEIGHT - 2][2] = GRID_CELL_SPAWN;
+	// bottom right
+	rows[MAP_HEIGHT - 2][MAP_WIDTH - 2] = GRID_CELL_SPAWN;
+	rows[MAP_HEIGHT - 3][MAP_WIDTH - 2] = GRID_CELL_SPAWN;
+	rows[MAP_HEIGHT - 2][MAP_WIDTH - 3] = GRID_CELL_SPAWN;
 
 	// outer walls are all the border type
 	for (let x = 0; x < MAP_WIDTH; x++) {
