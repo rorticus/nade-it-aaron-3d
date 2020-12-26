@@ -59,6 +59,10 @@ const bomberman28Font = require("./bomberman28.fnt");
 
 const rightStepSound = require("./sounds/right-footstep.mp3");
 const leftStepSound = require("./sounds/left-footstep.mp3");
+const dropBombSound = require("./sounds/drop-bomb.mp3");
+const explosionSound = require("./sounds/explosion.mp3");
+const fireCollectedSound = require("./sounds/fire-collected.mp3");
+const bombCollectedSound = require("./sounds/bomb-collected.mp3");
 
 export let hudBombsImage: HTMLImageElement;
 export let hudPowerImage: HTMLImageElement;
@@ -98,8 +102,14 @@ export async function loadAssets(engine: Engine) {
 		explosionCube
 	);
 
-	await engine.soundService.loadSoundEffect("left-step", leftStepSound);
-	await engine.soundService.loadSoundEffect("right-step", rightStepSound);
+	await Promise.all([
+		engine.soundService.loadSoundEffect("left-step", leftStepSound),
+		engine.soundService.loadSoundEffect("right-step", rightStepSound),
+		engine.soundService.loadSoundEffect("drop-bomb", dropBombSound),
+		engine.soundService.loadSoundEffect("explosion", explosionSound),
+		engine.soundService.loadSoundEffect("bomb-collected", bombCollectedSound),
+		engine.soundService.loadSoundEffect("fire-collected", fireCollectedSound),
+	]);
 }
 
 export async function loadFont(

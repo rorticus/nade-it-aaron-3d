@@ -162,6 +162,10 @@ export function configurePlayerModel(
 	characterModel.animation.states["Walk"].timeScale = 2;
 	characterModel.animation.states["Interact_ground"].timeScale = 2;
 
+	characterModel.animation
+		.getState("Interact_ground")
+		.addSoundAction(characterModel, 1.0, 1.25, "drop-bomb");
+
 	return characterModel;
 }
 

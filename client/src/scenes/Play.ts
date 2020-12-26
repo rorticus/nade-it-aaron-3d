@@ -1,6 +1,13 @@
 import { Room } from "colyseus.js";
 import { vec3 } from "gl-matrix";
-import { Camera, Engine, loadGLB, Scene } from "webgl-engine";
+import {
+	Camera,
+	Engine,
+	GameObject,
+	loadGLB,
+	Scene,
+	SoundComponent,
+} from "webgl-engine";
 import { GameComponentContext } from "webgl-engine/lib/interfaces";
 import { KeyboardKey } from "webgl-engine/lib/services/KeyboardService";
 import { StandardMaterialInstance } from "webgl-engine/lib/StandardMaterialInstance";
@@ -305,6 +312,10 @@ export class Play extends Scene {
 			const model = this.getObjectById(bomb.id);
 
 			if (model) {
+				const explosionSound = new GameObject();
+				explosionSound.addComponent(new SoundComponent("explosion"));
+				this.addGameObject(explosionSound);
+
 				this.removeGameObject(model);
 			} else {
 				console.error(`Cannot find bomb with id ${bomb.id}`);
@@ -331,6 +342,16 @@ export class Play extends Scene {
 			({ powerUp }: { powerUp: PowerUp }) => {
 				const model = this.getObjectById(powerUp.id);
 				model.removeFromParent();
+
+				const sound = new GameObject();
+
+				if (powerUp.type === "bomb") {
+					sound.addComponent(new SoundComponent("bomb-collected"));
+				} else if (powerUp.type === "power") {
+					sound.addComponent(new SoundComponent("fire-collected"));
+				}
+
+				this.addGameObject(sound);
 			}
 		);
 
