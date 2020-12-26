@@ -260,21 +260,30 @@ export class Play extends Scene {
 			scoreboxY += 82 + 5;
 		});
 
-		this.room.state.players.onChange = (player) => {
-			const model = this.getObjectById(player.id);
+		for (let playerKey in this.room.state.players) {
+			const player: Player = this.room.state.players[playerKey];
+			player.onChange = (changes) => {
+				const model = this.getObjectById(player.id);
 
-			const movement = model.findComponent<PlayerMovement>(PlayerMovementTag);
-			if (movement) {
-				const pos = mapToWorldCoordinates(
-					room.state.map,
-					player.position.x,
-					player.position.y
-				);
-				movement.setTarget(model, pos[0], model.position[1], pos[2]);
-			}
-
-			model.rotateY(player.rotation);
-		};
+				changes.forEach((change) => {
+					if (change.field === "position") {
+						const movement = model.findComponent<PlayerMovement>(
+							PlayerMovementTag
+						);
+						if (movement) {
+							const pos = mapToWorldCoordinates(
+								room.state.map,
+								player.position.x,
+								player.position.y
+							);
+							movement.setTarget(model, pos[0], model.position[1], pos[2]);
+						}
+					} else if (change.field === "rotation") {
+						model.rotateY(player.rotation);
+					}
+				});
+			};
+		}
 
 		// bomb is dropped
 		this.room.state.bombs.onAdd = (bomb, key) => {
@@ -349,7 +358,11 @@ export class Play extends Scene {
 									tile.children[0].renderable = newTile.children[0].renderable;
 
 									const explosion = createBoxExplosion(engine);
-									explosion.position = mapToWorldCoordinates(room.state.map, x + 0.5, y + 0.5);
+									explosion.position = mapToWorldCoordinates(
+										room.state.map,
+										x + 0.5,
+										y + 0.5
+									);
 									this.addGameObject(explosion);
 								}
 							}

@@ -36,7 +36,7 @@ module.exports = {
                 use: 'file-loader'
             },
             {
-                test: /\.glb$/,
+                test: /\.(glb|mp3)$/,
                 use: 'arraybuffer-loader'
             }
         ]

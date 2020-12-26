@@ -18,7 +18,7 @@ export const levelBackground = require("./models/level-background.glb");
 export const powerPowerUp = require("../resources/models/explosion_powerup.glb");
 export const bombPowerUp = require("../resources/models/bomb_powerup.glb");
 
-export const boxExplosion = require('../resources/models/box-explosion-single.glb');
+export const boxExplosion = require("../resources/models/box-explosion-single.glb");
 
 export const hudBombs = require("./images/badge-bomb.png");
 export const hudPower = require("./images/badge-fire.png");
@@ -57,6 +57,9 @@ const bomberman30BlackFont = require("./bomberman30black.fnt");
 const bomberman28Image = require("./bomberman28.png").default;
 const bomberman28Font = require("./bomberman28.fnt");
 
+const rightStepSound = require("./sounds/right-footstep.mp3");
+const leftStepSound = require("./sounds/left-footstep.mp3");
+
 export let hudBombsImage: HTMLImageElement;
 export let hudPowerImage: HTMLImageElement;
 
@@ -94,6 +97,9 @@ export async function loadAssets(engine: Engine) {
 		engine.programs.standard,
 		explosionCube
 	);
+
+	await engine.soundService.loadSoundEffect("left-step", leftStepSound);
+	await engine.soundService.loadSoundEffect("right-step", rightStepSound);
 }
 
 export async function loadFont(

@@ -143,6 +143,12 @@ export function configurePlayerModel(
 	);
 
 	characterModel.animation.addTransition("Walk", "Walk", () => false);
+	characterModel.animation
+		.getState("Walk")
+		.addSoundAction(characterModel, 0.125, 0.375, "left-step");
+	characterModel.animation
+		.getState("Walk")
+		.addSoundAction(characterModel, 0.791, 1, "right-step");
 
 	characterModel.animation.addTransition(
 		"Interact_ground",

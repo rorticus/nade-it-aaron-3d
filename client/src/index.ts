@@ -11,7 +11,7 @@ canvas.setAttribute("height", "768");
 
 document.body.appendChild(canvas);
 
-const debug = document.createElement('div');
+const debug = document.createElement("div");
 document.body.appendChild(debug);
 
 const host = window.document.location.host.replace(/:.*/, "");
@@ -23,7 +23,6 @@ const client = new Colyseus.Client(
 );
 
 async function main() {
-
 	const engine = new Engine(canvas);
 	engine.backgroundColor = [44 / 255, 216 / 255, 184 / 255];
 	engine.fpsUpdated = (fps) => {
@@ -32,8 +31,13 @@ async function main() {
 	await loadAssets(engine);
 	engine.start();
 
+	document.body.addEventListener("click", function soundResume() {
+		engine.soundService.resume();
+		document.body.removeEventListener("click", soundResume);
+	});
+
 	client
-		.joinOrCreate<GameState>("nadeit", { sessionId: "123", name: 'Unnamed' })
+		.joinOrCreate<GameState>("nadeit", { sessionId: "123", name: "Unnamed" })
 		.then((room) => {
 			console.log("sessionId", room.sessionId);
 
