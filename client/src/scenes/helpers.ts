@@ -286,5 +286,9 @@ export function createBoxExplosion(engine: Engine) {
 	model.animation.configure("Animation", { wrap: AnimationWrapMode.None });
 	model.rotateY(Math.random() * Math.PI * 2);
 
+	model.animation
+		.getState("Animation")
+		.addSoundAction(model, 0, 0.33, ["pop1", "pop2", "pop3"]);
+
 	return model;
 }
