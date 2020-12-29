@@ -1,4 +1,4 @@
-import { Room, Client } from "colyseus";
+import { Room, Client, ServerError } from "colyseus";
 import { GameState } from "./state/GameState";
 import { Player } from "./state/Player";
 import {
@@ -31,13 +31,30 @@ export interface MoveMessage {
 }
 
 export class NadeItAaron extends Room<GameState> {
+	sessionId: string;
+	started = false;
+
+	async onAuth(client: Client, options: any, request: any) {
+		if (options.sessionId !== this.sessionId) {
+			throw new ServerError(400, "Bad session ID");
+		}
+
+		if (this.started) {
+			throw new ServerError(400, "Game already started");
+		}
+
+		return true;
+	}
+
 	onCreate(options: any) {
+		this.sessionId = options.sessionId;
 		const state = new GameState();
 		state.map = generateMap();
 		this.setState(state);
 
 		this.onMessage("start", (client, message) => {
 			this.broadcast("start");
+			this.started = true;
 		});
 
 		this.onMessage<MoveMessage>("move", (client, message) => {
