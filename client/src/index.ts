@@ -46,6 +46,10 @@ async function main() {
 			room.onMessage("start", (message) => {
 				engine.scene = new Play(engine, room);
 			});
+		}).catch(e => {
+			if(e.message === 'GAME_STARTED') {
+				document.write('<h1>This game has already started. You missed your chance! 😭</h1>');
+			}
 		});
 }
 

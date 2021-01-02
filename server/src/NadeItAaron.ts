@@ -38,9 +38,9 @@ export class NadeItAaron extends Room<GameState> {
 		if (options.sessionId !== this.sessionId) {
 			throw new ServerError(400, "Bad session ID");
 		}
-
+		
 		if (this.started) {
-			throw new ServerError(400, "Game already started");
+			throw new ServerError(400, "GAME_STARTED");
 		}
 
 		return true;
