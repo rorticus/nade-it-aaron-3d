@@ -4,6 +4,7 @@ import cors from "cors";
 import { Server } from "colyseus";
 import { monitor } from "@colyseus/monitor";
 import bodyParser from "body-parser";
+import fetch from "node-fetch";
 
 import { NadeItAaron } from "./NadeItAaron";
 import { createSession, createJoinUrl } from "./server";
@@ -27,6 +28,7 @@ app.post("/slack/join", (req, res) => {
 	const {
 		actions,
 		user: { username },
+		response_url: slackResponseUrl,
 	} = JSON.parse(payloadJSON);
 	const action = actions[0];
 
@@ -35,22 +37,24 @@ app.post("/slack/join", (req, res) => {
 
 		const responseUrl = createJoinUrl(sessionId, username);
 
-		res.header("content-type", "application/json");
-		res.send(
-			JSON.stringify({
+		fetch(slackResponseUrl, {
+			method: "post",
+			headers: {
+				"content-type": "application/json",
+			},
+			body: JSON.stringify({
 				response_type: "ephemeral",
 				blocks: [
 					{
 						type: "section",
 						text: {
 							type: "mrkdwn",
-							text: `Great! [Click this link](${responseUrl}) to join.`,
+							text: `Great! click <${responseUrl}|this link> to join.`,
 						},
 					},
 				],
-			})
-		);
-		return;
+			}),
+		});
 	}
 
 	res.send();

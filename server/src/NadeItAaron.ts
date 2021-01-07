@@ -21,6 +21,7 @@ import { Bomb } from "./state/Bomb";
 import * as uuid from "uuid";
 import { PowerUp } from "./state/PowerUp";
 import * as scores from "./player/scores.json";
+import { consumeToken, validateSession, validateToken } from "./server";
 
 const FPS = 0.03333333;
 const PLAYER_SPEED = 2;
@@ -37,6 +38,14 @@ export class NadeItAaron extends Room<GameState> {
 	async onAuth(client: Client, options: any, request: any) {
 		if (options.sessionId !== this.sessionId) {
 			throw new ServerError(400, "Bad session ID");
+		}
+
+		if(!validateSession(this.sessionId)) {
+			throw new ServerError(400, "Bad session ID");
+		}
+		
+		if(!options.tokenId || !validateToken(options.tokenId)) {
+			throw new ServerError(400, "Invalid token ID");
 		}
 		
 		if (this.started) {
@@ -55,6 +64,7 @@ export class NadeItAaron extends Room<GameState> {
 		this.onMessage("start", (client, message) => {
 			this.broadcast("start");
 			this.started = true;
+			this.lock();
 		});
 
 		this.onMessage<MoveMessage>("move", (client, message) => {
@@ -151,7 +161,7 @@ export class NadeItAaron extends Room<GameState> {
 		player.isReady = false;
 		player.rotation = 0;
 		player.position = p;
-		player.name = options.name;
+		player.name = consumeToken(options.tokenId);
 
 		player.isHost = Object.keys(this.state.players).length === 0;
 
