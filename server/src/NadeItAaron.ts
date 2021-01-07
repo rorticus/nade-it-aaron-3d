@@ -64,7 +64,6 @@ export class NadeItAaron extends Room<GameState> {
 		this.onMessage("start", (client, message) => {
 			this.broadcast("start");
 			this.started = true;
-			this.lock();
 		});
 
 		this.onMessage<MoveMessage>("move", (client, message) => {
