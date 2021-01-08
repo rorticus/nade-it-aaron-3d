@@ -236,6 +236,16 @@ export class Play extends Scene {
 				true
 			).renderable.materialInstance = material;
 
+			const scorebox = createPlayerScoreBox(
+				engine,
+				player.index,
+				player.name,
+				scoreboxY
+			);
+			this.addGameObject(scorebox.gameObjectScorebox);
+			this.addGameObject(scorebox.gameObjectText);
+			this.addGameObject(scorebox.gameObjectName);
+
 			player.onChange = (changes) => {
 				if (player.id === room.sessionId) {
 					changes.forEach((change) => {
@@ -250,31 +260,8 @@ export class Play extends Scene {
 				changes.forEach((change) => {
 					if (change.field === "score") {
 						scorebox.update(change.value);
-					}
-				});
-			};
-
-			const scorebox = createPlayerScoreBox(
-				engine,
-				player.index,
-				player.name,
-				scoreboxY
-			);
-			this.addGameObject(scorebox.gameObjectScorebox);
-			this.addGameObject(scorebox.gameObjectText);
-			this.addGameObject(scorebox.gameObjectName);
-
-			scoreboxY += 82 + 5;
-		});
-
-		for (let playerKey in this.room.state.players) {
-			const player: Player = this.room.state.players[playerKey];
-			player.onChange = (changes) => {
-				const model = this.getObjectById(player.id);
-
-				changes.forEach((change) => {
-					if (change.field === "position") {
-						const movement = model.findComponent<PlayerMovement>(
+					} else if (change.field === "position") {
+						const movement = playerModel.findComponent<PlayerMovement>(
 							PlayerMovementTag
 						);
 						if (movement) {
@@ -283,14 +270,21 @@ export class Play extends Scene {
 								player.position.x,
 								player.position.y
 							);
-							movement.setTarget(model, pos[0], model.position[1], pos[2]);
+							movement.setTarget(
+								playerModel,
+								pos[0],
+								playerModel.position[1],
+								pos[2]
+							);
 						}
 					} else if (change.field === "rotation") {
-						model.rotateY(player.rotation);
+						playerModel.rotateY(player.rotation);
 					}
 				});
 			};
-		}
+
+			scoreboxY += 82 + 5;
+		});
 
 		// bomb is dropped
 		this.room.state.bombs.onAdd = (bomb, key) => {

@@ -11,8 +11,8 @@ import { PowerUp } from "../state/PowerUp";
 const playerWidth = 0.2;
 const playerHeight = 0.1;
 
-const powerUpWidth = 0.25;
-const powerUpHeight = 0.25;
+const powerUpWidth = 0.75;
+const powerUpHeight = 0.75;
 
 export function getPlayerBounds(
 	x: number,
