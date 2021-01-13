@@ -271,3 +271,37 @@ export function getExplosionResults(
 		powerUps: collidedPowerUps,
 	};
 }
+
+export function findClearDirectionForPlayer(
+	x: number,
+	y: number,
+	rotation: number,
+	map: MapInfo
+) {
+	const radians90 = (90 * Math.PI) / 180;
+
+	let direction =
+		Math.floor((rotation + radians90 / 2) / radians90) * radians90;
+	let tries = 0;
+
+	const possibilities: number[] = [];
+
+	while (tries < 4) {
+		tries++;
+
+		// is this spot free?
+		const tx = Math.floor(x + Math.cos(direction));
+		const ty = Math.floor(y - Math.sin(direction));
+
+		const tile = tileAtPosition(tx, ty, map.map);
+		const col = getTileCollisionRectsForPosition(tile, tx, ty);
+		if (!col.length) {
+			possibilities.push(direction);
+		}
+
+		direction += radians90;
+	}
+
+	// find the closest one
+	return possibilities[0];
+}

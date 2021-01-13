@@ -13,6 +13,7 @@ export class Player extends Schema {
 	@type("int32") score = 0;
 	@type("int8") bombsAllowed: number = 1;
 	@type("int8") bombLength: number = 1;
+	@type("boolean") isDead = false;
 
 	bombDelay: number = 1;
 	bombDelayElapsed: number = 0;

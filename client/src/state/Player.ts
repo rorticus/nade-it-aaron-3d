@@ -20,4 +20,5 @@ export class Player extends Schema {
     @type("int32") public score: number;
     @type("int8") public bombsAllowed: number;
     @type("int8") public bombLength: number;
+    @type("boolean") public isDead: boolean;
 }

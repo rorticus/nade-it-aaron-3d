@@ -27,3 +27,8 @@ export interface FireDescription {
 	position: [number, number];
 	duration: number;
 }
+
+export interface PlayerDeathDescription {
+	playerId: string;
+	direction: number;
+}

@@ -110,6 +110,7 @@ export function configurePlayerModel(
 		engine.programs.standard,
 		character
 	);
+
 	characterModel.id = player.id;
 	characterModel.position = mapToWorldCoordinates(
 		map,
@@ -165,6 +166,10 @@ export function configurePlayerModel(
 	characterModel.animation
 		.getState("Interact_ground")
 		.addSoundAction(characterModel, 1.0, 1.25, "drop-bomb");
+
+	characterModel.animation.configure("Death", {
+		wrap: AnimationWrapMode.None,
+	});
 
 	return characterModel;
 }

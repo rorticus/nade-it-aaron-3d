@@ -20,7 +20,11 @@ import {
 	PlayerMovement,
 	PlayerMovementTag,
 } from "../components/PlayerMovement";
-import { ExplosionDescription, FireDescription } from "../interfaces";
+import {
+	ExplosionDescription,
+	FireDescription,
+	PlayerDeathDescription,
+} from "../interfaces";
 import { createMapGameObject, createTileAt } from "../map";
 import {
 	bomberman17,
@@ -397,6 +401,15 @@ export class Play extends Scene {
 			);
 
 			map.add(model);
+		});
+
+		this.room.onMessage("player-death", (payload: PlayerDeathDescription) => {
+			const model = this.getObjectById(payload.playerId);
+
+			if (model) {
+				model.animation.transitionTo("Death", 0.33);
+				model.rotateY(payload.direction - Math.PI / 2);
+			}
 		});
 	}
 

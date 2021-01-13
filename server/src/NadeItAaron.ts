@@ -16,6 +16,7 @@ import {
 	getExplosionResults,
 	resolveCollisions,
 	resolvePowerUpCollisions,
+	findClearDirectionForPlayer,
 } from "./player/collisions";
 import { Bomb } from "./state/Bomb";
 import * as uuid from "uuid";
@@ -40,14 +41,14 @@ export class NadeItAaron extends Room<GameState> {
 			throw new ServerError(400, "Bad session ID");
 		}
 
-		if(!validateSession(this.sessionId)) {
+		if (!validateSession(this.sessionId)) {
 			throw new ServerError(400, "Bad session ID");
 		}
-		
-		if(!options.tokenId || !validateToken(options.tokenId)) {
+
+		if (!options.tokenId || !validateToken(options.tokenId)) {
 			throw new ServerError(400, "Invalid token ID");
 		}
-		
+
 		if (this.started) {
 			throw new ServerError(400, "GAME_STARTED");
 		}
@@ -68,6 +69,11 @@ export class NadeItAaron extends Room<GameState> {
 
 		this.onMessage<MoveMessage>("move", (client, message) => {
 			const player: Player = this.state.players[client.id];
+
+			if (player.isDead) {
+				return;
+			}
+
 			let x = player.position.x;
 			let y = player.position.y;
 
@@ -146,6 +152,20 @@ export class NadeItAaron extends Room<GameState> {
 		this.onMessage("not-ready", (client, message) => {
 			const player: Player = this.state.players[client.id];
 			player.isReady = false;
+		});
+
+		this.onMessage("test-death", (client) => {
+			const player: Player = this.state.players[client.id];
+			player.isDead = true;
+			this.broadcast("player-death", {
+				playerId: client.id,
+				direction: findClearDirectionForPlayer(
+					player.position.x,
+					player.position.y,
+					player.rotation,
+					this.state.map
+				),
+			});
 		});
 
 		this.setSimulationInterval((t) => this.update(t), 33);
