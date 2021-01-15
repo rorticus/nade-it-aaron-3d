@@ -17,6 +17,8 @@ import {
 	resolveCollisions,
 	resolvePowerUpCollisions,
 	findClearDirectionForPlayer,
+	getPlayerBounds,
+	rectangleIntersection,
 } from "./player/collisions";
 import { Bomb } from "./state/Bomb";
 import * as uuid from "uuid";
@@ -122,6 +124,7 @@ export class NadeItAaron extends Room<GameState> {
 			const player: Player = this.state.players[client.id];
 
 			if (
+				!player.isDead &&
 				player.bombsUsed < player.bombsAllowed &&
 				player.bombDelayElapsed >= player.bombDelay
 			) {
@@ -152,20 +155,6 @@ export class NadeItAaron extends Room<GameState> {
 		this.onMessage("not-ready", (client, message) => {
 			const player: Player = this.state.players[client.id];
 			player.isReady = false;
-		});
-
-		this.onMessage("test-death", (client) => {
-			const player: Player = this.state.players[client.id];
-			player.isDead = true;
-			this.broadcast("player-death", {
-				playerId: client.id,
-				direction: findClearDirectionForPlayer(
-					player.position.x,
-					player.position.y,
-					player.rotation,
-					this.state.map
-				),
-			});
 		});
 
 		this.setSimulationInterval((t) => this.update(t), 33);
@@ -206,7 +195,24 @@ export class NadeItAaron extends Room<GameState> {
 
 	onLeave(client: Client, consented: boolean) {
 		console.log("client left", client.id);
-		delete this.state.players[client.id];
+
+		this.killPlayer(client.id);
+
+		// todo: say something embarassing in slack
+	}
+
+	killPlayer(id: string) {
+		const player: Player = this.state.players[id];
+		player.isDead = true;
+		this.broadcast("player-death", {
+			playerId: id,
+			direction: findClearDirectionForPlayer(
+				player.position.x,
+				player.position.y,
+				player.rotation,
+				this.state.map
+			),
+		});
 	}
 
 	onDispose() {
@@ -281,6 +287,28 @@ export class NadeItAaron extends Room<GameState> {
 						this.state.powerUps[p.id] = p;
 
 						this.broadcast("powerup_added", { powerUp: p });
+					}
+				}
+
+				// check player collissions
+				const fireRect = [
+					fire.position[0],
+					fire.position[1],
+					fire.position[0] + 1,
+					fire.position[1] + 1,
+				] as [number, number, number, number];
+				for (let playerId in this.state.players) {
+					const player: Player = this.state.players[playerId];
+
+					if (!player.isDead) {
+						const playerRect = getPlayerBounds(
+							player.position.x,
+							player.position.y
+						);
+
+						if (rectangleIntersection(fireRect, playerRect)) {
+							this.killPlayer(playerId);
+						}
 					}
 				}
 
