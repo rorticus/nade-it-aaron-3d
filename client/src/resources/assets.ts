@@ -22,6 +22,7 @@ export const boxExplosion = require("../resources/models/box-explosion-single.gl
 
 export const hudBombs = require("./images/badge-bomb.png");
 export const hudPower = require("./images/badge-fire.png");
+export const hudTimer = require("./images/badge-timer.png");
 
 export const logo = require("./images/logo.png").default;
 export const instructions = require("./images/instructions.png").default;
@@ -69,6 +70,7 @@ const pop3Sound = require("./sounds/pop3.mp3");
 
 export let hudBombsImage: HTMLImageElement;
 export let hudPowerImage: HTMLImageElement;
+export let hudTimerImage: HTMLImageElement;
 
 export async function loadImage(url: string) {
 	return new Promise<HTMLImageElement>((resolve) => {
@@ -90,6 +92,7 @@ export let explosionTemplate!: GameObject;
 export async function loadAssets(engine: Engine) {
 	hudBombsImage = await loadImage(hudBombs.default);
 	hudPowerImage = await loadImage(hudPower.default);
+	hudTimerImage = await loadImage(hudTimer.default);
 
 	bomberman17 = await loadFont(bomberman17Image, bomberman17Font);
 	bomberman30 = await loadFont(bomberman30Image, bomberman30Font);

@@ -35,6 +35,10 @@ export interface MoveMessage {
 	y: number;
 }
 
+function padZeros(x: string) {
+	return x.length < 2 ? "0".repeat(2 - x.length) + x : x;
+}
+
 export class NadeItAaron extends Room<GameState> {
 	sessionId: string;
 	started = false;
@@ -231,16 +235,28 @@ export class NadeItAaron extends Room<GameState> {
 	}
 
 	endGame() {
-		this.ended = true;
+		if (!this.ended) {
+			this.ended = true;
+			console.log("game ended");
+		}
 	}
 
 	update(deltaInMs: number) {
 		const deltaInSeconds = deltaInMs / 1000;
 
+		if (!this.started) {
+			return;
+		}
+
 		this.state.gameTimeLeft -= deltaInMs;
 		if (this.state.gameTimeLeft <= 0) {
 			this.endGame();
 		}
+
+		const seconds = Math.floor((this.state.gameTimeLeft / 1000) % 60);
+		const hours = Math.floor(this.state.gameTimeLeft / 1000 / 60);
+		this.state.gameTimer = `${padZeros(String(hours))} ${padZeros(String(seconds))}`;
+
 
 		// update time since last bomb drop
 		for (let id in this.state.players) {

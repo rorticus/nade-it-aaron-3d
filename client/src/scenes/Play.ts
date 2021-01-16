@@ -32,6 +32,7 @@ import {
 	bomberman30Black,
 	hudBombsImage,
 	hudPowerImage,
+	hudTimerImage,
 	levelBackground,
 	scoreboxPlayer1,
 	scoreboxPlayer2,
@@ -85,6 +86,40 @@ export function createBadge(
 	}
 
 	update(1);
+
+	return {
+		gameObject,
+		update,
+	};
+}
+
+export function createTimerBadge(engine: Engine) {
+	const canvas = document.createElement("canvas");
+	canvas.width = 135;
+	canvas.height = 42;
+	const context = canvas.getContext("2d");
+
+	const gameObject = sprite(engine, canvas);
+	positionSpriteOnCanvas(engine, gameObject, 878, 101, 135, 42);
+
+	function update(value: string) {
+		context.clearRect(0, 0, 135, 42);
+
+		context.drawImage(hudTimerImage, 0, 0);
+
+		const textBounds = textDimensions(bomberman30Black, value);
+		drawTextOnCanvas(
+			context,
+			value,
+			bomberman30Black,
+			135 - textBounds.width - 8,
+			42 / 2 - textBounds.height / 2
+		);
+
+		updateSpriteFromSource(engine, gameObject, canvas);
+	}
+
+	update("");
 
 	return {
 		gameObject,
@@ -220,9 +255,15 @@ export class Play extends Scene {
 
 		const bombBadge = createBadge(engine, hudBombsImage, 5);
 		const fireBadge = createBadge(engine, hudPowerImage, 52);
+		const timerBadge = createTimerBadge(engine);
 
 		this.addGameObject(bombBadge.gameObject);
 		this.addGameObject(fireBadge.gameObject);
+		this.addGameObject(timerBadge.gameObject);
+
+		this.room.state.listen("gameTimer", (value) => {
+			timerBadge.update(value);
+		});
 
 		// add players to the map
 		let scoreboxY = 5;
