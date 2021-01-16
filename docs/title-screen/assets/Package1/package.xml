@@ -162,6 +162,8 @@
     <image id="keim4g" name="bomb.png" path="/HUD/"/>
     <image id="keim4h" name="fire.png" path="/HUD/"/>
     <image id="ccqv4i" name="game-screen-colored-names.jpg" path="/HUD/"/>
+    <image id="q2py4j" name="clock.png" path="/HUD/"/>
+    <image id="q2py4k" name="n62.png" path="/"/>
   </resources>
   <publish name="" path="/Users/rory/Desktop" packageCount="2"/>
 </packageDescription>

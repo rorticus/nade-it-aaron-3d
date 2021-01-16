@@ -30,5 +30,9 @@
     <image id="n58_wxlc" name="n58" src="keim4h" fileName="HUD/fire.png" xy="936,56" group="n60_wxlc"/>
     <text id="n59_wxlc" name="n59" xy="966,54" size="43,42" group="n60_wxlc" font="ui://4rc2pv9ap67146" fontSize="30" text="99"/>
     <group id="n60_wxlc" name="Badge" xy="929,54" size="84,42"/>
+    <image id="n62_q2py" name="n62" src="rj2s2d" fileName="UI/grey_panel.png" xy="878,102" size="135,41" group="n65_q2py"/>
+    <image id="n66_q2py" name="n66" src="q2py4j" fileName="HUD/clock.png" xy="883,107" group="n65_q2py"/>
+    <text id="n64_q2py" name="n64" xy="915,102" size="92,42" group="n65_q2py" font="ui://4rc2pv9ap67146" fontSize="30" text="04:30"/>
+    <group id="n65_q2py" name="Badge" xy="878,102" size="135,42"/>
   </displayList>
 </component>

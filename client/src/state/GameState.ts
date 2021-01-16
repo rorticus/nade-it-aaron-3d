@@ -17,4 +17,5 @@ export class GameState extends Schema {
     @type("boolean") public isStarted: boolean;
     @type({ map: Bomb }) public bombs: MapSchema<Bomb> = new MapSchema<Bomb>();
     @type({ map: PowerUp }) public powerUps: MapSchema<PowerUp> = new MapSchema<PowerUp>();
+    @type("int32") public gameTimeLeft: number;
 }

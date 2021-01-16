@@ -19,6 +19,7 @@ export class GameState extends Schema {
 	@type("boolean") isStarted = false;
 	@type({ map: Bomb }) bombs = new MapSchema<Bomb>();
 	@type({ map: PowerUp }) powerUps = new MapSchema<PowerUp>();
+	@type("int32") gameTimeLeft = 0;
 
 	fireBlocks: FireBlock[] = [];
 }

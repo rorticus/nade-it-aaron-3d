@@ -28,6 +28,7 @@ import { consumeToken, validateSession, validateToken } from "./server";
 
 const FPS = 0.03333333;
 const PLAYER_SPEED = 2;
+const GAME_TIME = 1000 * 60 * 5; // 5 minutes
 
 export interface MoveMessage {
 	x: number;
@@ -37,6 +38,7 @@ export interface MoveMessage {
 export class NadeItAaron extends Room<GameState> {
 	sessionId: string;
 	started = false;
+	ended = false;
 
 	async onAuth(client: Client, options: any, request: any) {
 		if (options.sessionId !== this.sessionId) {
@@ -55,6 +57,10 @@ export class NadeItAaron extends Room<GameState> {
 			throw new ServerError(400, "GAME_STARTED");
 		}
 
+		if (Object.keys(this.state.players).length >= 4) {
+			throw new ServerError(400, "SERVER_FULL");
+		}
+
 		return true;
 	}
 
@@ -66,13 +72,14 @@ export class NadeItAaron extends Room<GameState> {
 
 		this.onMessage("start", (client, message) => {
 			this.broadcast("start");
+			this.state.gameTimeLeft = GAME_TIME;
 			this.started = true;
 		});
 
 		this.onMessage<MoveMessage>("move", (client, message) => {
 			const player: Player = this.state.players[client.id];
 
-			if (player.isDead) {
+			if (player.isDead || this.ended) {
 				return;
 			}
 
@@ -124,6 +131,7 @@ export class NadeItAaron extends Room<GameState> {
 			const player: Player = this.state.players[client.id];
 
 			if (
+				!this.ended &&
 				!player.isDead &&
 				player.bombsUsed < player.bombsAllowed &&
 				player.bombDelayElapsed >= player.bombDelay
@@ -194,11 +202,14 @@ export class NadeItAaron extends Room<GameState> {
 	}
 
 	onLeave(client: Client, consented: boolean) {
-		console.log("client left", client.id);
+		if (this.started) {
+			console.log("client left", client.id);
 
-		this.killPlayer(client.id);
-
-		// todo: say something embarassing in slack
+			this.killPlayer(client.id);
+			// todo: say something embarassing in slack
+		} else {
+			delete this.state.players[client.id];
+		}
 	}
 
 	killPlayer(id: string) {
@@ -219,8 +230,17 @@ export class NadeItAaron extends Room<GameState> {
 		console.log("onDispose");
 	}
 
+	endGame() {
+		this.ended = true;
+	}
+
 	update(deltaInMs: number) {
 		const deltaInSeconds = deltaInMs / 1000;
+
+		this.state.gameTimeLeft -= deltaInMs;
+		if (this.state.gameTimeLeft <= 0) {
+			this.endGame();
+		}
 
 		// update time since last bomb drop
 		for (let id in this.state.players) {
@@ -239,75 +259,77 @@ export class NadeItAaron extends Room<GameState> {
 			if (!fire.active && fire.timer > fire.delay) {
 				fire.active = true;
 
-				// check powerup collisions
-				for (let k in this.state.powerUps) {
-					const powerUp: PowerUp = this.state.powerUps[k];
+				if (!this.ended) {
+					// check powerup collisions
+					for (let k in this.state.powerUps) {
+						const powerUp: PowerUp = this.state.powerUps[k];
 
-					const [px, py] = tileCoordForPosition(
-						powerUp.position.x,
-						powerUp.position.y
+						const [px, py] = tileCoordForPosition(
+							powerUp.position.x,
+							powerUp.position.y
+						);
+
+						if (px === fire.position[0] && py === fire.position[1]) {
+							this.state.players[fire.owner].score += scores.POWERUP_DESTROYED;
+							this.broadcast("powerup_explode", { powerUp });
+							delete this.state.powerUps[powerUp.id];
+						}
+					}
+
+					// check for tile / powerup positions on this tile
+					const tile = tileAtPosition(
+						fire.position[0],
+						fire.position[1],
+						this.state.map.map
 					);
 
-					if (px === fire.position[0] && py === fire.position[1]) {
-						this.state.players[fire.owner].score += scores.POWERUP_DESTROYED;
-						this.broadcast("powerup_explode", { powerUp });
-						delete this.state.powerUps[powerUp.id];
+					if (canTileExplode(tile)) {
+						map = setTileToGrass(fire.position[0], fire.position[1], map);
+
+						const score = getTileScore(tile);
+
+						if (score) {
+							this.state.players[fire.owner].score += score;
+						}
+
+						if (Math.random() * 100 < 15) {
+							const powerUps = ["bomb", "power"];
+							const powerUpType =
+								powerUps[Math.floor(Math.random() * powerUps.length)];
+
+							const p = new PowerUp();
+							p.id = uuid.v4();
+							p.type = powerUpType;
+							p.position = new Vector2(
+								fire.position[0] + 0.5,
+								fire.position[1] + 0.5
+							);
+
+							this.state.powerUps[p.id] = p;
+
+							this.broadcast("powerup_added", { powerUp: p });
+						}
 					}
-				}
 
-				// check for tile / powerup positions on this tile
-				const tile = tileAtPosition(
-					fire.position[0],
-					fire.position[1],
-					this.state.map.map
-				);
+					// check player collissions
+					const fireRect = [
+						fire.position[0],
+						fire.position[1],
+						fire.position[0] + 1,
+						fire.position[1] + 1,
+					] as [number, number, number, number];
+					for (let playerId in this.state.players) {
+						const player: Player = this.state.players[playerId];
 
-				if (canTileExplode(tile)) {
-					map = setTileToGrass(fire.position[0], fire.position[1], map);
+						if (!player.isDead) {
+							const playerRect = getPlayerBounds(
+								player.position.x,
+								player.position.y
+							);
 
-					const score = getTileScore(tile);
-
-					if (score) {
-						this.state.players[fire.owner].score += score;
-					}
-
-					if (Math.random() * 100 < 15) {
-						const powerUps = ["bomb", "power"];
-						const powerUpType =
-							powerUps[Math.floor(Math.random() * powerUps.length)];
-
-						const p = new PowerUp();
-						p.id = uuid.v4();
-						p.type = powerUpType;
-						p.position = new Vector2(
-							fire.position[0] + 0.5,
-							fire.position[1] + 0.5
-						);
-
-						this.state.powerUps[p.id] = p;
-
-						this.broadcast("powerup_added", { powerUp: p });
-					}
-				}
-
-				// check player collissions
-				const fireRect = [
-					fire.position[0],
-					fire.position[1],
-					fire.position[0] + 1,
-					fire.position[1] + 1,
-				] as [number, number, number, number];
-				for (let playerId in this.state.players) {
-					const player: Player = this.state.players[playerId];
-
-					if (!player.isDead) {
-						const playerRect = getPlayerBounds(
-							player.position.x,
-							player.position.y
-						);
-
-						if (rectangleIntersection(fireRect, playerRect)) {
-							this.killPlayer(playerId);
+							if (rectangleIntersection(fireRect, playerRect)) {
+								this.killPlayer(playerId);
+							}
 						}
 					}
 				}
@@ -360,45 +382,6 @@ export class NadeItAaron extends Room<GameState> {
 					bombTilePos,
 					bomb.explosionLength
 				);
-
-				// let map = this.state.map.map;
-				// const scoreMultiplier =
-				// 	1 + scores.BOX_MULTIPLIER * results.tiles.length;
-
-				// results.tiles.forEach((tilePos) => {
-				// 	const tile = tileAtPosition(tilePos[0], tilePos[1], map);
-				// 	const score = getTileScore(tile) * scoreMultiplier;
-
-				// 	if (score) {
-				// 		this.state.players[bomb.owner].score += score;
-				// 	}
-
-				// 	map = setTileToGrass(tilePos[0], tilePos[1], map);
-
-				// 	// chance of spawning a powerup
-				// 	if (Math.random() * 100 < 15) {
-				// 		const powerUps = ["bomb", "power"];
-				// 		const powerUpType =
-				// 			powerUps[Math.floor(Math.random() * powerUps.length)];
-
-				// 		const p = new PowerUp();
-				// 		p.id = uuid.v4();
-				// 		p.type = powerUpType;
-				// 		p.position = new Vector2(tilePos[0] + 0.5, tilePos[1] + 0.5);
-
-				// 		this.state.powerUps[p.id] = p;
-
-				// 		this.broadcast("powerup_added", { powerUp: p });
-				// 	}
-				// });
-
-				// results.powerUps.forEach((powerUp) => {
-				// 	this.state.players[bomb.owner].score += scores.POWERUP_DESTROYED;
-				// 	this.broadcast("powerup_explode", { powerUp });
-				// 	delete this.state.powerUps[powerUp.id];
-				// });
-
-				// this.state.map.map = map;
 
 				// add fireblocks
 				this.state.fireBlocks.push({
