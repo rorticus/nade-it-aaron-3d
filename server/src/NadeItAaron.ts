@@ -253,10 +253,12 @@ export class NadeItAaron extends Room<GameState> {
 			this.endGame();
 		}
 
-		const seconds = Math.floor((this.state.gameTimeLeft / 1000) % 60);
-		const hours = Math.floor(this.state.gameTimeLeft / 1000 / 60);
-		this.state.gameTimer = `${padZeros(String(hours))} ${padZeros(String(seconds))}`;
-
+		const seconds = Math.max(
+			Math.floor((this.state.gameTimeLeft / 1000) % 60),
+			0
+		);
+		const hours = Math.max(Math.floor(this.state.gameTimeLeft / 1000 / 60), 0);
+		this.state.gameTimer = `${hours} ${padZeros(String(seconds))}`;
 
 		// update time since last bomb drop
 		for (let id in this.state.players) {
