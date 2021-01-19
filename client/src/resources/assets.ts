@@ -51,8 +51,6 @@ export const scoreboxPlayer4 = require("./images/scorebox-player-4.png")
 
 const bomberman17Image = require("./bomberman17.png").default;
 const bomberman17Font = require("./bomberman17.fnt");
-const bomberman30Image = require("./bomberman30.png").default;
-const bomberman30Font = require("./bomberman17.fnt");
 const bomberman30BlackImage = require("./bomberman30black.png").default;
 const bomberman30BlackFont = require("./bomberman30black.fnt");
 const bomberman28Image = require("./bomberman28.png").default;
@@ -83,7 +81,6 @@ export async function loadImage(url: string) {
 }
 
 export let bomberman17: FontDefinition;
-export let bomberman30: FontDefinition;
 export let bomberman30Black: FontDefinition;
 export let bomberman28: FontDefinition;
 
@@ -95,7 +92,6 @@ export async function loadAssets(engine: Engine) {
 	hudTimerImage = await loadImage(hudTimer.default);
 
 	bomberman17 = await loadFont(bomberman17Image, bomberman17Font);
-	bomberman30 = await loadFont(bomberman30Image, bomberman30Font);
 	bomberman30Black = await loadFont(
 		bomberman30BlackImage,
 		bomberman30BlackFont

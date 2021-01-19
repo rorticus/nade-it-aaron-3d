@@ -258,7 +258,7 @@ export class NadeItAaron extends Room<GameState> {
 			0
 		);
 		const hours = Math.max(Math.floor(this.state.gameTimeLeft / 1000 / 60), 0);
-		this.state.gameTimer = `${hours} ${padZeros(String(seconds))}`;
+		this.state.gameTimer = `${hours}:${padZeros(String(seconds))}`;
 
 		// update time since last bomb drop
 		for (let id in this.state.players) {

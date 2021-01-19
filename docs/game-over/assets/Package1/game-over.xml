@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="1024,768" bgColor="#00cc99">
+  <displayList>
+    <text id="n0_fkzp" name="game-over-text" xy="219,38" size="651,129" font="Bomberman" fontSize="100" text="GAME OVER"/>
+  </displayList>
+</component>
