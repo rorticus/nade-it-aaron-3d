@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="1024,768" bgColor="#00cc99">
   <displayList>
-    <text id="n0_fkzp" name="game-over-text" xy="219,38" size="651,129" font="Bomberman" fontSize="100" text="GAME OVER"/>
+    <image id="n1_gtn4" name="n1" src="gtn41" fileName="game-over-back.jpg" xy="0,0"/>
+    <text id="n0_fkzp" name="game-over-text" xy="10,10" size="1004,154" font="Bomberman" fontSize="120" color="#ffffff" align="center" autoSize="none" shadowColor="#000000" shadowOffset="4,4" text="FRANK WINS"/>
   </displayList>
 </component>

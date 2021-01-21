@@ -20,6 +20,8 @@ export const bombPowerUp = require("../resources/models/bomb_powerup.glb");
 
 export const boxExplosion = require("../resources/models/box-explosion-single.glb");
 
+export const gameOver = require("../resources/models/game-over.glb");
+
 export const hudBombs = require("./images/badge-bomb.png");
 export const hudPower = require("./images/badge-fire.png");
 export const hudTimer = require("./images/badge-timer.png");
@@ -55,6 +57,8 @@ const bomberman30BlackImage = require("./bomberman30black.png").default;
 const bomberman30BlackFont = require("./bomberman30black.fnt");
 const bomberman28Image = require("./bomberman28.png").default;
 const bomberman28Font = require("./bomberman28.fnt");
+const bomberman120Font = require("./bomberman120.fnt");
+const bomberman120Iamge = require("./bomberman120.png").default;
 
 const rightStepSound = require("./sounds/right-footstep.mp3");
 const leftStepSound = require("./sounds/left-footstep.mp3");
@@ -83,6 +87,7 @@ export async function loadImage(url: string) {
 export let bomberman17: FontDefinition;
 export let bomberman30Black: FontDefinition;
 export let bomberman28: FontDefinition;
+export let bomberman120: FontDefinition;
 
 export let explosionTemplate!: GameObject;
 
@@ -97,6 +102,7 @@ export async function loadAssets(engine: Engine) {
 		bomberman30BlackFont
 	);
 	bomberman28 = await loadFont(bomberman28Image, bomberman28Font);
+	bomberman120 = await loadFont(bomberman120Iamge, bomberman120Font);
 
 	explosionTemplate = loadGLB(
 		engine.gl,

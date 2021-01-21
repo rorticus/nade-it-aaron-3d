@@ -2,6 +2,7 @@
 <packageDescription id="d4iws6z8">
   <resources>
     <component id="ga3z0" name="game-over.xml" path="/" exported="true"/>
+    <image id="gtn41" name="game-over-back.jpg" path="/"/>
   </resources>
   <publish name=""/>
 </packageDescription>
