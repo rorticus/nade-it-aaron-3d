@@ -42,6 +42,7 @@ import {
 import { GameState } from "../state/GameState";
 import { Player } from "../state/Player";
 import { PowerUp } from "../state/PowerUp";
+import { GameOver } from "./GameOver";
 import {
 	configurePlayerModel,
 	createBomb,
@@ -452,10 +453,26 @@ export class Play extends Scene {
 				model.rotateY(payload.direction - Math.PI / 2);
 			}
 		});
+
+		this.room.onMessage(
+			"game-over",
+			(payload: { winnerName: string; winnerIndex: number }) => {
+				const gameOver = new GameOver(
+					engine,
+					payload.winnerName,
+					payload.winnerIndex
+				);
+				engine.scene = gameOver;
+			}
+		);
 	}
 
 	update(context: GameComponentContext) {
 		super.update(context);
+
+		if (this.room.state.isEnded) {
+			return;
+		}
 
 		const { keyboardService } = context.engine;
 		let dirX = 0;

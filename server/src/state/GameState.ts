@@ -17,6 +17,7 @@ export class GameState extends Schema {
 	@type(MapInfo) map: MapInfo;
 	@type({ map: Player }) players = new MapSchema<Player>();
 	@type("boolean") isStarted = false;
+	@type("boolean") isEnded = false;
 	@type({ map: Bomb }) bombs = new MapSchema<Bomb>();
 	@type({ map: PowerUp }) powerUps = new MapSchema<PowerUp>();
 	@type("string") gameTimer = "";

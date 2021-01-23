@@ -1,34 +1,35 @@
-import { Room, Client, ServerError } from "colyseus";
-import { GameState } from "./state/GameState";
-import { Player } from "./state/Player";
+import { Client, Room, ServerError } from "colyseus";
+import * as uuid from "uuid";
 import {
 	canTileExplode,
 	generateMap,
 	getTileScore,
-	MAP_HEIGHT,
-	MAP_WIDTH,
 	setTileToGrass,
 	tileAtPosition,
 	tileCoordForPosition,
 } from "./map/map";
-import { Vector2 } from "./state/primitives";
 import {
-	getExplosionResults,
-	resolveCollisions,
-	resolvePowerUpCollisions,
 	findClearDirectionForPlayer,
+	getExplosionResults,
 	getPlayerBounds,
 	rectangleIntersection,
+	resolveCollisions,
+	resolvePowerUpCollisions,
 } from "./player/collisions";
-import { Bomb } from "./state/Bomb";
-import * as uuid from "uuid";
-import { PowerUp } from "./state/PowerUp";
 import * as scores from "./player/scores.json";
 import { consumeToken, validateSession, validateToken } from "./server";
+import { Bomb } from "./state/Bomb";
+import { GameState } from "./state/GameState";
+import { Player } from "./state/Player";
+import { PowerUp } from "./state/PowerUp";
+import { Vector2 } from "./state/primitives";
 
 const FPS = 0.03333333;
 const PLAYER_SPEED = 2;
 const GAME_TIME = 1000 * 60 * 5; // 5 minutes
+
+const MODE = process.env.mode || "prod";
+const DEV_MODE = "dev";
 
 export interface MoveMessage {
 	x: number;
@@ -42,7 +43,8 @@ function padZeros(x: string) {
 export class NadeItAaron extends Room<GameState> {
 	sessionId: string;
 	started = false;
-	ended = false;
+	winnerName = "";
+	winnerIndex = 0;
 
 	async onAuth(client: Client, options: any, request: any) {
 		if (options.sessionId !== this.sessionId) {
@@ -83,7 +85,7 @@ export class NadeItAaron extends Room<GameState> {
 		this.onMessage<MoveMessage>("move", (client, message) => {
 			const player: Player = this.state.players[client.id];
 
-			if (player.isDead || this.ended) {
+			if (player.isDead || this.state.isEnded) {
 				return;
 			}
 
@@ -135,7 +137,7 @@ export class NadeItAaron extends Room<GameState> {
 			const player: Player = this.state.players[client.id];
 
 			if (
-				!this.ended &&
+				!this.state.isEnded &&
 				!player.isDead &&
 				player.bombsUsed < player.bombsAllowed &&
 				player.bombDelayElapsed >= player.bombDelay
@@ -228,6 +230,26 @@ export class NadeItAaron extends Room<GameState> {
 				this.state.map
 			),
 		});
+
+		const playersAlive = Object.keys(this.state.players).reduce(
+			(total, player) => total + Number(this.state.players[player].isDead),
+			0
+		);
+
+		if (playersAlive === (MODE === DEV_MODE ? 0 : 1)) {
+			this.endGame();
+			const alivePlayerId = Object.keys(this.state.players).find(
+				(p) => !this.state.players[p].isDead
+			);
+
+			if (alivePlayerId) {
+				this.winnerName = this.state.players[alivePlayerId].name;
+				this.winnerIndex = (this.state.players[alivePlayerId] as Player).index;
+			} else {
+				this.winnerName = "large marge";
+				this.winnerIndex = 1;
+			}
+		}
 	}
 
 	onDispose() {
@@ -235,9 +257,12 @@ export class NadeItAaron extends Room<GameState> {
 	}
 
 	endGame() {
-		if (!this.ended) {
-			this.ended = true;
-			console.log("game ended");
+		if (!this.state.isEnded) {
+			this.state.isEnded = true;
+
+			setTimeout(() => {
+				this.broadcast("game-over", { winnerName: this.winnerName, winnerIndex: this.winnerIndex });
+			}, 3000);
 		}
 	}
 
@@ -277,7 +302,7 @@ export class NadeItAaron extends Room<GameState> {
 			if (!fire.active && fire.timer > fire.delay) {
 				fire.active = true;
 
-				if (!this.ended) {
+				if (!this.state.isEnded) {
 					// check powerup collisions
 					for (let k in this.state.powerUps) {
 						const powerUp: PowerUp = this.state.powerUps[k];
