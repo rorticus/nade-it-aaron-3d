@@ -6,7 +6,7 @@ import {
 	getTileScore,
 	setTileToGrass,
 	tileAtPosition,
-	tileCoordForPosition,
+	tileCoordForPosition
 } from "./map/map";
 import {
 	findClearDirectionForPlayer,
@@ -14,10 +14,15 @@ import {
 	getPlayerBounds,
 	rectangleIntersection,
 	resolveCollisions,
-	resolvePowerUpCollisions,
+	resolvePowerUpCollisions
 } from "./player/collisions";
 import * as scores from "./player/scores.json";
-import { consumeToken, validateSession, validateToken } from "./server";
+import {
+	consumeToken,
+	postBackMessage,
+	validateSession,
+	validateToken
+} from "./server";
 import { Bomb } from "./state/Bomb";
 import { GameState } from "./state/GameState";
 import { Player } from "./state/Player";
@@ -238,13 +243,19 @@ export class NadeItAaron extends Room<GameState> {
 
 		if (playersAlive === (MODE === DEV_MODE ? 0 : 1)) {
 			this.endGame();
-			const alivePlayerId = Object.keys(this.state.players).find(
-				(p) => !this.state.players[p].isDead
-			);
+			const alivePlayers: Player[] = [];
+			for (let playerId in this.state.players) {
+				const player = this.state.players[playerId];
+				if (!player.isDead) {
+					alivePlayers.push(player);
+				}
+			}
 
-			if (alivePlayerId) {
-				this.winnerName = this.state.players[alivePlayerId].name;
-				this.winnerIndex = (this.state.players[alivePlayerId] as Player).index;
+			alivePlayers.sort((a, b) => (a.score > b.score ? -1 : 1));
+
+			if (alivePlayers.length > 0) {
+				this.winnerName = alivePlayers[0].name;
+				this.winnerIndex = alivePlayers[0].index;
 			} else {
 				this.winnerName = "large marge";
 				this.winnerIndex = 1;
@@ -261,7 +272,11 @@ export class NadeItAaron extends Room<GameState> {
 			this.state.isEnded = true;
 
 			setTimeout(() => {
-				this.broadcast("game-over", { winnerName: this.winnerName, winnerIndex: this.winnerIndex });
+				this.broadcast("game-over", {
+					winnerName: this.winnerName,
+					winnerIndex: this.winnerIndex,
+				});
+				postBackMessage(this.sessionId, `Woo! ${this.winnerName} won!`);
 			}, 3000);
 		}
 	}

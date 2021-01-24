@@ -1,13 +1,11 @@
-import http from "http";
-import express from "express";
-import cors from "cors";
-import { Server } from "colyseus";
 import { monitor } from "@colyseus/monitor";
 import bodyParser from "body-parser";
-import fetch from "node-fetch";
-
+import { Server } from "colyseus";
+import cors from "cors";
+import express from "express";
+import http from "http";
 import { NadeItAaron } from "./NadeItAaron";
-import { createSession, createJoinUrl } from "./server";
+import { createJoinUrl, createSession, postToSlack } from "./server";
 
 const staticPath = process.env.STATIC_PATH || "../client/build";
 
@@ -37,24 +35,10 @@ app.post("/slack/join", (req, res) => {
 
 		const responseUrl = createJoinUrl(sessionId, username);
 
-		fetch(slackResponseUrl, {
-			method: "post",
-			headers: {
-				"content-type": "application/json",
-			},
-			body: JSON.stringify({
-				response_type: "ephemeral",
-				blocks: [
-					{
-						type: "section",
-						text: {
-							type: "mrkdwn",
-							text: `Great! click <${responseUrl}|this link> to join.`,
-						},
-					},
-				],
-			}),
-		});
+		postToSlack(
+			slackResponseUrl,
+			`Great! click <${responseUrl}|this link> to join.`
+		);
 	}
 
 	res.send();

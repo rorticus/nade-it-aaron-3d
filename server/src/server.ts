@@ -1,6 +1,7 @@
+import fetch from "node-fetch";
 import * as uuid from "uuid";
 
-const ANON = (process.env.ANON || 'true') === 'true';
+const ANON = (process.env.ANON || "true") === "true";
 
 export interface Session {
 	id: string;
@@ -15,7 +16,7 @@ export interface JoinToken {
 	username: string;
 }
 
-const host = process.env.HOST || "https://shy-robin-81.loca.lt";
+const host = process.env.HOST || "https://little-yak-33.loca.lt";
 
 const joinTokens = new Map<string, JoinToken>();
 const sessions: Record<string, Session> = {};
@@ -46,7 +47,7 @@ export function createJoinUrl(sessionId: string, username: string) {
 }
 
 export function validateSession(sessionId: string) {
-	if(ANON) {
+	if (ANON) {
 		return true;
 	}
 
@@ -54,14 +55,14 @@ export function validateSession(sessionId: string) {
 }
 
 export function validateToken(tokenId: string) {
-	if(ANON) {
+	if (ANON) {
 		return true;
 	}
 	return joinTokens.has(tokenId);
 }
 
 export function consumeToken(tokenId: string) {
-	if(ANON) {
+	if (ANON) {
 		return "ANON";
 	}
 
@@ -70,4 +71,36 @@ export function consumeToken(tokenId: string) {
 	joinTokens.delete(tokenId);
 
 	return t.username;
+}
+
+export function endSession(sessionId: string) {
+	delete sessions[sessionId];
+}
+
+export async function postBackMessage(sessionId: string, message: string) {
+	const session = sessions[sessionId];
+	if (session) {
+		postToSlack(session.responseUrl, message);
+	}
+}
+
+export function postToSlack(responseUrl: string, message: string) {
+	fetch(responseUrl, {
+		method: "post",
+		headers: {
+			"content-type": "application/json",
+		},
+		body: JSON.stringify({
+			response_type: "ephemeral",
+			blocks: [
+				{
+					type: "section",
+					text: {
+						type: "mrkdwn",
+						text: message,
+					},
+				},
+			],
+		}),
+	});
 }
