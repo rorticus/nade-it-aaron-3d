@@ -6,7 +6,7 @@ import {
 	getTileScore,
 	setTileToGrass,
 	tileAtPosition,
-	tileCoordForPosition
+	tileCoordForPosition,
 } from "./map/map";
 import {
 	findClearDirectionForPlayer,
@@ -14,14 +14,14 @@ import {
 	getPlayerBounds,
 	rectangleIntersection,
 	resolveCollisions,
-	resolvePowerUpCollisions
+	resolvePowerUpCollisions,
 } from "./player/collisions";
 import * as scores from "./player/scores.json";
 import {
 	consumeToken,
 	postBackMessage,
 	validateSession,
-	validateToken
+	validateToken,
 } from "./server";
 import { Bomb } from "./state/Bomb";
 import { GameState } from "./state/GameState";
@@ -217,7 +217,12 @@ export class NadeItAaron extends Room<GameState> {
 			console.log("client left", client.id);
 
 			this.killPlayer(client.id);
-			// todo: say something embarassing in slack
+			postBackMessage(
+				this.sessionId,
+				`Uh oh. ${
+					this.state.players[client.id].name
+				} has run away with their tail between their legs!`
+			);
 		} else {
 			delete this.state.players[client.id];
 		}
