@@ -85,6 +85,9 @@ export class NadeItAaron extends Room<GameState> {
 			this.broadcast("start");
 			this.state.gameTimeLeft = GAME_TIME;
 			this.started = true;
+			postBackMessage(this.sessionId, "The game has started!", {
+				replaceOriginal: true,
+			});
 		});
 
 		this.onMessage<MoveMessage>("move", (client, message) => {
@@ -213,7 +216,7 @@ export class NadeItAaron extends Room<GameState> {
 	}
 
 	onLeave(client: Client, consented: boolean) {
-		if (this.started) {
+		if (this.started && !this.state.isEnded) {
 			console.log("client left", client.id);
 
 			this.killPlayer(client.id);
