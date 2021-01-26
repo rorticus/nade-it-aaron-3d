@@ -25,7 +25,7 @@ export interface SlackMessageOptions {
 	replaceOriginal?: boolean;
 }
 
-const host = process.env.HOST || "https://tricky-frog-68.loca.lt";
+const host = process.env.HOST || "https://nade-it.rortic.us";
 
 const joinTokens = new Map<string, JoinToken>();
 const sessions: Record<string, Session> = {};
