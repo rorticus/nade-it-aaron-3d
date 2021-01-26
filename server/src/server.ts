@@ -9,8 +9,8 @@ export interface Session {
 	createdBy: string;
 	responseUrl: string;
 	slackToken: string;
-	// 	slackChannel: string;
-	// 	slackTs: string
+	slackChannelId: string;
+	slackMessageId: string;
 }
 
 export interface JoinToken {
@@ -25,7 +25,7 @@ export interface SlackMessageOptions {
 	replaceOriginal?: boolean;
 }
 
-const host = process.env.HOST || "https://jolly-eel-54.loca.lt";
+const host = process.env.HOST || "https://tricky-frog-68.loca.lt";
 
 const joinTokens = new Map<string, JoinToken>();
 const sessions: Record<string, Session> = {};
@@ -33,7 +33,8 @@ const sessions: Record<string, Session> = {};
 export function createSession(
 	createdBy: string,
 	responseUrl: string,
-	token: string
+	token: string,
+	channelId: string
 ) {
 	const sessionId = uuid.v4();
 
@@ -43,12 +44,18 @@ export function createSession(
 		createdBy,
 		responseUrl,
 		slackToken: token,
+		slackChannelId: channelId,
+		slackMessageId: "",
 	};
 
 	return sessionId;
 }
 
-export function createJoinUrl(sessionId: string, username: string) {
+export function createJoinUrl(
+	sessionId: string,
+	username: string,
+	sourceMessageId: string
+) {
 	const tokenId = uuid.v4();
 
 	joinTokens.set(tokenId, {
@@ -56,6 +63,8 @@ export function createJoinUrl(sessionId: string, username: string) {
 		sessionId,
 		username,
 	});
+
+	sessions[sessionId].slackChannelId = sourceMessageId;
 
 	return `${host}?t=${sessionId}:${tokenId}`;
 }
@@ -91,24 +100,27 @@ export function endSession(sessionId: string) {
 	delete sessions[sessionId];
 }
 
-// export async function replaceOriginalMessage(sessionId: string, message: string) {
-// 	const session = sessions[sessionId];
-// 	if (session) {
-// 		fetch('https://slack.com/api/chat.update', {
-// 			method: 'POST',
-// 			headers: {
-// 				"content-type": "application/json",
-// 			},
-// 			body: JSON.stringify({
-// 				token: session.slackToken,
-// 				channel: session.slackChannel,
-// 				ts: session.slackTs,
-// 				as_user: true,
-// 				texdt: message
-// 			})
-// 		})
-// 	}
-// }
+export async function replaceOriginalMessage(
+	sessionId: string,
+	message: string
+) {
+	const session = sessions[sessionId];
+	if (session) {
+		fetch("https://slack.com/api/chat.update", {
+			method: "POST",
+			headers: {
+				"content-type": "application/json",
+			},
+			body: JSON.stringify({
+				token: session.slackToken,
+				channel: session.slackChannelId,
+				ts: session.slackMessageId,
+				as_user: true,
+				texdt: message,
+			}),
+		});
+	}
+}
 
 export async function postBackMessage(
 	sessionId: string,

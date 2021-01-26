@@ -27,20 +27,22 @@ app.post("/slack/join", (req, res) => {
 		actions,
 		user: { username },
 		response_url: slackResponseUrl,
+		message: { ts },
 	} = JSON.parse(payloadJSON);
+	console.log(payloadJSON);
 	const action = actions[0];
 
 	if (action && action.action_id === "play") {
 		const sessionId = action.value;
 
-		const responseUrl = createJoinUrl(sessionId, username);
+		const responseUrl = createJoinUrl(sessionId, username, ts);
 
 		postToSlack(
 			slackResponseUrl,
 			`Great! click <${responseUrl}|this link> to join.`,
 			{
 				ephemeral: true,
-				markdown: true
+				markdown: true,
 			}
 		);
 	}
@@ -49,14 +51,20 @@ app.post("/slack/join", (req, res) => {
 });
 
 app.post("/slack", (req, res) => {
-	const { user_name: userName, response_url: responseUrl, token } = req.body;
+	const {
+		user_name: userName,
+		response_url: responseUrl,
+		token,
+		channel_id: channelId,
+	} = req.body;
+	console.log(req.body);
 
-	const sessionId = createSession(userName, responseUrl, token);
+	const sessionId = createSession(userName, responseUrl, token, channelId);
 
 	res.header("content-type", "application/json");
 	res.send(
 		JSON.stringify({
-			response_type: 'in_channel',
+			response_type: "in_channel",
 			blocks: [
 				{
 					type: "section",

@@ -20,6 +20,7 @@ import * as scores from "./player/scores.json";
 import {
 	consumeToken,
 	postBackMessage,
+	replaceOriginalMessage,
 	validateSession,
 	validateToken,
 } from "./server";
@@ -85,9 +86,11 @@ export class NadeItAaron extends Room<GameState> {
 			this.broadcast("start");
 			this.state.gameTimeLeft = GAME_TIME;
 			this.started = true;
-			postBackMessage(this.sessionId, "The game has started!", {
-				replaceOriginal: true,
-			});
+
+			replaceOriginalMessage(
+				this.sessionId,
+				"A game of nade-it aaron has started!"
+			);
 		});
 
 		this.onMessage<MoveMessage>("move", (client, message) => {
