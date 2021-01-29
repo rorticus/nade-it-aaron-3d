@@ -2,38 +2,32 @@
 	"borderNorthWest": {
 		"filename": "borderInner",
 		"index": 0,
-		"collisions": [
-			[0, 0, 1, 1],
-			[0, 0, 1, 1]
-		]
+		"solid": true
 	},
 	"borderNorth": {
 		"filename": "border",
 		"index": 1,
-		"collisions": [[0, 0, 1, 1]]
+		"solid": true
 	},
 	"borderNorthEast": {
 		"filename": "borderInner",
 		"index": 2,
-		"collisions": [
-			[1, 0, 1, 1],
-			[0, 0, 1, 1]
-		]
+		"solid": true
 	},
 	"largeRock": {
 		"filename": "largeRock",
 		"index": 3,
-		"collisions": [[0, 0, 1, 1]]
+		"solid": true
 	},
 	"largeRock2": {
 		"filename": "largeRock2",
 		"index": 4,
-		"collisions": [[0, 0, 1, 1]]
+		"solid": true
 	},
 	"borderWest": {
 		"filename": "border",
 		"index": 12,
-		"collisions": [[0, 0, 1, 1]]
+		"solid": true
 	},
 	"grass": {
 		"filename": "grass",
@@ -42,26 +36,26 @@
 	"borderEast": {
 		"filename": "border",
 		"index": 14,
-		"collisions": [[0, 0, 1, 1]]
+		"solid": true
 	},
 	"box": {
 		"filename": "box",
 		"index": 15,
-		"collisions": [[0, 0, 1, 1]]
+		"solid": true
 	},
 	"borderSouthWest": {
 		"filename": "borderInner",
 		"index": 24,
-		"collisions": [[0, 0, 1, 1]]
+		"solid": true
 	},
 	"borderSouth": {
 		"filename": "border",
 		"index": 25,
-		"collisions": [[0, 0, 1, 1]]
+		"solid": true
 	},
 	"borderSouthEast": {
 		"filename": "borderInner",
 		"index": 26,
-		"collisions": [[0, 0, 1, 1]]
+		"solid": true
 	}
 }

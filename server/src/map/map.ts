@@ -58,6 +58,18 @@ export function tileAtPosition(tx: number, ty: number, map: string) {
 	return map.charCodeAt(ty * MAP_WIDTH + tx);
 }
 
+export function isTileSolid(gid: number) {
+	if (tilesByIndex[gid] === undefined) {
+		console.error(`${gid} is not found in ${tilesByIndex}`);
+	}
+
+	const entry = (mapDef as any)[tilesByIndex[gid]];
+
+	const { solid = false } = entry;
+
+	return solid;
+}
+
 export function getTileCollisionRectsForPosition(
 	gid: number,
 	tx: number,

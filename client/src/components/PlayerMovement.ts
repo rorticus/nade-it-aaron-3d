@@ -3,13 +3,14 @@ import { vec3 } from "gl-matrix";
 import { GameObject } from "webgl-engine";
 
 export const PlayerMovementTag = "PlayerMovement";
+const PlayerMoveTime = 0.5;
 
 export class PlayerMovement {
 	movingTimer = 0;
 	tag = PlayerMovementTag;
 	targetPos?: vec3;
 	targetPosTime: number;
-	originalPosition: vec3;
+	originalPosition: vec3 = vec3.create();
 
 	update(context: GameComponentContext, gameObject: GameObject) {
 		if (this.targetPos) {
@@ -22,17 +23,21 @@ export class PlayerMovement {
 					this.targetPos,
 					Math.min(this.movingTimer / this.targetPosTime, 1)
 				);
+			} else {
+				this.movingTimer = 0;
+				this.targetPos = undefined;
 			}
 		}
 	}
 
 	isMoving() {
-		return this.movingTimer < this.targetPosTime;
+		return this.targetPos !== undefined;
 	}
 
 	setTarget(gameObject: GameObject, x: number, y: number, z: number) {
-		this.originalPosition = gameObject.position;
+		vec3.copy(this.originalPosition, gameObject.position);
 		this.targetPos = vec3.fromValues(x, y, z);
-		this.targetPosTime = this.movingTimer + 0.13;
+		this.movingTimer = 0;
+		this.targetPosTime = this.movingTimer + PlayerMoveTime;
 	}
 }

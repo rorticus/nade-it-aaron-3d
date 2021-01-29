@@ -229,6 +229,11 @@ export function createPlayerScoreBox(
 }
 
 export class Play extends Scene {
+	leftDown = false;
+	rightDown = false;
+	upDown = false;
+	downDown = false;
+
 	constructor(public engine: Engine, public room: Room<GameState>) {
 		super();
 
@@ -475,31 +480,33 @@ export class Play extends Scene {
 		}
 
 		const { keyboardService } = context.engine;
-		let dirX = 0;
-		let dirY = 0;
 
-		if (keyboardService.down[KeyboardKey.ArrowLeft]) {
-			dirX -= 1;
-		}
+		const leftDown = keyboardService.down[KeyboardKey.ArrowLeft];
+		const rightDown = keyboardService.down[KeyboardKey.ArrowRight];
+		const upDown = keyboardService.down[KeyboardKey.ArrowUp];
+		const downDown = keyboardService.down[KeyboardKey.ArrowDown];
 
-		if (keyboardService.down[KeyboardKey.ArrowRight]) {
-			dirX += 1;
-		}
+		if (
+			leftDown !== this.leftDown ||
+			rightDown !== this.rightDown ||
+			upDown !== this.upDown ||
+			downDown !== this.downDown
+		) {
+			// if (player && player.animation.canTransition("Walk")) {
+			// 	this.room.send("move", { x: dirX, y: dirY });
+			// }
 
-		if (keyboardService.down[KeyboardKey.ArrowUp]) {
-			dirY -= 1;
-		}
+			this.room.send("key", {
+				up: upDown,
+				right: rightDown,
+				down: downDown,
+				left: leftDown,
+			});
 
-		if (keyboardService.down[KeyboardKey.ArrowDown]) {
-			dirY += 1;
-		}
-
-		if (dirX || dirY) {
-			const player = this.getObjectById(this.room.sessionId);
-
-			if (player && player.animation.canTransition("Walk")) {
-				this.room.send("move", { x: dirX, y: dirY });
-			}
+			this.leftDown = leftDown;
+			this.rightDown = rightDown;
+			this.upDown = upDown;
+			this.downDown = downDown;
 		}
 
 		if (keyboardService.pressed(KeyboardKey.Space)) {

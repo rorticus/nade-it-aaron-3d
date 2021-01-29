@@ -3,7 +3,9 @@ import * as uuid from "uuid";
 import {
 	canTileExplode,
 	generateMap,
+	getTileCollisionRectsForPosition,
 	getTileScore,
+	isTileSolid,
 	setTileToGrass,
 	tileAtPosition,
 	tileCoordForPosition,
@@ -33,6 +35,7 @@ import { Vector2 } from "./state/primitives";
 const FPS = 0.03333333;
 const PLAYER_SPEED = 2;
 const GAME_TIME = 1000 * 60 * 5; // 5 minutes
+const PLAYER_SPACE_MOVE_TIME = 0.5;
 
 const MODE = process.env.mode || "prod";
 const DEV_MODE = "dev";
@@ -40,6 +43,13 @@ const DEV_MODE = "dev";
 export interface MoveMessage {
 	x: number;
 	y: number;
+}
+
+export interface KeyMessage {
+	left: boolean;
+	right: boolean;
+	up: boolean;
+	down: boolean;
 }
 
 function padZeros(x: string) {
@@ -93,55 +103,17 @@ export class NadeItAaron extends Room<GameState> {
 			);
 		});
 
-		this.onMessage<MoveMessage>("move", (client, message) => {
+		this.onMessage<KeyMessage>("key", (client, message) => {
 			const player: Player = this.state.players[client.id];
 
 			if (player.isDead || this.state.isEnded) {
 				return;
 			}
 
-			let x = player.position.x;
-			let y = player.position.y;
-
-			if (message.x !== 0) {
-				x += (message.x > 0 ? 1 : -1) * PLAYER_SPEED * FPS;
-				player.rotation = ((90 * Math.PI) / 180) * (message.x > 0 ? 1 : -1);
-			}
-
-			if (message.y !== 0) {
-				y += (message.y > 0 ? 1 : -1) * PLAYER_SPEED * FPS;
-				player.rotation = ((180 * Math.PI) / 180) * (message.y > 0 ? 0 : -1);
-			}
-
-			const resolved = resolveCollisions(x, y, message.x, message.y, state.map);
-			player.position.x = resolved.x;
-			player.position.y = resolved.y;
-
-			// power ups
-			const powerUpList: PowerUp[] = [];
-			for (let k in this.state.powerUps) {
-				powerUpList.push(this.state.powerUps[k]);
-			}
-
-			const powerUps = resolvePowerUpCollisions(
-				player.position.x,
-				player.position.y,
-				powerUpList
-			);
-
-			powerUps.forEach((powerUp) => {
-				switch (powerUp.type) {
-					case "bomb":
-						player.bombsAllowed++;
-						break;
-					case "power":
-						player.bombLength++;
-						break;
-				}
-
-				this.broadcast("powerup_collected", { powerUp });
-				delete this.state.powerUps[powerUp.id];
-			});
+			player.leftDown = message.left;
+			player.rightDown = message.right;
+			player.upDown = message.up;
+			player.downDown = message.down;
 		});
 
 		this.onMessage("place_bomb", (client, message) => {
@@ -316,6 +288,56 @@ export class NadeItAaron extends Room<GameState> {
 			const player: Player = this.state.players[id];
 
 			player.bombDelayElapsed += deltaInSeconds;
+
+			// handle movement
+			if (player.moving) {
+				player.moveTimer += deltaInSeconds;
+
+				if (player.moveTimer >= PLAYER_SPACE_MOVE_TIME * 0.95) {
+					player.moveTimer = 0;
+					player.moving = false;
+				}
+			}
+
+			if (!player.moving) {
+				let moved = false;
+				let targetPosition = [player.position.x, player.position.y];
+				let rotation = player.rotation;
+
+				if (player.leftDown) {
+					targetPosition[0]--;
+					moved = true;
+					rotation = (270 * Math.PI) / 180;
+				} else if (player.rightDown) {
+					targetPosition[0]++;
+					moved = true;
+					rotation = (90 * Math.PI) / 180;
+				} else if (player.upDown) {
+					targetPosition[1]--;
+					rotation = (180 * Math.PI) / 180;
+					moved = true;
+				} else if (player.downDown) {
+					targetPosition[1]++;
+					moved = true;
+					rotation = (0 * Math.PI) / 180;
+				}
+
+				if (moved) {
+					// check to see if you can even go here
+					const t = tileAtPosition(
+						Math.floor(targetPosition[0]),
+						Math.floor(targetPosition[1]),
+						this.state.map.map
+					);
+
+					if (!isTileSolid(t)) {
+						player.position.x = targetPosition[0];
+						player.position.y = targetPosition[1];
+						player.rotation = rotation;
+						player.moving = true;
+					}
+				}
+			}
 		}
 
 		const removeFire = [];
