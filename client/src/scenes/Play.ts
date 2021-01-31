@@ -16,6 +16,7 @@ import {
 	sprite,
 	updateSpriteFromSource,
 } from "webgl-engine/lib/webgl/utils";
+import { Collected } from "../components/Collected";
 import {
 	PlayerMovement,
 	PlayerMovementTag,
@@ -386,7 +387,8 @@ export class Play extends Scene {
 			"powerup_collected",
 			({ powerUp }: { powerUp: PowerUp }) => {
 				const model = this.getObjectById(powerUp.id);
-				model.removeFromParent();
+
+				model.addComponent(Collected());
 
 				const sound = new GameObject();
 
