@@ -1,7 +1,6 @@
 import {
 	canTileExplode,
-	getCollisionRectsForTile,
-	getTileCollisionRectsForPosition,
+	isTileSolid,
 	tileAtPosition,
 	tileCoordForPosition,
 } from "../map/map";
@@ -60,85 +59,6 @@ export function tilesOnHorizontalLine(x1: number, x2: number, y: number) {
 	return results;
 }
 
-function tilesOnVerticalLine(x: number, y1: number, y2: number) {
-	const results = [];
-
-	for (let y = y1; y < y2; y += 1) {
-		results.push(tileCoordForPosition(x, y));
-	}
-	results.push(tileCoordForPosition(x, y2));
-
-	return results;
-}
-
-function getTilesInRect(rect: [number, number, number, number], map: MapInfo) {
-	const allTiles = [
-		...tilesOnHorizontalLine(rect[0], rect[2], rect[3]),
-		...tilesOnHorizontalLine(rect[0], rect[2], rect[1]),
-		...tilesOnVerticalLine(rect[0], rect[1], rect[3]),
-		...tilesOnVerticalLine(rect[2], rect[1], rect[3]),
-	];
-
-	return allTiles.map((tile) => ({
-		gid: tileAtPosition(tile[0], tile[1], map.map),
-		x: tile[0],
-		y: tile[1],
-		tilePos: tile,
-	}));
-}
-
-export function resolveCollisions(
-	x: number,
-	y: number,
-	dx: number,
-	dy: number,
-	map: MapInfo
-): { x: number; y: number } {
-	let playerRect = getPlayerBounds(x, y);
-	let nx = x;
-	let ny = y;
-
-	const walls = getTilesInRect(playerRect, map);
-
-	walls.forEach((wall) => {
-		const collisionRects = getTileCollisionRectsForPosition(
-			wall.gid,
-			wall.tilePos[0],
-			wall.tilePos[1]
-		);
-
-		if (collisionRects.length) {
-			collisionRects.forEach((collisionRect) => {
-				const intersection = rectangleIntersection(collisionRect, playerRect);
-
-				if (intersection) {
-					const iw = intersection[2] - intersection[0];
-					const ih = intersection[3] - intersection[1];
-
-					if (iw > ih) {
-						if (dy < 0) {
-							// up
-							ny += ih;
-						} else if (dy > 0) {
-							ny -= ih;
-						}
-					} else if (iw < ih) {
-						if (dx < 0) {
-							nx += iw;
-						} else if (dx > 0) {
-							nx -= iw;
-						}
-					}
-
-					playerRect = getPlayerBounds(nx, ny);
-				}
-			});
-		}
-	});
-
-	return { x: nx, y: ny };
-}
-
 export function resolvePowerUpCollisions(
 	x: number,
 	y: number,
@@ -189,8 +109,7 @@ export function getExplosionResults(
 			y = Math.min(map.height - 1, Math.max(0, y));
 
 			const tile = tileAtPosition(x, y, map.map);
-			const collisions = getCollisionRectsForTile(tile);
-			if (collisions && collisions.length > 0) {
+			if (isTileSolid(tile)) {
 				if (canTileExplode(tile)) {
 					return {
 						pos: [x, y] as [number, number],
@@ -294,8 +213,7 @@ export function findClearDirectionForPlayer(
 		const ty = Math.floor(y - Math.sin(direction));
 
 		const tile = tileAtPosition(tx, ty, map.map);
-		const col = getTileCollisionRectsForPosition(tile, tx, ty);
-		if (!col.length) {
+		if (!isTileSolid(tile)) {
 			possibilities.push(direction);
 		}
 

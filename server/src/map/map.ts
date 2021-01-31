@@ -24,22 +24,6 @@ const tilesByIndex = Object.keys(mapDef).reduce((result, key) => {
 	return result;
 }, []);
 
-export function getCollisionRectsForTile(
-	tile: number
-): [number, number, number, number][] {
-	if (tilesByIndex[tile] === undefined) {
-		console.error(`${tile} is not found in ${tilesByIndex}`);
-	}
-
-	const entry = (mapDef as any)[tilesByIndex[tile]];
-
-	if (entry.collisions) {
-		return entry.collisions;
-	}
-
-	return null;
-}
-
 export function tileCoordForPosition(x: number, y: number): [number, number] {
 	const tx = Math.floor(x);
 	const ty = Math.floor(y);
@@ -68,21 +52,6 @@ export function isTileSolid(gid: number) {
 	const { solid = false } = entry;
 
 	return solid;
-}
-
-export function getTileCollisionRectsForPosition(
-	gid: number,
-	tx: number,
-	ty: number
-): [number, number, number, number][] {
-	const c = getCollisionRectsForTile(gid);
-	const p = tileRectFromTileCoords(tx, ty);
-
-	if (!c) {
-		return [];
-	}
-
-	return c.map((c) => [c[0] + p[0], c[1] + p[1], c[2] + p[0], c[3] + p[1]]);
 }
 
 export function canTileExplode(gid: number) {

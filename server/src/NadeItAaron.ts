@@ -3,7 +3,6 @@ import * as uuid from "uuid";
 import {
 	canTileExplode,
 	generateMap,
-	getTileCollisionRectsForPosition,
 	getTileScore,
 	isTileSolid,
 	setTileToGrass,
@@ -15,8 +14,6 @@ import {
 	getExplosionResults,
 	getPlayerBounds,
 	rectangleIntersection,
-	resolveCollisions,
-	resolvePowerUpCollisions,
 } from "./player/collisions";
 import * as scores from "./player/scores.json";
 import {
@@ -335,6 +332,24 @@ export class NadeItAaron extends Room<GameState> {
 						player.position.y = targetPosition[1];
 						player.rotation = rotation;
 						player.moving = true;
+
+						// check powerups
+						for (let powerupId in this.state.powerUps) {
+							const powerUp: PowerUp = this.state.powerUps[powerupId];
+
+							if (
+								powerUp.position.x === targetPosition[0] &&
+								powerUp.position.y === targetPosition[1]
+							) {
+								if (powerUp.type === "bomb") {
+									player.bombsAllowed++;
+								} else if (powerUp.type === "power") {
+									player.bombLength++;
+								}
+
+								this.broadcast("powerup_collected", { powerUp });
+							}
+						}
 					}
 				}
 			}
