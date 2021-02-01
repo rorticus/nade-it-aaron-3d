@@ -383,6 +383,10 @@ export class Play extends Scene {
 			}
 		);
 
+		this.room.onMessage("player-blocked", ({ playerId }) => {
+			// do something here, maybe play a sound?
+		});
+
 		this.room.onMessage(
 			"powerup_collected",
 			({ powerUp }: { powerUp: PowerUp }) => {

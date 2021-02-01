@@ -327,7 +327,22 @@ export class NadeItAaron extends Room<GameState> {
 						this.state.map.map
 					);
 
-					if (!isTileSolid(t)) {
+					let playerAtPosition = false;
+
+					for (let playerId in this.state.players) {
+						const p: Player = this.state.players[playerId];
+
+						if (
+							p.position.x === targetPosition[0] &&
+							p.position.y === targetPosition[1]
+						) {
+							playerAtPosition = true;
+							this.broadcast("player-blocked", { playerId });
+							break;
+						}
+					}
+
+					if (!isTileSolid(t) && !playerAtPosition) {
 						player.position.x = targetPosition[0];
 						player.position.y = targetPosition[1];
 						player.rotation = rotation;
