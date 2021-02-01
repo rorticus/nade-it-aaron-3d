@@ -194,7 +194,7 @@ export function createPlayerScoreBox(
 	const nameObject = sprite(engine, c);
 	nameObject.renderPhase = "alpha";
 
-	const aspect = dim.width / dim.height;
+	const aspect =  dim.height / dim.width;
 
 	if (dim.width > 116) {
 		let newWidth = 116;
