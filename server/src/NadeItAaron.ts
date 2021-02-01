@@ -347,7 +347,21 @@ export class NadeItAaron extends Room<GameState> {
 						}
 					}
 
-					if (!isTileSolid(t) && !playerAtPosition) {
+					let bombAtPosition = false;
+					for (let bombId in this.state.bombs) {
+						const b: Bomb = this.state.bombs[bombId];
+
+						if (
+							b.position.x === targetPosition[0] &&
+							b.position.y === targetPosition[1]
+						) {
+							bombAtPosition = true;
+							this.broadcast("player-blocked", { bombId });
+							break;
+						}
+					}
+
+					if (!isTileSolid(t) && !playerAtPosition && !bombAtPosition) {
 						player.position.x = targetPosition[0];
 						player.position.y = targetPosition[1];
 						player.rotation = rotation;

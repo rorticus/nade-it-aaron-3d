@@ -387,6 +387,10 @@ export class Play extends Scene {
 			// do something here, maybe play a sound?
 		});
 
+		this.room.onMessage("bomb-blocked", ({ bombId }) => {
+			// do something here, maybe play a sound?
+		});
+
 		this.room.onMessage(
 			"powerup_collected",
 			({ powerUp }: { powerUp: PowerUp }) => {
