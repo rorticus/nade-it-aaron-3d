@@ -370,6 +370,19 @@ export class NadeItAaron extends Room<GameState> {
 								this.broadcast("powerup_collected", { powerUp });
 							}
 						}
+
+						// check for fire
+						for (let i = 0; i < this.state.fireBlocks.length; i++) {
+							const fire = this.state.fireBlocks[i];
+							if (fire.active) {
+								if (
+									fire.position[0] === targetPosition[0] &&
+									fire.position[1] === targetPosition[1]
+								) {
+									this.killPlayer(player.id);
+								}
+							}
+						}
 					}
 				}
 			}
@@ -437,7 +450,7 @@ export class NadeItAaron extends Room<GameState> {
 						}
 					}
 
-					// check player collissions
+					// check player collisions
 					const fireRect = [
 						fire.position[0],
 						fire.position[1],
