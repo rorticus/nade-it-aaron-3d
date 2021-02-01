@@ -217,7 +217,7 @@ export class NadeItAaron extends Room<GameState> {
 		});
 
 		const playersAlive = Object.keys(this.state.players).reduce(
-			(total, player) => total + Number(this.state.players[player].isDead),
+			(total, player) => total + Number(!this.state.players[player].isDead),
 			0
 		);
 
