@@ -296,7 +296,12 @@ export class NadeItAaron extends Room<GameState> {
 				}
 			}
 
-			if (!player.moving) {
+			if (
+				!player.moving &&
+				!player.isDead &&
+				!this.state.isEnded &&
+				this.started
+			) {
 				let moved = false;
 				let targetPosition = [player.position.x, player.position.y];
 				let rotation = player.rotation;

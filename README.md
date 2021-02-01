@@ -43,6 +43,14 @@ npm run watch
 
 After a few seconds, the server should print out a URL to let you know its ready. You'll probably want to also wait for your client build to finish. After both builds have settled down, you should be able to hit http://localhost:2567 and see the menu screen.
 
+### Building for Docker
+
+If you're on an ARM machine, make sure you build for x64!
+
+```shell
+docker buildx build --platform linux/amd64 --push -t docker.rortic.us/nade-it .
+```
+
 ## Map Assets
 
 Map assets are generated using Asset Forge.
