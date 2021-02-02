@@ -221,7 +221,7 @@ export class NadeItAaron extends Room<GameState> {
 			0
 		);
 
-		if (playersAlive === (MODE === DEV_MODE ? 0 : 1)) {
+		if (playersAlive <= (MODE === DEV_MODE ? 0 : 1)) {
 			this.endGame();
 			const alivePlayers: Player[] = [];
 			for (let playerId in this.state.players) {
