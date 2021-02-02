@@ -194,7 +194,7 @@ export function createPlayerScoreBox(
 	const nameObject = sprite(engine, c);
 	nameObject.renderPhase = "alpha";
 
-	const aspect =  dim.height / dim.width;
+	const aspect = dim.height / dim.width;
 
 	if (dim.width > 116) {
 		let newWidth = 116;
@@ -491,10 +491,18 @@ export class Play extends Scene {
 
 		const { keyboardService } = context.engine;
 
-		const leftDown = keyboardService.down[KeyboardKey.ArrowLeft];
-		const rightDown = keyboardService.down[KeyboardKey.ArrowRight];
-		const upDown = keyboardService.down[KeyboardKey.ArrowUp];
-		const downDown = keyboardService.down[KeyboardKey.ArrowDown];
+		const leftDown =
+			keyboardService.down[KeyboardKey.ArrowLeft] ||
+			keyboardService.down[KeyboardKey.A];
+		const rightDown =
+			keyboardService.down[KeyboardKey.ArrowRight] ||
+			keyboardService.down[KeyboardKey.D];
+		const upDown =
+			keyboardService.down[KeyboardKey.ArrowUp] ||
+			keyboardService.down[KeyboardKey.W];
+		const downDown =
+			keyboardService.down[KeyboardKey.ArrowDown] ||
+			keyboardService.down[KeyboardKey.S];
 
 		if (
 			leftDown !== this.leftDown ||
