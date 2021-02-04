@@ -69,6 +69,7 @@ const bombCollectedSound = require("./sounds/bomb-collected.mp3");
 const pop1Sound = require("./sounds/pop1.mp3");
 const pop2Sound = require("./sounds/pop2.mp3");
 const pop3Sound = require("./sounds/pop3.mp3");
+const deadSound = require('./sounds/dead.mp3');
 
 export let hudBombsImage: HTMLImageElement;
 export let hudPowerImage: HTMLImageElement;
@@ -120,6 +121,7 @@ export async function loadAssets(engine: Engine) {
 		engine.soundService.loadSoundEffect("pop1", pop1Sound),
 		engine.soundService.loadSoundEffect("pop2", pop2Sound),
 		engine.soundService.loadSoundEffect("pop3", pop3Sound),
+		engine.soundService.loadSoundEffect("dead", deadSound)
 	]);
 }
 

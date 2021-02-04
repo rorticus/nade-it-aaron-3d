@@ -338,6 +338,7 @@ export class NadeItAaron extends Room<GameState> {
 						const p: Player = this.state.players[playerId];
 
 						if (
+							!p.isDead &&
 							p.position.x === targetPosition[0] &&
 							p.position.y === targetPosition[1]
 						) {

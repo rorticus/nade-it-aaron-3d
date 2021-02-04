@@ -464,8 +464,12 @@ export class Play extends Scene {
 			const model = this.getObjectById(payload.playerId);
 
 			if (model) {
+				const sound = new SoundComponent("dead");
+				sound.autoRemove = false;
+
 				model.animation.transitionTo("Death", 0.33);
 				model.rotateY(payload.direction - Math.PI / 2);
+				model.addComponent(sound);
 			}
 		});
 
